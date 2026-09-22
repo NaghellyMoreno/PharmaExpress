@@ -1,0 +1,5 @@
+google-genai
+pydantic>=2.8,<3
+python-docx>=1.1,<2
+pypdf>=5,<7
+python-dotenv>=1.0,<2
