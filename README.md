@@ -2,7 +2,7 @@
 
 **Prototipo funcional de pre-dispensación de medicamentos para reducir los tiempos de espera en los puntos de dispensación de Manizales, Caldas.**
 
-> ⚠️ Proyecto académico independiente. No tiene afiliación, convenio ni acceso a los sistemas de Disfarma, de las EPS ni de ninguna entidad del sistema de salud. Todos los sistemas externos del prototipo son **simulados** y todos los datos son **ficticios**.
+> Proyecto académico independiente. No tiene afiliación, convenio ni acceso a los sistemas de Disfarma, de las EPS ni de ninguna entidad del sistema de salud. Todos los sistemas externos del prototipo son **simulados** y todos los datos son **ficticios**.
 
 ---
 
