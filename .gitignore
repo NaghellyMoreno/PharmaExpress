@@ -1,0 +1,4 @@
+# Llaves y entornos locales
+.env
+.venv/
+__pycache__/

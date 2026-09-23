@@ -1,0 +1,12 @@
+{
+  "nombre": "Generador de historias de usuario (INVEST)",
+  "descripcion": "Genera historias de usuario desde cero para Pharma Express y las autoevalúa con el criterio INVEST.",
+  "modelo": "openai/gpt-oss-120b",
+  "parametros": {
+    "temperature": 0.5,
+    "top_p": 0.95,
+    "max_completion_tokens": 8192,
+    "reasoning_effort": "medium"
+  },
+  "carpeta_salida": "User-Strories/generadas"
+}
