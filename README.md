@@ -159,17 +159,8 @@ pharma-express/
 
 ```bash
 # Clonar el repositorio
-git clone <url-del-repositorio>
+git clone https://github.com/NaghellyMoreno/PharmaExpress.git
 cd pharma-express
-
-# Instalar dependencias
-# ...
-
-# Levantar los servicios simulados
-# ...
-
-# Ejecutar el backend y la aplicación
-# ...
 ```
 
 ## Consideraciones éticas y de datos
