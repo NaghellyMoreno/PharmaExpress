@@ -154,9 +154,6 @@ pharma-express/
 ```
 
 ## Instalación y ejecución
-
-> Completar cuando se defina el stack tecnológico.
-
 ```bash
 # Clonar el repositorio
 git clone https://github.com/NaghellyMoreno/PharmaExpress.git
