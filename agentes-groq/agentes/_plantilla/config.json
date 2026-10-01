@@ -1,12 +1,12 @@
 {
   "nombre": "Nombre legible del agente",
   "descripcion": "Qué hace el agente en una frase.",
-  "modelo": "openai/gpt-oss-120b",
+  "proveedor": "mistral",
+  "modelo": "mistral-large-latest",
   "parametros": {
     "temperature": 0.5,
     "top_p": 0.95,
-    "max_completion_tokens": 4096,
-    "reasoning_effort": "medium"
+    "max_tokens": 4096
   },
   "carpeta_salida": "agentes-groq/salidas/nombre-del-agente"
 }

@@ -1,9 +1,23 @@
-# Agentes de Groq — Pharma Express
+# Agentes de IA — Pharma Express
 
-Agentes de IA que usan la API de [Groq](https://console.groq.com) para apoyar el proyecto.
-Cada agente es una **instrucción de sistema** (`prompt.md`) + una **configuración** (`config.json`) que se ejecutan con un script común (`agente.py`).
+Agentes de IA que apoyan el proyecto. Cada agente es una **instrucción de sistema** (`prompt.md`) + una **configuración** (`config.json`) que se ejecutan con un script común (`agente.py`).
 
-> En este proyecto, un "agente" es: instrucción de sistema + modelo + parámetros + script. La consola de Groq sirve para crear la llave de la API y probar prompts en el Playground; el agente vive en este repositorio.
+> En este proyecto, un "agente" es: instrucción de sistema + proveedor + modelo + parámetros + script. El agente vive en este repositorio.
+
+El script funciona con cualquier proveedor compatible con la API de OpenAI. Hoy admite **Mistral**, **Gemini**, **Groq** y **OpenRouter**. Cada agente escoge su proveedor en `config.json`. La carpeta conserva el nombre `agentes-groq` para no romper rutas.
+
+---
+
+## Qué proveedor usar
+
+| Proveedor | ¿Gratis? | Límite que importa para el Specification Agent | Recomendación |
+|---|---|---|---|
+| **Mistral** (plan Experiment) | Sí, sin tarjeta. Pide verificar el celular y aceptar que usen tus datos para entrenamiento | Margen amplio por solicitud y por mes. Los límites exactos aparecen en la consola de tu cuenta | **Recomendado.** Es el que trae configurado el agente |
+| **Gemini** (Google AI Studio) | Sí, sin tarjeta. Google puede usar los datos del plan gratuito para mejorar sus productos | Margen amplio por solicitud, pero pocas solicitudes al día en los modelos Flash. Los límites exactos aparecen en AI Studio | Alternativa si Mistral falla |
+| **Groq** (plan gratuito) | Sí | Rechaza cualquier solicitud de más de 8.000 tokens (prompt + `max_tokens`). El Specification Agent no cabe | Solo para agentes con prompts cortos |
+| **OpenRouter** (modelos `:free`) | Sí | Pocas solicitudes al día sin créditos | Respaldo |
+
+Como los planes gratuitos pueden usar lo que envías, **nunca envíes datos reales de pacientes**. Usa solo datos ficticios.
 
 ---
 
@@ -13,27 +27,29 @@ Cada agente es una **instrucción de sistema** (`prompt.md`) + una **configuraci
 agentes-groq/
 ├── README.md                  ← esta guía
 ├── agente.py                  ← script común que ejecuta cualquier agente
-├── requirements.txt           ← dependencias (groq, python-dotenv)
-├── .env.example               ← plantilla para la llave de la API
+├── requirements.txt           ← dependencias (openai, python-dotenv)
+├── .env.example               ← plantilla para las llaves de API
 └── agentes/
     ├── _plantilla/            ← copia esta carpeta para crear un agente nuevo
     │   ├── config.json
     │   └── prompt.md
-    └── generador-hu-invest/   ← agente 1: genera historias de usuario con INVEST
+    └── specification-agent/   ← genera preguntas y una SPEC de una funcionalidad
         ├── config.json
         └── prompt.md
 ```
 
-El marcador `{{CONTEXTO_PROYECTO}}` dentro de un `prompt.md` se reemplaza automáticamente por el contenido de `PHARMA_EXPRESS_CONTEXTO.md` (raíz del proyecto). Así todos los agentes usan siempre el contexto actualizado del proyecto.
+El marcador `{{CONTEXTO_PROYECTO}}` dentro de un `prompt.md` se reemplaza automáticamente por el contenido de `PHARMA_EXPRESS_AGENTES.md` (raíz del proyecto). Si un agente necesita otro archivo, lo indica con `archivo_contexto` en su `config.json`. El archivo se lee en cada ejecución, así que el contexto siempre está actualizado.
 
 ---
 
 ## Parte 1 — Configuración inicial (solo una vez)
 
-### Paso 1. Crear la llave de la API
-1. Entra a <https://console.groq.com> e inicia sesión.
-2. Ve a **API Keys** (<https://console.groq.com/keys>) y pulsa **Create API Key**.
-3. Ponle un nombre (p. ej. `pharma-express`) y **copia la llave**: solo se muestra una vez.
+### Paso 1. Crear la llave de la API de Mistral
+1. Entra a <https://console.mistral.ai> y crea una cuenta.
+2. Verifica tu número de celular y escoge el plan gratuito **Experiment**.
+3. Crea una llave de API y **cópiala**.
+
+Si prefieres Gemini: entra a <https://aistudio.google.com/app/apikey>, crea una llave y cambia el proveedor del agente (Parte 2, "Cambiar de proveedor").
 
 ### Paso 2. Guardar la llave
 Desde la carpeta `agentes-groq`:
@@ -42,7 +58,7 @@ Desde la carpeta `agentes-groq`:
 cp .env.example .env
 ```
 
-Abre `.env` y reemplaza `pega_aqui_tu_llave` por tu llave. El archivo `.env` está en `.gitignore`: **nunca lo subas a git ni lo compartas**.
+Abre `.env` y pega tu llave en `MISTRAL_API_KEY`. Solo hace falta la llave del proveedor que uses. El archivo `.env` está en `.gitignore`: **nunca lo subas a git ni lo compartas**.
 
 ### Paso 3. Crear el entorno de Python e instalar dependencias
 
@@ -64,47 +80,82 @@ pip install -r requirements.txt
 python agente.py --listar
 ```
 
-Debe mostrar `generador-hu-invest`.
+Debe mostrar `specification-agent`. Para confirmar que la llave funciona y ver los modelos disponibles:
+
+```bash
+python agente.py --modelos mistral
+```
 
 ---
 
-## Parte 2 — Usar el agente de historias de usuario
+## Parte 2 — Usar el Specification Agent
 
-**Qué hace:** genera historias de usuario **desde cero** con el contexto de `PHARMA_EXPRESS_CONTEXTO.md`, en el formato del proyecto ("Yo, como / quiero / para" + "Está hecho cuando" con Dado/Cuando/Entonces), y las **autoevalúa con INVEST**. Si una historia no cumple, el agente debe corregirla antes de entregarla.
+**Qué hace:** recibe la necesidad informal de **una sola funcionalidad** y devuelve preguntas de aclaración (`OPEN-Q-001`...) y una SPEC de 17 secciones, sin decisiones técnicas. Trabaja por versiones: borrador `0.x`, candidata `1.0` con solicitud de aprobación, y aprobada y congelada.
 
-**Qué entrega:** supuestos, historias con su tabla INVEST y comentario, y una tabla resumen con el puntaje de cada historia.
+**Requisito:** el archivo `PHARMA_EXPRESS_AGENTES.md` en la raíz del proyecto.
 
-### Ejemplos
+Cada ejecución es independiente: el agente itera recibiendo como adjunto su salida anterior.
 
-Generar historias de una épica:
-
-```bash
-python agente.py generador-hu-invest "Genera 5 historias para la épica de atención asistida a adultos mayores sin celular"
-```
-
-Complementar historias existentes sin duplicarlas:
+1. Primera versión (modo inicial):
 
 ```bash
-python agente.py generador-hu-invest "Genera 4 historias nuevas para la épica de canal WhatsApp, empezando en HU-31" --adjuntar ../User-Strories/UserStory.md
+python agente.py specification-agent "Necesitamos que el paciente pueda cancelar su cita"
 ```
 
-Modo interactivo (el script te pregunta la petición):
+2. Siguiente versión (modo iteración). Responde las preguntas en la petición y adjunta la salida anterior:
 
 ```bash
-python agente.py generador-hu-invest
+python agente.py specification-agent "Respuestas del equipo. OPEN-Q-001: ... OPEN-Q-002: ..." --adjuntar salidas/specification-agent/<archivo-anterior>.md
 ```
 
-El resultado se muestra en pantalla y se guarda en `User-Strories/generadas/`. Usa `--no-guardar` si solo quieres verlo.
+Repite el paso 2 hasta que el agente entregue la versión 1.0 con la solicitud de aprobación.
 
-### Consejos para pedirle historias
-- Indica **épica o tema**, **cantidad** y **número inicial** (`HU-31`).
-- Si quieres un rol específico, nómbralo: *"desde el punto de vista del cuidador"*.
-- Adjunta las historias existentes para que no se repitan.
-- **Revisa siempre la salida**: el agente es un apoyo, no reemplaza el criterio del equipo. Verifica en particular que no haya cifras o normas inventadas.
+3. Aprobación:
+
+```bash
+python agente.py specification-agent "El equipo aprueba la SPEC-001 versión 1.0" --adjuntar salidas/specification-agent/<archivo-version-1.0>.md
+```
+
+4. Cambio después de aprobar: describe el cambio en la petición y adjunta la versión aprobada. El agente entrega la versión 1.1 con el análisis de impacto.
+
+**Numeración:** para la segunda funcionalidad y las siguientes, indica el número de SPEC y los números iniciales para no repetir identificadores. Por ejemplo: *"SPEC-002, empieza en RF-015, BR-010, AC-020. Necesitamos que..."*.
+
+### Cambiar de proveedor
+Edita `agentes/specification-agent/config.json`. Por ejemplo, para Gemini:
+
+```json
+"proveedor": "gemini",
+"modelo": "<nombre de un modelo Flash>",
+```
+
+Consulta los nombres exactos con `python agente.py --modelos gemini` y agrega `GEMINI_API_KEY` en `.env`. Todo lo demás del `config.json` queda igual.
 
 ---
 
-## Parte 3 — Paso a paso para crear próximos agentes
+## Parte 3 — Usar el Specification Agent con Claude Code (plan Pro de Claude)
+
+Si tienes el plan Pro de Claude, también puedes ejecutar el agente con Claude Code, que está incluido en ese plan y no necesita llave de API. El uso se descuenta de los límites de tu plan Pro.
+
+El agente está en `.claude/agents/specification-agent.md` (raíz del proyecto). Tiene las mismas reglas, convenciones y formato de salida que `agentes/specification-agent/prompt.md`. La diferencia es que lee `PHARMA_EXPRESS_AGENTES.md` por su cuenta y guarda cada versión en `agentes-groq/salidas/specification-agent/`.
+
+### Instalar Claude Code (solo una vez)
+Sigue la guía oficial: <https://code.claude.com/docs/en/overview>. Al iniciar sesión, entra con tu cuenta del plan Pro, no con una llave de la consola de API.
+
+### Usarlo
+Desde la raíz del proyecto, abre Claude Code con `claude` y escríbele:
+
+1. Primera versión:
+   *"Usa el agente specification-agent con esta necesidad: Necesitamos que el paciente pueda cancelar su cita"*
+2. Siguiente versión:
+   *"Usa el agente specification-agent. Respuestas del equipo: OPEN-Q-001: ... OPEN-Q-002: ... SPEC anterior: agentes-groq/salidas/specification-agent/SPEC-001_v0.1.md"*
+3. Aprobación:
+   *"Usa el agente specification-agent. El equipo aprueba la SPEC de agentes-groq/salidas/specification-agent/SPEC-001_v1.0.md"*
+
+Cada vez, el agente guarda un archivo nuevo y te muestra en la conversación las preguntas abiertas pendientes.
+
+---
+
+## Parte 4 — Paso a paso para crear próximos agentes
 
 ### Paso 1. Definir el agente en una frase
 Escribe: *"Este agente recibe ___ y devuelve ___ para ___"*.
@@ -119,7 +170,7 @@ cp -r agentes/_plantilla agentes/nombre-del-agente
 ```
 
 ### Paso 3. Escribir el `prompt.md`
-La guía oficial de Groq ([Prompt Basics](https://console.groq.com/docs/prompting)) recomienda cinco bloques. La plantilla ya los trae:
+Una buena instrucción de sistema tiene cinco bloques. La plantilla ya los trae:
 
 | Bloque | Qué escribir | En la plantilla |
 |---|---|---|
@@ -129,7 +180,7 @@ La guía oficial de Groq ([Prompt Basics](https://console.groq.com/docs/promptin
 | **Entrada** | Lo que envía el usuario | Llega como mensaje al ejecutar el script |
 | **Salida esperada** | Formato exacto + ejemplo | `# FORMATO DE SALIDA` y `# EJEMPLO` |
 
-Buenas prácticas de la misma guía:
+Buenas prácticas:
 - Pon **las reglas críticas al inicio**: el modelo les da más peso a las primeras instrucciones.
 - **Muestra un ejemplo** de la respuesta ideal en vez de describirla con muchas palabras.
 - Usa **verbos concretos** ("lista", "reescribe", "clasifica") en vez de verbos vagos ("analiza").
@@ -140,19 +191,20 @@ Buenas prácticas de la misma guía:
 | Campo | Qué es | Recomendación |
 |---|---|---|
 | `nombre`, `descripcion` | Para identificar el agente | Frase del paso 1 |
-| `modelo` | ID del modelo en Groq | `openai/gpt-oss-120b` para tareas que exigen razonar; `llama-3.1-8b-instant` para tareas simples y rápidas. Revisa la [lista oficial de modelos](https://console.groq.com/docs/models) porque cambia con el tiempo. |
+| `proveedor` | Dónde corre el modelo: `mistral`, `gemini`, `groq` u `openrouter` | `mistral` |
+| `modelo` | ID del modelo en ese proveedor | `mistral-large-latest`. Consulta los disponibles con `python agente.py --modelos <proveedor>` |
 | `parametros.temperature` | Qué tan creativo es | `0`–`0.2` para extraer o clasificar; `0.5` para redactar; `0.8` para ideas creativas |
-| `parametros.max_completion_tokens` | Límite de largo de la respuesta | Un poco más de lo que esperas recibir |
-| `parametros.reasoning_effort` | Cuánto "piensa" antes de responder (`low`, `medium`, `high`) | **Solo para modelos de razonamiento** como `openai/gpt-oss-*`. **Bórralo** si usas un modelo Llama. |
+| `parametros.max_tokens` | Límite de largo de la respuesta | Un poco más de lo que esperas recibir |
+| `archivo_contexto` | Opcional. Archivo que reemplaza `{{CONTEXTO_PROYECTO}}` | Omítelo para usar `PHARMA_EXPRESS_AGENTES.md`. Relativo a la raíz del proyecto. No se envía a la API |
 | `carpeta_salida` | Dónde se guardan los resultados | Relativa a la raíz del proyecto |
 
-Todo lo que esté en `parametros` se envía tal cual a la API, así que usa los nombres de la [referencia oficial de la API](https://console.groq.com/docs/api-reference).
+Todo lo que esté en `parametros` se envía tal cual a la API del proveedor. Si un proveedor rechaza un parámetro, bórralo del `config.json`.
 
-### Paso 5. Probar el prompt en el Playground (recomendado)
-1. Abre <https://console.groq.com/playground>.
+### Paso 5. Probar el prompt en el playground del proveedor (recomendado)
+1. Abre el playground de tu proveedor (en Mistral, dentro de <https://console.mistral.ai>; en Gemini, <https://aistudio.google.com>).
 2. Elige el mismo modelo del `config.json`.
-3. Pega el `prompt.md` en el campo **System** (reemplaza `{{CONTEXTO_PROYECTO}}` por el texto de `PHARMA_EXPRESS_CONTEXTO.md`).
-4. Escribe una petición de prueba en el mensaje de usuario y ajusta la temperatura.
+3. Pega el `prompt.md` como instrucción de sistema (reemplaza `{{CONTEXTO_PROYECTO}}` por el texto de `PHARMA_EXPRESS_AGENTES.md`).
+4. Escribe una petición de prueba y ajusta la temperatura.
 5. Ajusta el prompt hasta que la respuesta tenga el formato esperado y copia los cambios al `prompt.md`.
 
 ### Paso 6. Ejecutar desde el script
@@ -170,15 +222,19 @@ Haz commit de la carpeta nueva del agente (sin el `.env`). Así el equipo puede 
 ---
 
 ## Cuidados importantes
-- **Datos personales:** no envíes datos reales de pacientes a la API (Ley 1581 de 2012). Usa solo datos ficticios.
-- **Llave de la API:** si se filtra, bórrala en <https://console.groq.com/keys> y crea otra.
-- **Límites de uso:** la cuenta gratuita tiene límites de solicitudes y tokens por minuto y por día. Consúltalos en <https://console.groq.com/docs/rate-limits> y en la sección **Limits** de tu cuenta. Si aparece un error 429, espera un momento y vuelve a intentarlo.
+- **Datos personales:** no envíes datos reales de pacientes a ninguna API (Ley 1581 de 2012). Usa solo datos ficticios. Los planes gratuitos pueden usar lo que envías para entrenar o mejorar sus modelos.
+- **Llaves de API:** si una se filtra, bórrala en la consola del proveedor y crea otra.
+- **Límites de uso:** cada plan gratuito tiene límites por minuto y por día, y pueden cambiar. Consúltalos en la consola de tu proveedor. El script traduce los errores más comunes:
+  - **413:** la solicitud es demasiado grande para el plan (pasa en Groq gratuito con el Specification Agent).
+  - **429:** alcanzaste un límite de uso; espera un momento o hasta el día siguiente.
+  - **404:** el nombre del modelo no existe en ese proveedor; revisa con `--modelos`.
+- **Respuesta cortada:** si el script avisa que la respuesta se cortó, sube `max_tokens` en el `config.json`.
 - **Verificación:** la salida de un modelo puede contener errores. Toda cifra, norma o fuente debe verificarse antes de usarse en el proyecto.
 
 ## Referencias oficiales
-- Groq. (s. f.). *Quickstart*. GroqDocs. <https://console.groq.com/docs/quickstart>
-- Groq. (s. f.). *Prompt basics*. GroqDocs. <https://console.groq.com/docs/prompting>
-- Groq. (s. f.). *Supported models*. GroqDocs. <https://console.groq.com/docs/models>
-- Groq. (s. f.). *Reasoning*. GroqDocs. <https://console.groq.com/docs/reasoning>
-- Groq. (s. f.). *API reference*. GroqDocs. <https://console.groq.com/docs/api-reference>
+- Mistral AI. (s. f.). *Documentation*. <https://docs.mistral.ai>
+- Google. (s. f.). *Gemini API: compatibilidad con OpenAI*. <https://ai.google.dev/gemini-api/docs/openai>
+- Google. (s. f.). *Gemini API: rate limits*. <https://ai.google.dev/gemini-api/docs/rate-limits>
 - Groq. (s. f.). *Rate limits*. GroqDocs. <https://console.groq.com/docs/rate-limits>
+- OpenRouter. (s. f.). *Limits*. <https://openrouter.ai/docs/api-reference/limits>
+- Anthropic. (s. f.). *Claude Code: subagentes*. <https://code.claude.com/docs/en/sub-agents>
