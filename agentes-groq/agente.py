@@ -1,24 +1,4 @@
 #!/usr/bin/env python3
-"""Motor común para ejecutar los agentes del proyecto Pharma Express.
-
-Funciona con cualquier proveedor compatible con la API de OpenAI: Mistral, Gemini,
-Groq u OpenRouter. El proveedor se escoge en el config.json de cada agente.
-
-Cada agente vive en agentes/<nombre>/ y tiene dos archivos:
-    - prompt.md   -> instrucciones de sistema (puede incluir {{CONTEXTO_PROYECTO}})
-    - config.json -> proveedor, modelo, parámetros, carpeta de salida y, opcionalmente,
-                     archivo_contexto (ruta relativa a la raíz del proyecto)
-
-Uso:
-    python agente.py --listar
-    python agente.py --modelos mistral
-    python agente.py --probar mistral mistral-small-latest
-    python agente.py specification-agent "Respuestas del equipo. OPEN-Q-001: ..." --continuar SPEC-001
-    python agente.py --organizar specification-agent
-    python agente.py specification-agent "Necesitamos que el paciente pueda cancelar su cita"
-    python agente.py specification-agent "Respuestas del equipo. OPEN-Q-001: ..." --adjuntar salidas/specification-agent/<archivo>.md
-"""
-
 import argparse
 import json
 import os
@@ -44,9 +24,9 @@ PROVEEDORES = {
     "groq": {"base_url": "https://api.groq.com/openai/v1", "variable": "GROQ_API_KEY"},
     "openrouter": {"base_url": "https://openrouter.ai/api/v1", "variable": "OPENROUTER_API_KEY"},
 }
-PROVEEDOR_POR_DEFECTO = "groq"
+PROVEEDOR_POR_DEFECTO = "gemini"
 # Errores ante los que se prueba el siguiente modelo de "modelos_respaldo":
-# 429 = límite de uso alcanzado; 500, 502, 503 y 504 = modelo saturado o caído.
+# 429 = cupo agotado; 500, 502, 503 y 504 = modelo saturado o caído.
 ESTADOS_CON_RESPALDO = {429, 500, 502, 503, 504}
 
 
@@ -263,7 +243,7 @@ def crear_cliente(nombre_proveedor):
         from openai import OpenAI
     except ImportError:
         sys.exit("Falta la librería openai. Ejecuta: pip install -r requirements.txt")
-    return OpenAI(api_key=llave, base_url=datos["base_url"], max_retries=3)
+    return OpenAI(api_key=llave, base_url=datos["base_url"])
 
 
 def listar_modelos(nombre_proveedor):
@@ -271,84 +251,6 @@ def listar_modelos(nombre_proveedor):
     print(f"Modelos disponibles en {nombre_proveedor}:")
     for modelo in sorted(m.id for m in cliente.models.list()):
         print(f"  - {modelo}")
-
-
-def mostrar_limites(cabeceras):
-    """Imprime las cabeceras de límites de uso que envía el proveedor, si las hay."""
-    limites = {k: v for k, v in cabeceras.items() if "ratelimit" in k.lower() or k.lower() == "retry-after"}
-    if not limites:
-        print("El proveedor no envió información de límites.")
-        return
-    print("Límites que reporta el proveedor para tu cuenta:")
-    for clave, valor in sorted(limites.items()):
-        print(f"  {clave}: {valor}")
-
-
-def probar_conexion(nombre_proveedor, modelo):
-    """Envía una solicitud mínima para separar problemas de cuenta de problemas de tamaño."""
-    from openai import APIError
-
-    cliente = crear_cliente(nombre_proveedor).with_options(max_retries=0)
-    print(f"Probando {modelo} en {nombre_proveedor} con una solicitud mínima...\n")
-    try:
-        crudo = cliente.chat.completions.with_raw_response.create(
-            model=modelo,
-            messages=[{"role": "user", "content": "Responde solo: hola"}],
-            max_tokens=10,
-        )
-    except APIError as error:
-        print(f"Falló (error {getattr(error, 'status_code', '?')}): {detalle_del_proveedor(error)}\n")
-        respuesta = getattr(error, "response", None)
-        if respuesta is not None:
-            mostrar_limites(respuesta.headers)
-        return
-    completado = crudo.parse()
-    print(f"Funciona. Respuesta: {completado.choices[0].message.content}\n")
-    mostrar_limites(crudo.headers)
-
-
-def detalle_del_proveedor(error):
-    """Devuelve el mensaje original del proveedor, que suele decir la causa exacta."""
-    cuerpo = getattr(error, "body", None)
-    if isinstance(cuerpo, list) and cuerpo:
-        cuerpo = cuerpo[0]
-    if isinstance(cuerpo, dict):
-        datos = cuerpo.get("error", cuerpo)
-        if isinstance(datos, dict) and datos.get("message"):
-            return str(datos["message"])
-        if cuerpo.get("message"):
-            return str(cuerpo["message"])
-    return str(error)
-
-
-def explicar_error(error, nombre_proveedor):
-    return f"{explicacion_breve(error, nombre_proveedor)}\nDetalle del proveedor: {detalle_del_proveedor(error)}"
-
-
-def explicacion_breve(error, nombre_proveedor):
-    estado = getattr(error, "status_code", None)
-    if estado == 413:
-        sugerencia = (
-            "Reduce max_tokens en config.json."
-            if nombre_proveedor == "mistral"
-            else "Cambia \"proveedor\" a \"mistral\" en config.json o reduce max_tokens."
-        )
-        return f"La solicitud supera el límite de tokens por solicitud del plan de {nombre_proveedor}. {sugerencia}"
-    if estado in ESTADOS_CON_RESPALDO and estado != 429:
-        return "El modelo está saturado en este momento. Espera unos minutos o agrega modelos de respaldo en config.json."
-    if estado == 429:
-        return (
-            "El proveedor rechazó la solicitud por límite de uso (429). Si es la primera vez que lo usas, "
-            "revisa que el plan gratuito esté activo y que el modelo tenga cupo en tu plan."
-        )
-    if estado == 401:
-        return "La llave de API no es válida. Revisa agentes-groq/.env."
-    if estado == 404:
-        return (
-            "El modelo no existe en este proveedor. Revisa los nombres con: "
-            f"python agente.py --modelos {nombre_proveedor}"
-        )
-    return str(error)
 
 
 def main():
@@ -367,17 +269,9 @@ def main():
         "--continuar", metavar="SPEC-00X",
         help="Adjunta automáticamente la última versión completa de esa SPEC",
     )
-    parser.add_argument(
-        "--probar", nargs=2, metavar=("PROVEEDOR", "MODELO"),
-        help="Envía una solicitud mínima y muestra los límites de tu cuenta",
-    )
     args = parser.parse_args()
 
     cargar_variables_entorno()
-
-    if args.probar:
-        probar_conexion(*args.probar)
-        return
 
     if args.organizar:
         organizar_existentes(args.organizar)
@@ -418,9 +312,8 @@ def main():
         {"role": "system", "content": prompt_sistema},
         {"role": "user", "content": construir_mensaje_usuario(peticion, args.adjuntar)},
     ]
-    # Si un modelo está saturado o sin cupo, se prueba el siguiente de la lista.
+    # Si un modelo está saturado o sin cupo, se prueba el siguiente de "modelos_respaldo".
     modelos = [config["modelo"]] + config.get("modelos_respaldo", [])
-    completado = None
     for posicion, modelo in enumerate(modelos):
         try:
             completado = cliente.chat.completions.create(
@@ -430,19 +323,17 @@ def main():
             break
         except APIError as error:
             estado = getattr(error, "status_code", None)
-            hay_otro = posicion < len(modelos) - 1
-            if estado in ESTADOS_CON_RESPALDO and hay_otro:
-                print(
-                    f"Aviso: {modelo} no está disponible (error {estado}: {detalle_del_proveedor(error)}). "
-                    f"Probando con {modelos[posicion + 1]}...\n"
-                )
+            if estado in ESTADOS_CON_RESPALDO and posicion < len(modelos) - 1:
+                print(f"Aviso: {modelo} no está disponible (error {estado}). Probando con {modelos[posicion + 1]}...\n")
                 continue
-            sys.exit(f"Error de la API ({nombre_proveedor}): {explicar_error(error, nombre_proveedor)}")
+            # Muestra el error en una sola línea en lugar de la traza completa de Python.
+            sys.exit(f"Error de la API ({nombre_proveedor}): {error}")
 
     respuesta = completado.choices[0].message.content or ""
     print(respuesta)
 
-    if completado.choices[0].finish_reason == "length":
+    cortada = completado.choices[0].finish_reason == "length"
+    if cortada:
         print(
             "\nAviso: la respuesta se cortó porque alcanzó el límite de tokens de salida. "
             "Sube max_tokens en config.json y vuelve a ejecutar."
@@ -454,7 +345,6 @@ def main():
             f"salida: {completado.usage.completion_tokens}"
         )
 
-    cortada = completado.choices[0].finish_reason == "length"
     if not args.no_guardar:
         if config.get("organizacion_salida") == "spec":
             archivo = guardar_spec(config, args.agente, peticion, respuesta, config["modelo"], cortada)
