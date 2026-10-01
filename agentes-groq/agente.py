@@ -13,6 +13,8 @@ Uso:
     python agente.py --listar
     python agente.py --modelos mistral
     python agente.py --probar mistral mistral-small-latest
+    python agente.py specification-agent "Respuestas del equipo. OPEN-Q-001: ..." --continuar SPEC-001
+    python agente.py --organizar specification-agent
     python agente.py specification-agent "Necesitamos que el paciente pueda cancelar su cita"
     python agente.py specification-agent "Respuestas del equipo. OPEN-Q-001: ..." --adjuntar salidas/specification-agent/<archivo>.md
 """
@@ -117,6 +119,133 @@ def guardar_resultado(config, nombre_agente, peticion, respuesta):
     )
     archivo.write_text(encabezado + respuesta + "\n", encoding="utf-8")
     return archivo
+
+
+# ---------------------------------------------------------------------------
+# Organización de salidas por SPEC (solo agentes con "organizacion_salida": "spec")
+#
+# salidas/specification-agent/
+#   aprobadas/                  solo versiones aprobadas y congeladas
+#   borradores/SPEC-001/        borradores y candidatas de cada SPEC
+#   sin-clasificar/             respuestas sin encabezado de SPEC
+#   registro.md                 una línea por ejecución
+# ---------------------------------------------------------------------------
+PATRON_ENCABEZADO = re.compile(r"^#\s*(SPEC-\d{3})\.\s*(.+?)\s*-\s*Versi[oó]n\s*(\d+\.\d+)\s*$", re.M)
+PATRON_ESTADO = re.compile(r"^Estado:\s*(.+?)\s*$", re.M)
+MARCA_INCOMPLETA = "_INCOMPLETA"
+
+
+def leer_encabezado_spec(texto):
+    """Devuelve (id, nombre, version, estado) o None si la respuesta no es una SPEC."""
+    encabezado = PATRON_ENCABEZADO.search(texto)
+    if not encabezado:
+        return None
+    estado = PATRON_ESTADO.search(texto)
+    return (
+        encabezado.group(1),
+        encabezado.group(2),
+        encabezado.group(3),
+        estado.group(1) if estado else "Desconocido",
+    )
+
+
+def clave_version(ruta):
+    """Ordena archivos SPEC-001_v1.10.md por versión numérica, no alfabética."""
+    coincidencia = re.search(r"_v(\d+)\.(\d+)", ruta.name)
+    return (int(coincidencia.group(1)), int(coincidencia.group(2))) if coincidencia else (-1, -1)
+
+
+def ruta_libre(ruta):
+    """Si el archivo ya existe, agrega _2, _3... para no sobrescribir."""
+    if not ruta.exists():
+        return ruta
+    contador = 2
+    while True:
+        candidata = ruta.with_name(f"{ruta.stem}_{contador}{ruta.suffix}")
+        if not candidata.exists():
+            return candidata
+        contador += 1
+
+
+def ultima_version_spec(config, id_spec):
+    """Busca la última versión completa de una SPEC, aprobada o en borrador."""
+    base = RAIZ_PROYECTO / config["carpeta_salida"]
+    archivos = list((base / "borradores" / id_spec).glob(f"{id_spec}_v*.md"))
+    archivos += list((base / "aprobadas").glob(f"{id_spec}_v*.md"))
+    completos = [a for a in archivos if MARCA_INCOMPLETA not in a.name]
+    if not completos:
+        sys.exit(f"No hay versiones guardadas de {id_spec} en {base.relative_to(RAIZ_PROYECTO)}.")
+    # A igual versión, prefiere la aprobada sobre la candidata.
+    return max(completos, key=lambda a: (clave_version(a), "aprobadas" in a.parts))
+
+
+def guardar_spec(config, nombre_agente, peticion, respuesta, modelo, cortada):
+    base = RAIZ_PROYECTO / config.get("carpeta_salida", f"agentes-groq/salidas/{nombre_agente}")
+    fecha = datetime.now()
+    datos = leer_encabezado_spec(respuesta)
+
+    if datos is None:
+        carpeta = base / "sin-clasificar"
+        nombre = f"{fecha:%Y%m%d-%H%M}_sin-clasificar.md"
+        id_spec, version, estado = "-", "-", "Sin encabezado de SPEC"
+    else:
+        id_spec, _, version, estado = datos
+        aprobada = "aprobada" in estado.lower() and not cortada
+        carpeta = base / ("aprobadas" if aprobada else f"borradores/{id_spec}")
+        nombre = f"{id_spec}_v{version}{MARCA_INCOMPLETA if cortada else ''}.md"
+
+    carpeta.mkdir(parents=True, exist_ok=True)
+    archivo = ruta_libre(carpeta / nombre)
+    encabezado = (
+        f"<!--\n"
+        f"Agente: {config.get('nombre', nombre_agente)}\n"
+        f"Proveedor: {config.get('proveedor', PROVEEDOR_POR_DEFECTO)}\n"
+        f"Modelo: {modelo}\n"
+        f"Fecha: {fecha:%Y-%m-%d %H:%M}\n"
+        f"Petición: {peticion}\n"
+        f"-->\n\n"
+    )
+    archivo.write_text(encabezado + respuesta + "\n", encoding="utf-8")
+
+    registro = base / "registro.md"
+    if not registro.exists():
+        registro.write_text("# Registro de ejecuciones del Specification Agent\n\n", encoding="utf-8")
+    resumen = " ".join(peticion.split())[:120]
+    with registro.open("a", encoding="utf-8") as r:
+        r.write(
+            f"- {fecha:%Y-%m-%d %H:%M} | {id_spec} | versión {version} | {estado}"
+            f"{' | INCOMPLETA' if cortada else ''} | {modelo} | "
+            f"{archivo.relative_to(base)} | {resumen}\n"
+        )
+    return archivo
+
+
+def organizar_existentes(nombre_agente):
+    """Mueve una sola vez los archivos sueltos del formato anterior a la estructura por SPEC."""
+    config, _ = cargar_agente(nombre_agente)
+    if config.get("organizacion_salida") != "spec":
+        sys.exit(f"El agente '{nombre_agente}' no usa \"organizacion_salida\": \"spec\".")
+    base = RAIZ_PROYECTO / config["carpeta_salida"]
+    sueltos = [a for a in sorted(base.glob("*.md")) if a.name != "registro.md"]
+    if not sueltos:
+        print("No hay archivos sueltos para organizar.")
+        return
+    for archivo in sueltos:
+        texto = archivo.read_text(encoding="utf-8")
+        datos = leer_encabezado_spec(texto)
+        if datos is None:
+            destino = base / "sin-clasificar" / archivo.name
+        else:
+            id_spec, _, version, estado = datos
+            # Una SPEC completa termina con "## Siguiente paso"; si falta, se cortó.
+            cortada = "## Siguiente paso" not in texto
+            aprobada = "aprobada" in estado.lower() and not cortada
+            carpeta = base / ("aprobadas" if aprobada else f"borradores/{id_spec}")
+            destino = carpeta / f"{id_spec}_v{version}{MARCA_INCOMPLETA if cortada else ''}.md"
+        destino.parent.mkdir(parents=True, exist_ok=True)
+        destino = ruta_libre(destino)
+        archivo.rename(destino)
+        print(f"  {archivo.name}  ->  {destino.relative_to(base)}")
 
 
 def crear_cliente(nombre_proveedor):
@@ -231,6 +360,14 @@ def main():
     parser.add_argument("--listar", action="store_true", help="Lista los agentes disponibles")
     parser.add_argument("--modelos", metavar="PROVEEDOR", help="Lista los modelos de un proveedor")
     parser.add_argument(
+        "--organizar", metavar="AGENTE",
+        help="Reorganiza una sola vez los archivos sueltos del formato anterior",
+    )
+    parser.add_argument(
+        "--continuar", metavar="SPEC-00X",
+        help="Adjunta automáticamente la última versión completa de esa SPEC",
+    )
+    parser.add_argument(
         "--probar", nargs=2, metavar=("PROVEEDOR", "MODELO"),
         help="Envía una solicitud mínima y muestra los límites de tu cuenta",
     )
@@ -240,6 +377,10 @@ def main():
 
     if args.probar:
         probar_conexion(*args.probar)
+        return
+
+    if args.organizar:
+        organizar_existentes(args.organizar)
         return
 
     if args.modelos:
@@ -259,6 +400,13 @@ def main():
     peticion = args.peticion or input("¿Qué le pides al agente?\n> ").strip()
     if not peticion:
         sys.exit("La petición está vacía.")
+
+    if args.continuar:
+        if config.get("organizacion_salida") != "spec":
+            sys.exit("--continuar solo funciona con agentes que usan \"organizacion_salida\": \"spec\".")
+        anterior = ultima_version_spec(config, args.continuar.upper())
+        print(f"Adjuntando la última versión: {anterior.relative_to(RAIZ_PROYECTO)}\n")
+        args.adjuntar = [str(anterior)] + list(args.adjuntar)
 
     from openai import APIError
 
@@ -306,8 +454,14 @@ def main():
             f"salida: {completado.usage.completion_tokens}"
         )
 
+    cortada = completado.choices[0].finish_reason == "length"
     if not args.no_guardar:
-        archivo = guardar_resultado(config, args.agente, peticion, respuesta)
+        if config.get("organizacion_salida") == "spec":
+            archivo = guardar_spec(config, args.agente, peticion, respuesta, config["modelo"], cortada)
+            if cortada:
+                print("Se guardó marcada como INCOMPLETA: --continuar no la usará como adjunto.")
+        else:
+            archivo = guardar_resultado(config, args.agente, peticion, respuesta)
         print(f"Resultado guardado en: {archivo.relative_to(RAIZ_PROYECTO)}")
 
 
