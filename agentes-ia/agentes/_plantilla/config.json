@@ -1,8 +1,8 @@
 {
   "nombre": "Nombre legible del agente",
   "descripcion": "Qué hace el agente en una frase.",
-  "proveedor": "mistral",
-  "modelo": "mistral-large-latest",
+  "proveedor": "openrouter",
+  "modelo": "google/gemma-4-31b-it:free",
   "parametros": {
     "temperature": 0.5,
     "top_p": 0.95,

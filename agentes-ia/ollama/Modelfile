@@ -1,0 +1,11 @@
+# Modelo local de Pharma Express para Ollama.
+# Crear una sola vez (desde agentes-ia/):
+#   ollama pull qwen3.5:4b
+#   ollama create pharma-qwen -f ollama/Modelfile
+#
+# qwen3.5:4b ocupa unos 3,4 GB y cabe en un equipo de 8 GB de RAM.
+# Ollama usa por defecto un contexto corto y recorta en silencio lo que no cabe.
+# El Specification Agent con una SPEC adjunta necesita unos 20.000 tokens de entrada
+# más la respuesta, por eso se fija aquí en 32.768.
+FROM qwen3.5:4b
+PARAMETER num_ctx 32768

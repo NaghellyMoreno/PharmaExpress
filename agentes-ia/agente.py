@@ -16,18 +16,26 @@ MARCADOR_CONTEXTO = "{{CONTEXTO_PROYECTO}}"
 
 # Proveedores compatibles con la API de OpenAI. La llave de cada uno va en agentes-ia/.env.
 PROVEEDORES = {
-    "mistral": {"base_url": "https://api.mistral.ai/v1", "variable": "MISTRAL_API_KEY"},
     "gemini": {
         "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/",
         "variable": "GEMINI_API_KEY",
     },
     "groq": {"base_url": "https://api.groq.com/openai/v1", "variable": "GROQ_API_KEY"},
     "openrouter": {"base_url": "https://openrouter.ai/api/v1", "variable": "OPENROUTER_API_KEY"},
+    # IA local: no necesita llave. Se puede cambiar la dirección con OLLAMA_BASE_URL en .env.
+    "ollama": {"base_url": "http://localhost:11434/v1", "variable": None, "variable_url": "OLLAMA_BASE_URL"},
 }
-PROVEEDOR_POR_DEFECTO = "gemini"
+PROVEEDOR_POR_DEFECTO = "openrouter"
 # Errores ante los que se prueba el siguiente modelo de "modelos_respaldo":
+# 404 = modelo retirado (pasa con los modelos gratuitos de OpenRouter, que cambian);
 # 429 = cupo agotado; 500, 502, 503 y 504 = modelo saturado o caído.
-ESTADOS_CON_RESPALDO = {429, 500, 502, 503, 504}
+ESTADOS_CON_RESPALDO = {404, 429, 500, 502, 503, 504}
+# Los modelos con razonamiento locales (Qwen) pueden devolver su razonamiento entre estas etiquetas.
+PATRON_RAZONAMIENTO = re.compile(r"<think>.*?</think>\s*", re.S)
+
+
+class ProveedorNoDisponible(Exception):
+    """El proveedor no se puede usar en este equipo (falta la llave o la librería)."""
 
 
 def cargar_variables_entorno():
@@ -236,18 +244,100 @@ def crear_cliente(nombre_proveedor):
             f"Opciones: {', '.join(PROVEEDORES)}"
         )
     datos = PROVEEDORES[nombre_proveedor]
-    llave = os.environ.get(datos["variable"])
-    if not llave:
-        sys.exit(f"Falta {datos['variable']}. Agrégala en agentes-ia/.env (mira .env.example).")
+    if datos["variable"]:
+        llave = os.environ.get(datos["variable"])
+        if not llave:
+            raise ProveedorNoDisponible(
+                f"Falta {datos['variable']}. Agrégala en agentes-ia/.env."
+            )
+    else:
+        # Ollama ignora la llave, pero la librería exige una.
+        llave = "ollama"
+    base_url = os.environ.get(datos.get("variable_url") or "", "") or datos["base_url"]
     try:
         from openai import OpenAI
     except ImportError:
-        sys.exit("Falta la librería openai. Ejecuta: pip install -r requirements.txt")
-    return OpenAI(api_key=llave, base_url=datos["base_url"])
+        raise ProveedorNoDisponible("Falta la librería openai. Ejecuta: pip install -r requirements.txt")
+    return OpenAI(api_key=llave, base_url=base_url)
+
+
+def cadena_de_modelos(config):
+    """Arma la lista de intentos (proveedor, modelo, parámetros) en orden.
+
+    Cada elemento de "modelos_respaldo" puede ser el nombre de un modelo del mismo proveedor
+    o un objeto {"proveedor", "modelo", "parametros"} para pasar a otro proveedor, por ejemplo
+    a la IA local. Si el objeto no trae "parametros", usa los del agente.
+    """
+    proveedor = config.get("proveedor", PROVEEDOR_POR_DEFECTO)
+    parametros = config.get("parametros", {})
+    cadena = [(proveedor, config["modelo"], parametros)]
+    for respaldo in config.get("modelos_respaldo", []):
+        if isinstance(respaldo, str):
+            cadena.append((proveedor, respaldo, parametros))
+        else:
+            cadena.append((
+                respaldo.get("proveedor", proveedor),
+                respaldo["modelo"],
+                respaldo.get("parametros", parametros),
+            ))
+    return cadena
+
+
+def filtrar_cadena(cadena, proveedor, modelo):
+    """Aplica --proveedor y --modelo: deja un solo intento, sin respaldos."""
+    if modelo:
+        coincidencias = [i for i in cadena if i[1] == modelo and (not proveedor or i[0] == proveedor)]
+        if coincidencias:
+            return coincidencias[:1]
+        return [(proveedor or cadena[0][0], modelo, cadena[0][2])]
+    coincidencias = [i for i in cadena if i[0] == proveedor]
+    if not coincidencias:
+        sys.exit(
+            f"El agente no tiene un modelo de '{proveedor}' en config.json. "
+            f"Indica cuál con --modelo."
+        )
+    return coincidencias[:1]
+
+
+def ejecutar_con_respaldo(cadena, mensajes):
+    """Prueba cada (proveedor, modelo) en orden hasta que uno responda."""
+    from openai import APIConnectionError, APIError
+
+    for posicion, (proveedor, modelo, parametros) in enumerate(cadena):
+        hay_siguiente = posicion < len(cadena) - 1
+        siguiente = f"{cadena[posicion + 1][1]} ({cadena[posicion + 1][0]})" if hay_siguiente else ""
+        try:
+            cliente = crear_cliente(proveedor)
+        except ProveedorNoDisponible as error:
+            if hay_siguiente:
+                print(f"Aviso: no se puede usar {proveedor}: {error} Probando con {siguiente}...\n")
+                continue
+            sys.exit(str(error))
+        print(f"Ejecutando con {modelo} ({proveedor})...\n")
+        try:
+            completado = cliente.chat.completions.create(model=modelo, messages=mensajes, **parametros)
+            return proveedor, modelo, completado
+        except APIConnectionError as error:
+            # Pasa con Ollama cuando la aplicación no está abierta.
+            if hay_siguiente:
+                print(f"Aviso: no hay conexión con {proveedor}. Probando con {siguiente}...\n")
+                continue
+            ayuda = " ¿Está abierto Ollama?" if proveedor == "ollama" else ""
+            sys.exit(f"Error de conexión ({proveedor}): {error}{ayuda}")
+        except APIError as error:
+            estado = getattr(error, "status_code", None)
+            if estado in ESTADOS_CON_RESPALDO and hay_siguiente:
+                print(f"Aviso: {modelo} no está disponible (error {estado}). Probando con {siguiente}...\n")
+                continue
+            # Muestra el error en una sola línea en lugar de la traza completa de Python.
+            sys.exit(f"Error de la API ({proveedor}): {error}")
 
 
 def listar_modelos(nombre_proveedor):
-    cliente = crear_cliente(nombre_proveedor)
+    try:
+        cliente = crear_cliente(nombre_proveedor)
+    except ProveedorNoDisponible as error:
+        sys.exit(str(error))
     print(f"Modelos disponibles en {nombre_proveedor}:")
     for modelo in sorted(m.id for m in cliente.models.list()):
         print(f"  - {modelo}")
@@ -269,6 +359,11 @@ def main():
         "--continuar", metavar="SPEC-00X",
         help="Adjunta automáticamente la última versión completa de esa SPEC",
     )
+    parser.add_argument(
+        "--proveedor", choices=sorted(PROVEEDORES),
+        help="Usa solo este proveedor, sin respaldos (por ejemplo, ollama para la IA local)",
+    )
+    parser.add_argument("--modelo", help="Usa solo este modelo, sin respaldos")
     args = parser.parse_args()
 
     cargar_variables_entorno()
@@ -288,8 +383,9 @@ def main():
         return
 
     config, prompt_sistema = cargar_agente(args.agente)
-    nombre_proveedor = config.get("proveedor", PROVEEDOR_POR_DEFECTO)
-    cliente = crear_cliente(nombre_proveedor)
+    cadena = cadena_de_modelos(config)
+    if args.proveedor or args.modelo:
+        cadena = filtrar_cadena(cadena, args.proveedor, args.modelo)
 
     peticion = args.peticion or input("¿Qué le pides al agente?\n> ").strip()
     if not peticion:
@@ -302,34 +398,17 @@ def main():
         print(f"Adjuntando la última versión: {anterior.relative_to(RAIZ_PROYECTO)}\n")
         args.adjuntar = [str(anterior)] + list(args.adjuntar)
 
-    from openai import APIError
-
-    print(
-        f"Ejecutando '{config.get('nombre', args.agente)}' con "
-        f"{config['modelo']} ({nombre_proveedor})...\n"
-    )
+    print(f"Agente: {config.get('nombre', args.agente)}")
     mensajes = [
         {"role": "system", "content": prompt_sistema},
         {"role": "user", "content": construir_mensaje_usuario(peticion, args.adjuntar)},
     ]
-    # Si un modelo está saturado o sin cupo, se prueba el siguiente de "modelos_respaldo".
-    modelos = [config["modelo"]] + config.get("modelos_respaldo", [])
-    for posicion, modelo in enumerate(modelos):
-        try:
-            completado = cliente.chat.completions.create(
-                model=modelo, messages=mensajes, **config.get("parametros", {})
-            )
-            config["modelo"] = modelo
-            break
-        except APIError as error:
-            estado = getattr(error, "status_code", None)
-            if estado in ESTADOS_CON_RESPALDO and posicion < len(modelos) - 1:
-                print(f"Aviso: {modelo} no está disponible (error {estado}). Probando con {modelos[posicion + 1]}...\n")
-                continue
-            # Muestra el error en una sola línea en lugar de la traza completa de Python.
-            sys.exit(f"Error de la API ({nombre_proveedor}): {error}")
+    # Si un modelo está saturado, sin cupo o sin conexión, se prueba el siguiente de "modelos_respaldo".
+    proveedor, modelo, completado = ejecutar_con_respaldo(cadena, mensajes)
+    # El archivo guardado y el registro indican el proveedor y el modelo que respondieron.
+    config["proveedor"], config["modelo"] = proveedor, modelo
 
-    respuesta = completado.choices[0].message.content or ""
+    respuesta = PATRON_RAZONAMIENTO.sub("", completado.choices[0].message.content or "").strip()
     print(respuesta)
 
     cortada = completado.choices[0].finish_reason == "length"
