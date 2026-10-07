@@ -137,34 +137,58 @@ salidas/specification-agent/
 ```
 
 - Si la respuesta se corta, se guarda con `_INCOMPLETA` y nunca se usa como adjunto.
-- Ningún archivo se sobrescribe: si el nombre ya existe, se agrega `_2`, `_3`.
+- Ningún borrador se sobrescribe: si el nombre ya existe, se agrega `_2`, `_3`.
+- Una versión aprobada y congelada **nunca** se duplica: si ya está en `aprobadas/`, el script avisa y no guarda.
 - Los borradores se conservan como evidencia del proceso.
 
-### Comandos
+### Flujo interactivo (con terminal)
 
-1. Primera versión:
+1. Pega solo la necesidad:
 
 ```bash
 python agente.py specification-agent "Necesitamos que el paciente pueda cancelar su cita"
 ```
 
-2. Responder preguntas o pedir correcciones. `--continuar` adjunta solo la última versión completa de la SPEC, así que no hace falta escribir nombres de archivo:
+El agente hace sus preguntas **una a una** en la terminal, con el símbolo `>`:
+
+- escribe la respuesta y pulsa Enter;
+- pulsa Enter en blanco para dejar esa pregunta pendiente;
+- escribe `salir` o pulsa `Ctrl+C` para terminar: lo que falte queda pendiente y se guarda el borrador.
+
+2. Con tus respuestas, el agente genera la SPEC en una segunda llamada. La terminal **no imprime el markdown**: solo el resumen (id, nombre, versión, estado, épica, conteos, preguntas pendientes y ruta). Para ver la SPEC completa, agrega `--imprimir`.
+
+3. Si respondiste todo sin vacíos y el agente entrega una Candidata sin pendientes, el script pregunta:
+
+```text
+¿Apruebas y congelas la SPEC-001 versión 1.0? [S/n]
+```
+
+- `S` o Enter: se reescribe `Estado: Aprobada y congelada` y el archivo queda en `aprobadas/`, **sin llamadas extra a la API**.
+- `n`: se guarda como Candidata en `borradores/` y queda lista para iterar.
+
+4. Si quedó algo pendiente (blanco o `salir`), se guarda como Borrador `0.x` y sigues con el flujo por mensajes de abajo.
+
+Sin terminal (por ejemplo en un pipe o en un script), o cuando usas `--continuar`, el script hace **una sola llamada** como antes: las preguntas vienen dentro de la propia respuesta.
+
+### Flujo por mensajes (`--continuar`)
+
+1. Responder preguntas o pedir correcciones. `--continuar` adjunta solo la última versión completa de la SPEC, así que no hace falta escribir nombres de archivo:
 
 ```bash
 python agente.py specification-agent "Respuestas del equipo. OPEN-Q-001: ... OPEN-Q-002: ..." --continuar SPEC-001
 ```
 
-Repite el paso 2 hasta que el agente entregue una versión Candidata sin pendientes.
+Repite el paso 1 hasta que el agente entregue una versión Candidata sin pendientes.
 
-3. Aprobar:
+2. Aprobar:
 
 ```bash
 python agente.py specification-agent "El equipo aprueba la SPEC-001" --continuar SPEC-001
 ```
 
-4. Cambio después de aprobar: describe el cambio y usa `--continuar SPEC-001`. El agente entrega la siguiente versión como Candidata, con el análisis de impacto.
+3. Cambio después de aprobar: describe el cambio y usa `--continuar SPEC-001`. El agente entrega la siguiente versión como Candidata, con el análisis de impacto.
 
-**Numeración:** para la segunda funcionalidad y las siguientes, indica el número de SPEC y los números iniciales para no repetir identificadores. Por ejemplo: *"SPEC-002, empieza en RF-013, BR-009, AC-013. Necesitamos que..."*.
+**Numeración:** no hace falta indicar nada: en la primera versión el script calcula **solo** el siguiente número de SPEC y los números iniciales (HU, RF, RNF, BR, CL, AC) a partir de lo que ya está guardado, se lo avisa al agente con una línea `Numeración:` y se lo pasa en el mensaje. Si quieres forzar otros números, escríbelos tú al inicio del mensaje (*"SPEC-003, empieza en RF-020. Necesitamos que..."*) y el script no los toca. En iteraciones (`--continuar`) la numeración sigue la de la versión adjunta.
 
 **Épica:** agrupa funcionalidades relacionadas (el Architecture Agent recibe varias SPECs de una misma épica). Pegas solo la necesidad: si no traes la épica, el agente la **pide como `OPEN-Q-`** y la decides tú respondiendo con el `EPIC-00x` de tu catálogo de agrupación (el encabezado queda `Épica: pendiente` hasta que respondas). Para saltarte la pregunta, indícala en el mensaje: *"EPIC-002. Necesitamos que..."*.
 
@@ -250,6 +274,8 @@ Buenas prácticas:
 | `proveedor` | Dónde corre el modelo: `mistral`, `gemini`, `groq` u `openrouter` | `mistral` |
 | `modelo` | ID del modelo en ese proveedor | `mistral-large-latest`. Consulta los disponibles con `python agente.py --modelos <proveedor>` |
 | `organizacion_salida` | Opcional. `"spec"` guarda por SPEC y estado y habilita `--continuar` | Solo para agentes que producen SPEC con el encabezado `# SPEC-00x. Nombre - Versión X.Y` |
+| `prefijo_documento` | Opcional. Prefijo del ID en el encabezado (`SPEC` → `SPEC-001`) | Omítelo para `SPEC`; escríbelo si el agente produce documentos con otro prefijo |
+| `interactivo` | Opcional. `true` hace las preguntas una a una en la terminal, imprime un resumen en vez del markdown y ofrece aprobar con `[S/n]` cuando no quedan vacíos | `true` solo si el agente trabaja con `organizacion_salida: spec`; omítelo para agentes que responden de corrido |
 | `modelos_respaldo` | Opcional. Modelos que se prueban, en orden, si el principal está saturado (error 503) o sin cupo (error 429) | Otros modelos del mismo proveedor |
 | `parametros.temperature` | Qué tan creativo es | `0`–`0.2` para extraer o clasificar; `0.5` para redactar; `0.8` para ideas creativas |
 | `parametros.max_tokens` | Límite de largo de la respuesta | Un poco más de lo que esperas recibir |
