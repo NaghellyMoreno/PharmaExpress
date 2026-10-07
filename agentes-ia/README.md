@@ -4,18 +4,25 @@ Agentes de IA que apoyan el proyecto. Cada agente es una **instrucción de siste
 
 > En este proyecto, un "agente" es: instrucción de sistema + proveedor + modelo + parámetros + script. El agente vive en este repositorio.
 
-El script funciona con cualquier proveedor compatible con la API de OpenAI. Hoy admite **Mistral**, **Gemini**, **Groq** y **OpenRouter**. Cada agente escoge su proveedor en `config.json`.
+Hay tres formas de ejecutar los agentes, de mejor a menor calidad:
+
+1. **Claude Code** (Parte 3): subagentes en `.claude/agents/`. No necesitan llave de API y usan el modelo de tu plan de Claude.
+2. **API gratuita en la nube** con `agente.py`: OpenRouter (modelos `:free`) por defecto, más Groq.
+3. **IA local** con `agente.py` y Ollama: funciona sin internet y sin enviar datos a terceros, pero con menor calidad (ver "IA local con Ollama").
+
+El script funciona con cualquier proveedor compatible con la API de OpenAI. Cada agente escoge su proveedor en `config.json` y puede pasar a otro proveedor si el principal falla.
 
 ---
 
 ## Qué proveedor usar
 
-| Proveedor | ¿Gratis? | Límite que importa para el Specification Agent | Recomendación |
+| Proveedor | ¿Gratis? | Límite que importa | Uso en este proyecto |
 |---|---|---|---|
-| **Mistral** (plan Experiment) | Sí, sin tarjeta. Pide verificar el celular y aceptar que usen tus datos para entrenamiento | Margen amplio por solicitud y por mes. Los límites exactos aparecen en la consola de tu cuenta | **Recomendado.** Es el que trae configurado el agente |
-| **Gemini** (Google AI Studio) | Sí, sin tarjeta. Google puede usar los datos del plan gratuito para mejorar sus productos | Margen amplio por solicitud, pero pocas solicitudes al día en los modelos Flash. Los límites exactos aparecen en AI Studio | Alternativa si Mistral falla |
-| **Groq** (plan gratuito) | Sí | Rechaza cualquier solicitud de más de 8.000 tokens (prompt + `max_tokens`). El Specification Agent no cabe | Solo para agentes con prompts cortos |
-| **OpenRouter** (modelos `:free`) | Sí | Pocas solicitudes al día sin créditos | Respaldo |
+| **Claude Code** | Incluido en el plan Pro de Claude | Límites de uso del plan | **Recomendado** para SPEC e historias de usuario |
+| **OpenRouter** (modelos `:free`) | Sí, sin tarjeta. Los proveedores de los modelos gratuitos pueden usar lo que envías | 20 solicitudes por minuto y 50 al día sin créditos (1.000 al día con 10 USD comprados una vez). Cada intento de respaldo cuenta. El catálogo gratuito cambia | Proveedor principal de `agente.py` |
+| **Ollama** (IA local) | Sí, corre en tu equipo | Con 8 GB de RAM solo caben modelos de ~4B parámetros: lentos y menos precisos con prompts largos | Último respaldo y uso sin internet |
+| **Groq** (plan gratuito) | Sí | Máximo 8.000 tokens por minuto (prompt + `max_tokens`). El Specification Agent no cabe | Generador de HU |
+| **Gemini** | Sí, con pocas solicitudes al día en los modelos Flash | Cupo diario bajo | Ya no se usa por defecto |
 
 Como los planes gratuitos pueden usar lo que envías, **nunca envíes datos reales de pacientes**. Usa solo datos ficticios.
 
@@ -26,66 +33,44 @@ Como los planes gratuitos pueden usar lo que envías, **nunca envíes datos real
 ```
 agentes-ia/
 ├── README.md                  ← esta guía
-├── agente.py                  ← punto de entrada (solo llama a nucleo/cli.py)
+├── agente.py                  ← script común: carga el agente, llama al modelo y guarda la respuesta
 ├── requirements.txt           ← dependencias (openai, python-dotenv)
-├── .env.example               ← plantilla para las llaves de API
-├── nucleo/                    ← lógica común, un módulo por responsabilidad
-│   ├── cli.py                 ← comandos de la terminal y armado de dependencias
-│   ├── rutas.py               ← ubicación de carpetas y archivos
-│   ├── entorno.py             ← carga del archivo .env
-│   ├── agentes.py             ← definición de un agente y su carga desde disco
-│   ├── contexto.py            ← inserción del archivo de contexto en el prompt
-│   ├── proveedores.py         ← catálogo de proveedores y creación de clientes
-│   ├── mensajes.py            ← mensaje del usuario con sus adjuntos
-│   ├── ejecucion.py           ← llamada al modelo con modelos de respaldo
-│   ├── diagnostico.py         ← prueba de conexión y lista de modelos
-│   ├── errores.py             ← errores para el usuario y su explicación
-│   └── almacenamiento/
-│       ├── base.py            ← interfaz común para guardar respuestas
-│       ├── simple.py          ← un archivo por ejecución
-│       ├── spec.py            ← borradores y aprobadas por SPEC
-│       ├── organizador.py     ← migración única del formato anterior
-│       └── fabrica.py         ← escoge la forma de guardar según config.json
-└── agentes/
-    ├── _plantilla/            ← copia esta carpeta para crear un agente nuevo
-    │   ├── config.json
-    │   └── prompt.md
-    └── specification-agent/   ← genera preguntas y una SPEC de una funcionalidad
-        ├── config.json
-        └── prompt.md
+├── .env                       ← llaves de API (no se sube a git)
+├── ollama/
+│   └── Modelfile              ← modelo local "pharma-qwen" con el contexto ampliado
+├── agentes/
+│   ├── _plantilla/            ← copia esta carpeta para crear un agente nuevo
+│   ├── specification-agent/   ← genera preguntas y una SPEC de una funcionalidad
+│   └── generador-hu-invest/   ← genera historias de usuario y las evalúa con INVEST
+└── salidas/                   ← respuestas guardadas
+    ├── specification-agent/   ← SPEC por versión y registro.md
+    └── User-Strories/         ← backlog (UserStory.md) e historias del generador en generadas/
+
+.claude/agents/                ← los mismos agentes como subagentes de Claude Code (raíz del proyecto)
+├── specification-agent.md
+├── generador-hu-invest.md
+└── user-story-reviewer.md
 ```
 
 El marcador `{{CONTEXTO_PROYECTO}}` dentro de un `prompt.md` se reemplaza automáticamente por el contenido de `PHARMA_EXPRESS_AGENTES.md` (raíz del proyecto). Si un agente necesita otro archivo, lo indica con `archivo_contexto` en su `config.json`. El archivo se lee en cada ejecución, así que el contexto siempre está actualizado.
 
-### Diseño del núcleo
-
-El código sigue los principios SOLID:
-
-- **Responsabilidad única:** cada módulo tiene un solo motivo para cambiar. Si cambia cómo se guardan las SPEC, solo se toca `almacenamiento/spec.py`; si cambia un proveedor, solo `proveedores.py`.
-- **Abierto a extensión, cerrado a modificación:** un proveedor nuevo se agrega como una línea en `PROVEEDORES` (`proveedores.py`). Una forma nueva de guardar se agrega como una clase con el método `guardar` y se registra en `CONSTRUCTORES` (`almacenamiento/fabrica.py`). En ningún caso hay que tocar `cli.py`.
-- **Sustitución:** `AlmacenamientoSimple` y `AlmacenamientoPorSpec` cumplen la misma interfaz (`guardar`), así que los comandos funcionan igual con cualquiera.
-- **Interfaces pequeñas:** guardar (`Almacenamiento`) y buscar la última versión (`FuenteVersiones`) son interfaces separadas; solo el almacenamiento por SPEC implementa la segunda, que es la que usa `--continuar`.
-- **Inversión de dependencias:** las clases reciben sus dependencias ya creadas (cliente de la API, traductor de errores, función para mostrar mensajes). Solo `crear_aplicacion` en `cli.py` crea objetos concretos, lo que permite probar cada pieza por separado.
+**Si cambias un `prompt.md`, copia el mismo cambio al subagente de `.claude/agents/`.** Los subagentes tienen las mismas reglas; solo cambia cómo leen el contexto y cómo guardan los archivos.
 
 ## Parte 1 — Configuración inicial (solo una vez)
 
-### Paso 1. Crear la llave de la API de Mistral
-1. Entra a <https://console.mistral.ai> y crea una cuenta.
-2. Verifica tu número de celular y escoge el plan gratuito **Experiment**.
-3. Crea una llave de API y **cópiala**.
+### Paso 1. Crear la llave de la API de OpenRouter
+1. Entra a <https://openrouter.ai> y crea una cuenta. No pide tarjeta.
+2. En *Settings → Privacy*, permite el uso de los modelos gratuitos. Si no lo haces, los modelos `:free` responden 404 ("No endpoints found matching your data policy").
+3. En *Keys* (<https://openrouter.ai/keys>), crea una llave y **cópiala**.
 
 Si prefieres Gemini: entra a <https://aistudio.google.com/app/apikey>, crea una llave y cambia el proveedor del agente (Parte 2, "Cambiar de proveedor").
 
 ### Paso 2. Guardar la llave
-Desde la carpeta `agentes-ia`:
-
-```bash
-cp .env.example .env
-```
-
-Abre `.env` y pega tu llave en `MISTRAL_API_KEY`. Solo hace falta la llave del proveedor que uses. El archivo `.env` está en `.gitignore`: **nunca lo subas a git ni lo compartas**.
+Abre el archivo `.env` de la carpeta `agentes-ia` y pega tu llave en `OPENROUTER_API_KEY` (las demás van en `GROQ_API_KEY` y `GEMINI_API_KEY`; Ollama no necesita llave). Solo hace falta la llave del proveedor que uses. El archivo `.env` está en `.gitignore`: **nunca lo subas a git ni lo compartas**.
 
 ### Paso 3. Crear el entorno de Python e instalar dependencias
+
+Necesitas Python 3.9 o superior (`python3 --version`). En macOS ya viene instalado. Si usas Anaconda y tu terminal muestra `(base)`, igual crea y activa el `.venv`: el Python de conda no tiene estas dependencias.
 
 ```bash
 python3 -m venv .venv
@@ -105,10 +90,10 @@ pip install -r requirements.txt
 python agente.py --listar
 ```
 
-Debe mostrar `specification-agent`. Para confirmar que la llave funciona y ver los modelos disponibles:
+Debe mostrar `generador-hu-invest` y `specification-agent`. Para confirmar que la llave funciona y ver los modelos disponibles:
 
 ```bash
-python agente.py --modelos mistral
+python agente.py --modelos openrouter
 ```
 
 ---
@@ -172,23 +157,76 @@ python agente.py specification-agent "El equipo aprueba la SPEC-001" --continuar
 python agente.py --organizar specification-agent
 ```
 
-### Cambiar de proveedor
-Edita `agentes/specification-agent/config.json`. Por ejemplo, para Gemini:
+### Respaldo automático entre proveedores
+Si un modelo responde 404 (retirado), 429 (sin cupo), 5xx (saturado) o no hay conexión, el script prueba el siguiente de `modelos_respaldo`. El Specification Agent usa este orden:
 
-```json
-"proveedor": "gemini",
-"modelo": "<nombre de un modelo Flash>",
+1. `google/gemma-4-31b-it:free` (OpenRouter)
+2. `nvidia/nemotron-3-ultra-550b-a55b:free` (OpenRouter)
+3. `openrouter/free` (OpenRouter escoge un modelo gratuito disponible)
+4. `pharma-qwen` (Ollama, local)
+
+Los modelos gratuitos de OpenRouter cambian con el tiempo. Si uno responde 404, consulta los vigentes con `python agente.py --modelos openrouter` (los gratuitos terminan en `:free`) y actualiza el `config.json`.
+
+El archivo guardado y `registro.md` indican qué modelo respondió. **Revisa con más cuidado las versiones hechas con `pharma-qwen`**: un modelo local pequeño se equivoca más con la numeración, el origen de cada requisito y las 17 secciones.
+
+### Escoger el proveedor en una ejecución
+Sin editar `config.json`, usa `--proveedor` y, si quieres, `--modelo`. Así se usa solo ese modelo, sin respaldos:
+
+```bash
+python agente.py specification-agent "..." --continuar SPEC-002 --proveedor ollama
+python agente.py specification-agent "..." --proveedor openrouter --modelo "<modelo>:free"
 ```
 
-Consulta los nombres exactos con `python agente.py --modelos gemini` y agrega `GEMINI_API_KEY` en `.env`. Todo lo demás del `config.json` queda igual.
+Consulta los nombres exactos con `python agente.py --modelos <proveedor>`.
+
+### Cambiar de proveedor de forma permanente
+Edita `proveedor`, `modelo` y `modelos_respaldo` en el `config.json` del agente. Un respaldo de otro proveedor se escribe como objeto y, si ese proveedor no acepta los mismos parámetros, con sus propios `parametros`:
+
+```json
+"modelos_respaldo": [
+  "nvidia/nemotron-3-ultra-550b-a55b:free",
+  {"proveedor": "ollama", "modelo": "pharma-qwen"}
+]
+```
 
 ---
 
-## Parte 3 — Usar el Specification Agent con Claude Code (plan Pro de Claude)
+## IA local con Ollama
 
-Si tienes el plan Pro de Claude, también puedes ejecutar el agente con Claude Code, que está incluido en ese plan y no necesita llave de API. El uso se descuenta de los límites de tu plan Pro.
+Sirve para trabajar sin internet, sin cupos y sin enviar datos a terceros. Con 8 GB de RAM el modelo recomendado es `qwen3.5:4b` (unos 3,4 GB). Un modelo de este tamaño tiene un puntaje muy inferior a los modelos en la nube, así que úsalo como respaldo o para borradores, no para aprobar SPEC.
 
-El agente está en `.claude/agents/specification-agent.md` (raíz del proyecto). Tiene las mismas reglas, convenciones y formato de salida que `agentes/specification-agent/prompt.md`. La diferencia es que lee `PHARMA_EXPRESS_AGENTES.md` por su cuenta y guarda cada versión con la misma estructura de carpetas de la Parte 2.
+### Instalar (solo una vez)
+1. Descarga Ollama desde <https://ollama.com/download> e instálalo. Debe quedar abierto (ícono en la barra de menú).
+2. Desde la carpeta `agentes-ia`, descarga el modelo y crea `pharma-qwen`:
+
+```bash
+ollama pull qwen3.5:4b
+ollama create pharma-qwen -f ollama/Modelfile
+```
+
+El `Modelfile` amplía el contexto a 32.768 tokens. Sin ese paso, Ollama usa un contexto corto y **recorta en silencio** el prompt del Specification Agent, que necesita unos 20.000 tokens cuando lleva una SPEC adjunta.
+
+### Usar
+
+```bash
+python agente.py specification-agent "Necesitamos que..." --proveedor ollama
+```
+
+- La primera respuesta tarda más porque Ollama carga el modelo en memoria. Una SPEC completa puede tardar varios minutos.
+- Cierra otras aplicaciones pesadas mientras corre: el modelo y el contexto usan buena parte de los 8 GB.
+- Si el equipo tiene más memoria, puedes cambiar `FROM` en el `Modelfile` por un modelo más grande y volver a ejecutar `ollama create`.
+
+---
+
+## Parte 3 — Usar los agentes con Claude Code (plan Pro de Claude)
+
+Si tienes el plan Pro de Claude, también puedes ejecutar los agentes con Claude Code, que está incluido en ese plan y no necesita llave de API. El uso se descuenta de los límites de tu plan Pro. Es la opción con mejor calidad y el respaldo cuando las API gratuitas no responden.
+
+Los subagentes están en `.claude/agents/` (raíz del proyecto):
+
+- `specification-agent.md`: mismas reglas, convenciones y formato que `agentes/specification-agent/prompt.md`. Lee `PHARMA_EXPRESS_AGENTES.md` por su cuenta y guarda cada versión con la misma estructura de carpetas de la Parte 2.
+- `generador-hu-invest.md`: mismas reglas que `agentes/generador-hu-invest/prompt.md`. Guarda en `agentes-ia/salidas/User-Strories/generadas/`.
+- `user-story-reviewer.md`: revisa y corrige historias de usuario existentes.
 
 ### Instalar Claude Code (solo una vez)
 Sigue la guía oficial: <https://code.claude.com/docs/en/overview>. Al iniciar sesión, entra con tu cuenta del plan Pro, no con una llave de la consola de API.
@@ -204,6 +242,9 @@ Desde la raíz del proyecto, abre Claude Code con `claude` y escríbele:
    *"Usa el agente specification-agent. Continuar SPEC-001. El equipo aprueba la SPEC."*
 
 Cada vez, el agente guarda un archivo nuevo y te muestra en la conversación las preguntas abiertas pendientes.
+
+Para historias de usuario:
+   *"Usa el agente generador-hu-invest: genera 5 historias para la épica de cancelación de citas, empieza en HU-10"*
 
 ---
 
@@ -243,10 +284,10 @@ Buenas prácticas:
 | Campo | Qué es | Recomendación |
 |---|---|---|
 | `nombre`, `descripcion` | Para identificar el agente | Frase del paso 1 |
-| `proveedor` | Dónde corre el modelo: `mistral`, `gemini`, `groq` u `openrouter` | `mistral` |
-| `modelo` | ID del modelo en ese proveedor | `mistral-large-latest`. Consulta los disponibles con `python agente.py --modelos <proveedor>` |
+| `proveedor` | Dónde corre el modelo: `openrouter`, `groq`, `gemini` u `ollama` (local) | `openrouter` |
+| `modelo` | ID del modelo en ese proveedor | `google/gemma-4-31b-it:free`. Consulta los disponibles con `python agente.py --modelos <proveedor>` |
 | `organizacion_salida` | Opcional. `"spec"` guarda por SPEC y estado y habilita `--continuar` | Solo para agentes que producen SPEC con el encabezado `# SPEC-00x. Nombre - Versión X.Y` |
-| `modelos_respaldo` | Opcional. Modelos que se prueban, en orden, si el principal está saturado (error 503) o sin cupo (error 429) | Otros modelos del mismo proveedor |
+| `modelos_respaldo` | Opcional. Modelos que se prueban, en orden, si el principal está saturado (5xx), sin cupo (429) o sin conexión | Otros modelos del mismo proveedor y, al final, `{"proveedor": "ollama", "modelo": "pharma-qwen"}` |
 | `parametros.temperature` | Qué tan creativo es | `0`–`0.2` para extraer o clasificar; `0.5` para redactar; `0.8` para ideas creativas |
 | `parametros.max_tokens` | Límite de largo de la respuesta | Un poco más de lo que esperas recibir |
 | `archivo_contexto` | Opcional. Archivo que reemplaza `{{CONTEXTO_PROYECTO}}` | Omítelo para usar `PHARMA_EXPRESS_AGENTES.md`. Relativo a la raíz del proyecto. No se envía a la API |
@@ -255,7 +296,7 @@ Buenas prácticas:
 Todo lo que esté en `parametros` se envía tal cual a la API del proveedor. Si un proveedor rechaza un parámetro, bórralo del `config.json`.
 
 ### Paso 5. Probar el prompt en el playground del proveedor (recomendado)
-1. Abre el playground de tu proveedor (en Mistral, dentro de <https://console.mistral.ai>; en Gemini, <https://aistudio.google.com>).
+1. Abre el playground de tu proveedor (en OpenRouter, el chat de <https://openrouter.ai/chat>; en Gemini, <https://aistudio.google.com>).
 2. Elige el mismo modelo del `config.json`.
 3. Pega el `prompt.md` como instrucción de sistema (reemplaza `{{CONTEXTO_PROYECTO}}` por el texto de `PHARMA_EXPRESS_AGENTES.md`).
 4. Escribe una petición de prueba y ajusta la temperatura.
@@ -282,15 +323,15 @@ Haz commit de la carpeta nueva del agente (sin el `.env`). Así el equipo puede 
   - **413:** la solicitud es demasiado grande para el plan (pasa en Groq gratuito con el Specification Agent).
   - **429:** alcanzaste un límite de uso; espera un momento o hasta el día siguiente.
   - **503:** el modelo está saturado en ese momento; suele ser temporal.
-  - Ante un 429 o un 503, el script prueba solo los `modelos_respaldo` del `config.json`.
-  - **404:** el nombre del modelo no existe en ese proveedor; revisa con `--modelos`.
+  - Ante un 404, un 429, un 5xx o un error de conexión, el script prueba los `modelos_respaldo` del `config.json`, aunque sean de otro proveedor.
+  - **404:** el modelo no existe o fue retirado en ese proveedor, o (en OpenRouter) la configuración de privacidad bloquea los modelos gratuitos; revisa con `--modelos`.
 - **Respuesta cortada:** si el script avisa que la respuesta se cortó, sube `max_tokens` en el `config.json`.
 - **Verificación:** la salida de un modelo puede contener errores. Toda cifra, norma o fuente debe verificarse antes de usarse en el proyecto.
 
 ## Referencias oficiales
-- Mistral AI. (s. f.). *Documentation*. <https://docs.mistral.ai>
 - Google. (s. f.). *Gemini API: compatibilidad con OpenAI*. <https://ai.google.dev/gemini-api/docs/openai>
 - Google. (s. f.). *Gemini API: rate limits*. <https://ai.google.dev/gemini-api/docs/rate-limits>
 - Groq. (s. f.). *Rate limits*. GroqDocs. <https://console.groq.com/docs/rate-limits>
 - OpenRouter. (s. f.). *Limits*. <https://openrouter.ai/docs/api-reference/limits>
+- Ollama. (s. f.). *Documentation*. <https://docs.ollama.com>
 - Anthropic. (s. f.). *Claude Code: subagentes*. <https://code.claude.com/docs/en/sub-agents>
