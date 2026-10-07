@@ -14,7 +14,7 @@ CARPETA_AGENTES = RAIZ_AGENTES / "agentes"
 ARCHIVO_CONTEXTO_POR_DEFECTO = "PHARMA_EXPRESS_AGENTES.md"
 MARCADOR_CONTEXTO = "{{CONTEXTO_PROYECTO}}"
 
-# Proveedores compatibles con la API de OpenAI. La llave de cada uno va en agentes-groq/.env.
+# Proveedores compatibles con la API de OpenAI. La llave de cada uno va en agentes-ia/.env.
 PROVEEDORES = {
     "mistral": {"base_url": "https://api.mistral.ai/v1", "variable": "MISTRAL_API_KEY"},
     "gemini": {
@@ -31,7 +31,7 @@ ESTADOS_CON_RESPALDO = {429, 500, 502, 503, 504}
 
 
 def cargar_variables_entorno():
-    """Carga las llaves de API desde agentes-groq/.env si python-dotenv está instalado."""
+    """Carga las llaves de API desde agentes-ia/.env si python-dotenv está instalado."""
     try:
         from dotenv import load_dotenv
     except ImportError:
@@ -81,7 +81,7 @@ def construir_mensaje_usuario(peticion, adjuntos):
 
 
 def guardar_resultado(config, nombre_agente, peticion, respuesta):
-    carpeta = RAIZ_PROYECTO / config.get("carpeta_salida", f"agentes-groq/salidas/{nombre_agente}")
+    carpeta = RAIZ_PROYECTO / config.get("carpeta_salida", f"agentes-ia/salidas/{nombre_agente}")
     carpeta.mkdir(parents=True, exist_ok=True)
 
     fecha = datetime.now()
@@ -160,7 +160,7 @@ def ultima_version_spec(config, id_spec):
 
 
 def guardar_spec(config, nombre_agente, peticion, respuesta, modelo, cortada):
-    base = RAIZ_PROYECTO / config.get("carpeta_salida", f"agentes-groq/salidas/{nombre_agente}")
+    base = RAIZ_PROYECTO / config.get("carpeta_salida", f"agentes-ia/salidas/{nombre_agente}")
     fecha = datetime.now()
     datos = leer_encabezado_spec(respuesta)
 
@@ -238,7 +238,7 @@ def crear_cliente(nombre_proveedor):
     datos = PROVEEDORES[nombre_proveedor]
     llave = os.environ.get(datos["variable"])
     if not llave:
-        sys.exit(f"Falta {datos['variable']}. Agrégala en agentes-groq/.env (mira .env.example).")
+        sys.exit(f"Falta {datos['variable']}. Agrégala en agentes-ia/.env (mira .env.example).")
     try:
         from openai import OpenAI
     except ImportError:

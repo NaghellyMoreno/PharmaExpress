@@ -8,5 +8,5 @@
     "top_p": 0.95,
     "max_tokens": 4096
   },
-  "carpeta_salida": "agentes-groq/salidas/nombre-del-agente"
+  "carpeta_salida": "agentes-ia/salidas/nombre-del-agente"
 }

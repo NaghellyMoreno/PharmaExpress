@@ -15,5 +15,5 @@
     "max_tokens": 32000
   },
   "organizacion_salida": "spec",
-  "carpeta_salida": "agentes-groq/salidas/specification-agent"
+  "carpeta_salida": "agentes-ia/salidas/specification-agent"
 }

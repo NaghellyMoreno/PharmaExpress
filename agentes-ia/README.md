@@ -4,7 +4,7 @@ Agentes de IA que apoyan el proyecto. Cada agente es una **instrucción de siste
 
 > En este proyecto, un "agente" es: instrucción de sistema + proveedor + modelo + parámetros + script. El agente vive en este repositorio.
 
-El script funciona con cualquier proveedor compatible con la API de OpenAI. Hoy admite **Mistral**, **Gemini**, **Groq** y **OpenRouter**. Cada agente escoge su proveedor en `config.json`. La carpeta conserva el nombre `agentes-groq` para no romper rutas.
+El script funciona con cualquier proveedor compatible con la API de OpenAI. Hoy admite **Mistral**, **Gemini**, **Groq** y **OpenRouter**. Cada agente escoge su proveedor en `config.json`.
 
 ---
 
@@ -24,7 +24,7 @@ Como los planes gratuitos pueden usar lo que envías, **nunca envíes datos real
 ## Estructura
 
 ```
-agentes-groq/
+agentes-ia/
 ├── README.md                  ← esta guía
 ├── agente.py                  ← punto de entrada (solo llama a nucleo/cli.py)
 ├── requirements.txt           ← dependencias (openai, python-dotenv)
@@ -77,7 +77,7 @@ El código sigue los principios SOLID:
 Si prefieres Gemini: entra a <https://aistudio.google.com/app/apikey>, crea una llave y cambia el proveedor del agente (Parte 2, "Cambiar de proveedor").
 
 ### Paso 2. Guardar la llave
-Desde la carpeta `agentes-groq`:
+Desde la carpeta `agentes-ia`:
 
 ```bash
 cp .env.example .env
