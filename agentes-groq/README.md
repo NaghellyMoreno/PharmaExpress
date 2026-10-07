@@ -115,7 +115,7 @@ python agente.py --modelos mistral
 
 ## Parte 2 — Usar el Specification Agent
 
-**Qué hace:** recibe la necesidad informal de **una sola funcionalidad** y devuelve preguntas de aclaración (`OPEN-Q-001`...) y una SPEC de 17 secciones, sin decisiones técnicas. Trabaja por versiones: borradores `0.x`, candidatas `1.0`, `1.1`... y una versión aprobada y congelada.
+**Qué hace:** recibe la necesidad informal de **una sola funcionalidad** y devuelve preguntas de aclaración (`OPEN-Q-001`..., incluida la de la épica) y una SPEC de 17 secciones, sin decisiones técnicas. Trabaja por versiones: borradores `0.x`, candidatas `1.0`, `1.1`... y una versión aprobada y congelada.
 
 **Requisito:** el archivo `PHARMA_EXPRESS_AGENTES.md` en la raíz del proyecto.
 
@@ -165,6 +165,10 @@ python agente.py specification-agent "El equipo aprueba la SPEC-001" --continuar
 4. Cambio después de aprobar: describe el cambio y usa `--continuar SPEC-001`. El agente entrega la siguiente versión como Candidata, con el análisis de impacto.
 
 **Numeración:** para la segunda funcionalidad y las siguientes, indica el número de SPEC y los números iniciales para no repetir identificadores. Por ejemplo: *"SPEC-002, empieza en RF-013, BR-009, AC-013. Necesitamos que..."*.
+
+**Épica:** agrupa funcionalidades relacionadas (el Architecture Agent recibe varias SPECs de una misma épica). Pegas solo la necesidad: si no traes la épica, el agente la **pide como `OPEN-Q-`** y la decides tú respondiendo con el `EPIC-00x` de tu catálogo de agrupación (el encabezado queda `Épica: pendiente` hasta que respondas). Para saltarte la pregunta, indícala en el mensaje: *"EPIC-002. Necesitamos que..."*.
+
+**Temas para arquitectura:** cuando la SPEC detecta un tema técnico que no le corresponde resolver (tecnología, dónde vive un cálculo, integraciones), lo escribe en la sección 14 con la etiqueta `tema para arquitectura. Origen: RF-00x`. Es el insumo que puede leer el Architecture Agent además de la SPEC misma.
 
 **Archivos del formato anterior:** si tienes respuestas guardadas antes de esta estructura (nombres con fecha y hora en la carpeta principal), organízalas una sola vez con:
 
