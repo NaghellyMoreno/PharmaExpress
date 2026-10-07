@@ -33,7 +33,16 @@ Como los planes gratuitos pueden usar lo que envías, **nunca envíes datos real
 ```
 agentes-ia/
 ├── README.md                  ← esta guía
-├── agente.py                  ← script común: carga el agente, llama al modelo y guarda la respuesta
+├── agente.py                  ← punto de entrada: python agente.py ... (solo llama a motor/cli.py)
+├── motor/                     ← lógica común, un módulo por responsabilidad
+│   ├── cli.py                 ← argumentos y comandos; une las demás piezas
+│   ├── agentes.py             ← lista y carga los agentes (config.json + prompt.md + contexto)
+│   ├── proveedores.py         ← proveedores (OpenRouter, Groq, Ollama...) y sus clientes
+│   ├── intentos.py            ← orden de modelos: principal + modelos_respaldo, --proveedor, --modelo
+│   ├── ejecutor.py            ← llama al modelo y pasa al respaldo si falla
+│   ├── mensajes.py            ← petición + archivos adjuntos
+│   ├── errores.py / rutas.py  ← errores mostrados en una línea y carpetas del proyecto
+│   └── salidas/               ← formas de guardar: simple.py (por defecto) y spec.py (por SPEC)
 ├── requirements.txt           ← dependencias (openai, python-dotenv)
 ├── .env                       ← llaves de API (no se sube a git)
 ├── ollama/
