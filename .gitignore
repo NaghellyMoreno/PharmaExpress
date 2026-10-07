@@ -1,4 +1,20 @@
 # Llaves y entornos locales
 .env
+.env.*
 .venv/
+
+# Python
 __pycache__/
+*.py[cod]
+
+# Claude Code: configuración personal (los agentes de .claude/agents sí se comparten)
+.claude/settings.local.json
+
+# Sistema operativo y editores
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Registros
+*.log
