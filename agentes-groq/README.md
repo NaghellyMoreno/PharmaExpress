@@ -10,11 +10,11 @@ El script funciona con cualquier proveedor compatible con la API de OpenAI. Hoy 
 
 ## Qué proveedor usar
 
-| Proveedor | ¿Gratis? | Límite que importa para el Specification Agent | Recomendación |
+| Proveedor | ¿Gratis? | Límite que importa para estos agentes | Recomendación |
 |---|---|---|---|
-| **Mistral** (plan Experiment) | Sí, sin tarjeta. Pide verificar el celular y aceptar que usen tus datos para entrenamiento | Margen amplio por solicitud y por mes. Los límites exactos aparecen en la consola de tu cuenta | **Recomendado.** Es el que trae configurado el agente |
-| **Gemini** (Google AI Studio) | Sí, sin tarjeta. Google puede usar los datos del plan gratuito para mejorar sus productos | Margen amplio por solicitud, pero pocas solicitudes al día en los modelos Flash. Los límites exactos aparecen en AI Studio | Alternativa si Mistral falla |
-| **Groq** (plan gratuito) | Sí | Rechaza cualquier solicitud de más de 8.000 tokens (prompt + `max_tokens`). El Specification Agent no cabe | Solo para agentes con prompts cortos |
+| **Gemini** (Google AI Studio) | Sí, sin tarjeta. Google puede usar los datos del plan gratuito para mejorar sus productos | Margen amplio por solicitud, pero pocas solicitudes al día en los modelos Flash. Los límites exactos aparecen en AI Studio | Es el que traen configurado los dos agentes (`gemini-3.5-flash-lite`) |
+| **Mistral** (plan Experiment) | Sí, sin tarjeta. Pide verificar el celular y aceptar que usen tus datos para entrenamiento | Margen amplio por solicitud y por mes. Los límites exactos aparecen en la consola de tu cuenta | Alternativa si Gemini falla o agota cupo |
+| **Groq** (plan gratuito) | Sí | Rechaza cualquier solicitud de más de 8.000 tokens (prompt + `max_tokens`). Los agentes no caben | Solo para agentes con prompts cortos |
 | **OpenRouter** (modelos `:free`) | Sí | Pocas solicitudes al día sin créditos | Respaldo |
 
 Como los planes gratuitos pueden usar lo que envías, **nunca envíes datos reales de pacientes**. Usa solo datos ficticios.
@@ -26,73 +26,61 @@ Como los planes gratuitos pueden usar lo que envías, **nunca envíes datos real
 ```
 agentes-groq/
 ├── README.md                  ← esta guía
-├── agente.py                  ← punto de entrada (solo llama a nucleo/cli.py)
+├── agente.py                  ← punto de entrada: agencia, contexto, API, flujo interactivo, guardado
 ├── requirements.txt           ← dependencias (openai, python-dotenv)
-├── .env.example               ← plantilla para las llaves de API
-├── nucleo/                    ← lógica común, un módulo por responsabilidad
-│   ├── cli.py                 ← comandos de la terminal y armado de dependencias
-│   ├── rutas.py               ← ubicación de carpetas y archivos
-│   ├── entorno.py             ← carga del archivo .env
-│   ├── agentes.py             ← definición de un agente y su carga desde disco
-│   ├── contexto.py            ← inserción del archivo de contexto en el prompt
-│   ├── proveedores.py         ← catálogo de proveedores y creación de clientes
-│   ├── mensajes.py            ← mensaje del usuario con sus adjuntos
-│   ├── ejecucion.py           ← llamada al modelo con modelos de respaldo
-│   ├── diagnostico.py         ← prueba de conexión y lista de modelos
-│   ├── errores.py             ← errores para el usuario y su explicación
-│   └── almacenamiento/
-│       ├── base.py            ← interfaz común para guardar respuestas
-│       ├── simple.py          ← un archivo por ejecución
-│       ├── spec.py            ← borradores y aprobadas por SPEC
-│       ├── organizador.py     ← migración única del formato anterior
-│       └── fabrica.py         ← escoge la forma de guardar según config.json
-└── agentes/
-    ├── _plantilla/            ← copia esta carpeta para crear un agente nuevo
-    │   ├── config.json
-    │   └── prompt.md
-    └── specification-agent/   ← genera preguntas y una SPEC de una funcionalidad
-        ├── config.json
-        └── prompt.md
+├── .env                       ← llaves de API (está en .gitignore: nunca se sube)
+├── agentes/
+│   ├── _plantilla/            ← copia esta carpeta para crear un agente nuevo
+│   │   ├── config.json
+│   │   └── prompt.md
+│   ├── specification-agent/   ← necesidad → preguntas OPEN-Q y SPEC de 17 secciones
+│   │   ├── config.json
+│   │   └── prompt.md
+│   └── architecture-agent/    ← SPECs aprobadas → preguntas ARCH-Q y ARQ (arquitectura + ADR)
+│       ├── config.json
+│       └── prompt.md
+└── salidas/
+    ├── specification-agent/   ← SPECs por estado (borradores/, aprobadas/, registro.md)
+    └── architecture-agent/    ← ARQs por estado (analisis/, borradores/, aprobadas/, registro.md)
 ```
 
 El marcador `{{CONTEXTO_PROYECTO}}` dentro de un `prompt.md` se reemplaza automáticamente por el contenido de `PHARMA_EXPRESS_AGENTES.md` (raíz del proyecto). Si un agente necesita otro archivo, lo indica con `archivo_contexto` en su `config.json`. El archivo se lee en cada ejecución, así que el contexto siempre está actualizado.
 
 ### Diseño del núcleo
 
-El código sigue los principios SOLID:
+Hay un solo script (`agente.py`) con toda la lógica común y los puntos de extensión claros:
 
-- **Responsabilidad única:** cada módulo tiene un solo motivo para cambiar. Si cambia cómo se guardan las SPEC, solo se toca `almacenamiento/spec.py`; si cambia un proveedor, solo `proveedores.py`.
-- **Abierto a extensión, cerrado a modificación:** un proveedor nuevo se agrega como una línea en `PROVEEDORES` (`proveedores.py`). Una forma nueva de guardar se agrega como una clase con el método `guardar` y se registra en `CONSTRUCTORES` (`almacenamiento/fabrica.py`). En ningún caso hay que tocar `cli.py`.
-- **Sustitución:** `AlmacenamientoSimple` y `AlmacenamientoPorSpec` cumplen la misma interfaz (`guardar`), así que los comandos funcionan igual con cualquiera.
-- **Interfaces pequeñas:** guardar (`Almacenamiento`) y buscar la última versión (`FuenteVersiones`) son interfaces separadas; solo el almacenamiento por SPEC implementa la segunda, que es la que usa `--continuar`.
-- **Inversión de dependencias:** las clases reciben sus dependencias ya creadas (cliente de la API, traductor de errores, función para mostrar mensajes). Solo `crear_aplicacion` en `cli.py` crea objetos concretos, lo que permite probar cada pieza por separado.
+- **Proveedores:** el catálogo `PROVEEDORES` define la base URL y la variable de la llave de cada proveedor. Un proveedor nuevo se agrega como una línea ahí, sin tocar nada más.
+- **Agentes:** cada agente es solo `prompt.md` + `config.json` dentro de `agentes/`. El script carga el prompt, reemplaza `{{CONTEXTO_PROYECTO}}` con el contexto y usa `parametros` tal cual en la API.
+- **Modelos de respaldo:** `modelos_respaldo` en el `config.json` se prueban en orden ante errores 429 (cupo agotado) y 500, 502, 503, 504 (saturado o caído).
+- **Guardado por documento:** con `organizacion_salida: "spec"` el script lee el encabezado `# PREFIJO-00x. Nombre - Versión X.Y` que escribe el agente y organiza el archivo por estado: `analisis/`, `borradores/`, `aprobadas/` o `sin-clasificar/`. `--continuar` usa la última versión completa guardada; una respuesta cortada se marca `_INCOMPLETA` y nunca se reutiliza; una versión aprobada y congelada no se duplica.
+- **Flujo interactivo:** con `interactivo: true` y terminal, el script hace las preguntas una a una (`>`, Open `-Q` o `ARCH-Q`), imprime un resumen en vez del markdown (`--imprimir` para verlo) y ofrece aprobar con `[S/n]`. Sin terminal, hace una sola llamada con las preguntas dentro de la respuesta.
 
 ## Parte 1 — Configuración inicial (solo una vez)
 
-### Paso 1. Crear la llave de la API de Mistral
-1. Entra a <https://console.mistral.ai> y crea una cuenta.
-2. Verifica tu número de celular y escoge el plan gratuito **Experiment**.
-3. Crea una llave de API y **cópiala**.
+### Paso 1. Crear la llave de la API de Gemini
+1. Entra a <https://aistudio.google.com/app/apikey> y crea una cuenta (gratis, sin tarjeta).
+2. Crea una llave de API y **cópiala**.
 
-Si prefieres Gemini: entra a <https://aistudio.google.com/app/apikey>, crea una llave y cambia el proveedor del agente (Parte 2, "Cambiar de proveedor").
+Los dos agentes traen configurado `gemini-3.5-flash-lite`. Si prefieres Mistral, crea la llave en <https://console.mistral.ai> (plan **Experiment**), cambia `proveedor` y `modelo` en los dos `config.json` (Parte 2, "Cambiar de proveedor").
 
 ### Paso 2. Guardar la llave
-Desde la carpeta `agentes-groq`:
+Desde la carpeta `agentes-groq`, crea el archivo `.env`:
 
 ```bash
-cp .env.example .env
+echo 'GEMINI_API_KEY=tu_llave_aqui' > .env
 ```
 
-Abre `.env` y pega tu llave en `MISTRAL_API_KEY`. Solo hace falta la llave del proveedor que uses. El archivo `.env` está en `.gitignore`: **nunca lo subas a git ni lo compartas**.
+Solo hace falta la llave del proveedor que uses. El archivo `.env` está en `.gitignore`: **nunca lo subas a git ni lo compartas**.
 
 ### Paso 3. Crear el entorno de Python e instalar dependencias
 
 ```bash
-python3 -m venv .venv
+python3 -m venv ../venv
 ```
 
 ```bash
-source .venv/bin/activate
+source ../venv/bin/activate
 ```
 
 ```bash
@@ -105,10 +93,10 @@ pip install -r requirements.txt
 python agente.py --listar
 ```
 
-Debe mostrar `specification-agent`. Para confirmar que la llave funciona y ver los modelos disponibles:
+Debe mostrar `specification-agent` y `architecture-agent`. Para confirmar que la llave funciona y ver los modelos disponibles:
 
 ```bash
-python agente.py --modelos mistral
+python agente.py --modelos gemini
 ```
 
 ---
@@ -275,6 +263,7 @@ Buenas prácticas:
 | `modelo` | ID del modelo en ese proveedor | `mistral-large-latest`. Consulta los disponibles con `python agente.py --modelos <proveedor>` |
 | `organizacion_salida` | Opcional. `"spec"` guarda por SPEC y estado y habilita `--continuar` | Solo para agentes que producen SPEC con el encabezado `# SPEC-00x. Nombre - Versión X.Y` |
 | `prefijo_documento` | Opcional. Prefijo del ID en el encabezado (`SPEC` → `SPEC-001`) | Omítelo para `SPEC`; escríbelo si el agente produce documentos con otro prefijo |
+| `numeracion_solo_documento` | Opcional. `true` para que la numeración automática indique solo el siguiente número de documento (por ejemplo, `ARQ-002`), sin el "empieza en..." de elementos | `true` en el Architecture Agent, porque los ARQ citan elementos calificados (`SPEC-001/RF-005`) y no los numeran como propios |
 | `interactivo` | Opcional. `true` hace las preguntas una a una en la terminal, imprime un resumen en vez del markdown y ofrece aprobar con `[S/n]` cuando no quedan vacíos | `true` solo si el agente trabaja con `organizacion_salida: spec`; omítelo para agentes que responden de corrido |
 | `modelos_respaldo` | Opcional. Modelos que se prueban, en orden, si el principal está saturado (error 503) o sin cupo (error 429) | Otros modelos del mismo proveedor |
 | `parametros.temperature` | Qué tan creativo es | `0`–`0.2` para extraer o clasificar; `0.5` para redactar; `0.8` para ideas creativas |
@@ -302,6 +291,127 @@ Ejecuta al menos 3 peticiones distintas: una normal, una ambigua y una que deba 
 
 ### Paso 8. Guardar en git
 Haz commit de la carpeta nueva del agente (sin el `.env`). Así el equipo puede usarlo y ver cómo cambia el prompt con el tiempo.
+
+---
+
+## Parte 5 — Usar el Architecture Agent
+
+**Qué hace:** recibe una o varias SPEC **aprobadas y congeladas** y devuelve preguntas de análisis arquitectónico (`ARCH-Q-001`...) y una propuesta de arquitectura justificable: Architecture Drivers, restricciones, atributos de calidad, alternativas comparadas con matriz de decisión, arquitectura seleccionada, diagrama conceptual, componentes y responsabilidades, integraciones, ADR, patrones con problema real, riesgos, supuestos y trazabilidad. No escribe código de producción ni toma decisiones humanas: propone y documenta para que el equipo decida.
+
+**Entrada:** SPECs aprobadas. Se las pasas sin escribir nombres de archivo, de dos formas:
+- `--aprobada SPEC-001 SPEC-002` → adjunta la última versión aprobada y completa de esas SPECs (busca en `salidas/*/aprobadas/` de cualquier agente).
+- `--epica EPIC-001` → adjunta todas las SPECs aprobadas de esa épica (la épica decide el equipo y queda en la línea `Épica:` del encabezado de cada SPEC).
+
+El agente además lee de cada SPEC la sección 13 (restricciones 3.9 y 3.11 del contexto) y los temas "para arquitectura" de la sección 14. Siempre cita los elementos con su identificador calificado (`SPEC-001/RF-005`, `SPEC-002/BR-003`), porque la numeración se repite entre SPECs.
+
+### Dónde quedan los archivos
+
+```
+salidas/architecture-agent/
+├── analisis/                  ← estudios de análisis con preguntas ARCH-Q pendientes (entrada del --continuar)
+│   ├── ARQ-001/
+│   │   └── ARQ-001_v0.1.md
+│   └── ARQ-002/
+├── borradores/                ← propuestas aún no aprobadas
+│   └── ARQ-001/
+│       └── ARQ-001_v1.0.md
+├── aprobadas/                 ← solo ARQs aprobadas y congeladas (entrada del Planning Agent)
+│   └── ARQ-001_v1.0.md
+└── registro.md                ← una línea por ejecución
+```
+
+Los estados y la ruta se deciden solos leyendo el encabezado que escribe el agente:
+- `Estado: Análisis` → `analisis/ARQ-00x/`.
+- Borrador o Candidata → `borradores/ARQ-00x/`.
+- `Estado: Aprobada y congelada` → `aprobadas/`, sin duplicados.
+
+### Flujo interactivo (con terminal)
+
+1. Elige las SPECs de entrada y ejecuta:
+
+```bash
+python agente.py architecture-agent "Analiza la arquitectura" --aprobada SPEC-001 SPEC-002
+```
+
+o agrupadas por épica:
+
+```bash
+python agente.py architecture-agent "Analiza la arquitectura" --epica EPIC-001
+```
+
+2. Primera llamada: el agente hace sus preguntas de análisis **una a una** con el símbolo `>`:
+   - escribe la respuesta y pulsa Enter;
+   - pulsa Enter en blanco para dejar esa pregunta pendiente;
+   - escribe `salir` o pulsa `Ctrl+C` para terminar: lo que falte queda pendiente.
+3. Segunda llamada: con tus respuestas genera la **propuesta completa** (Architecture Package). La terminal no imprime el markdown, solo el resumen (id, versión, estado, preguntas pendientes y ruta). Úsalo con `--imprimir` para ver el documento completo.
+4. Si respondiste todo sin vacíos y el agente entrega una Candidata sin pendientes, el script pregunta:
+
+```text
+¿Apruebas y congelas la ARQ-001 versión 1.0? [S/n]
+```
+
+- `S` o Enter: queda `Estado: Aprobada y congelada` y se guarda en `aprobadas/`, sin llamadas extra a la API.
+- `n`: se guarda como Candidata en `borradores/` y queda lista para iterar.
+
+### Flujo por mensajes (sin terminal o con `--continuar`)
+
+Sin terminal (pipe o script) el script hace **una sola llamada**: el agente primero entrega el **estudio de análisis** (`Estado: Análisis`, guardado en `analisis/ARQ-00x/`) y **no propone todavía**. Luego:
+
+1. Responde las preguntas de análisis. `--continuar` adjunta la última versión guardada:
+
+```bash
+python agente.py architecture-agent "Respuestas del equipo. ARCH-Q-001: ... ARCH-Q-002: ..." --continuar ARQ-001
+```
+
+Repite hasta tener una Candidata sin pendientes.
+
+2. Aprobar (si no usaste `[S/n]`):
+
+```bash
+python agente.py architecture-agent "El equipo aprueba la ARQ-001" --continuar ARQ-001
+```
+
+3. Cambio después de aprobar: describe el cambio con `--continuar ARQ-001`. El agente entrega la siguiente versión como Candidata, con análisis de impacto.
+
+**Numeración:** automática. El script calcula el siguiente número de ARQ (ARQ-002, ARQ-003...) a partir de lo guardado y lo inyecta al agente aunque lleves SPECs adjuntas. Si escribes tú el número, usas `--continuar`, o adjuntas un documento `ARQ-00x`, el script no la toca.
+
+### Cómo revisar una propuesta
+
+La propuesta se defiende sola: cada decisión tiene alternativas comparadas (matriz con pesos justificados), un ADR y su trazabilidad `SPEC-00x/RF-00x → Driver → ADR → COMP`. Revisa al menos:
+- que los drivers nazcan de las SPECs y no de "modas" (si el agente agregó un driver que ninguna SPEC pide, debe haberlo consultado antes, no silenciosamente);
+- que las restricciones 3.9 (equipo de cuatro personas, 8 semanas) y 3.11 (normativa) estén consideradas;
+- que el Mermaid aparezca solo en el diagrama conceptual;
+- que la fila de Implementación/TEST de la trazabilidad quede "pendiente de Planning/QA" (no la invente).
+
+---
+
+## Parte 6 — Flujo completo: los dos agentes en conjunto
+
+Secuencia Spec-Driven: **HUMANO → Specification Agent → SPEC → Architecture Agent → ARQ → (Planning Agent → Coding Agent → QA Agent)**. El Architecture Agent entra solo cuando la SPEC está **aprobada y congelada**.
+
+### Paso a paso con los comandos
+
+| Etapa | Comando | Decides tú | Resultado |
+|---|---|---|---|
+| 1. Necesidad | `python agente.py specification-agent "Necesitamos que el paciente pueda cancelar su cita"` | Preguntas `OPEN-Q` (una a una con `>`) | Borrador 0.x de la SPEC |
+| 2. Responder pendientes | `python agente.py specification-agent "Respuestas del equipo. OPEN-Q-001: ..." --continuar SPEC-001` | Repites hasta Candidata sin pendientes | Candidata 1.0 |
+| 3. Congelar | `[S/n]` en terminal, o `... "El equipo aprueba la SPEC-001" --continuar SPEC-001` | Decides aprobar | `SPEC-001_v1.0` en `aprobadas/` |
+| 4. Arquitectura (sola SPEC) | `python agente.py architecture-agent "Analiza la arquitectura" --aprobada SPEC-001` | Preguntas `ARCH-Q` | `ARQ-00x` análisis / propuesta |
+| 4b. Arquitectura (épica) | `python agente.py architecture-agent "Analiza la arquitectura" --epica EPIC-001` | Igual; el agente recibe juntas las SPECs de la misma épica | Propuesta que integra varias SPECs |
+| 5. Responder `ARCH-Q` | `python agente.py architecture-agent "Respuestas del equipo. ARCH-Q-001: ..." --continuar ARQ-001` | Respuestas de arquitectura | Candidata 1.0 de la ARQ |
+| 6. Congelar | `[S/n]`, o `... "El equipo aprueba la ARQ-001" --continuar ARQ-001` | Decides aprobar la arquitectura | `ARQ-001_v1.0` en `aprobadas/` |
+
+### Reglas que se mantienen en las dos etapas
+- **La IA propone, una persona decide, el equipo valida.** Ningún agente convierte sus propuestas en decisiones: apruebas tú, en la terminal o con `--continuar`.
+- **La épica la decide el equipo**, no el agente. El Specification Agent la pregunta (`OPEN-Q-...`); el Architecture Agent la recibe por `--epica`.
+- **Los temas técnicos quedan marcados, no resueltos**: la sección 14 de una SPEC etiqueta los temas de construcción con "tema para arquitectura. Origen: RF-00x"; son insumo adicional para el Architecture Agent.
+- **La SPEC se congela antes de la arquitectura.** Nunca corras el Architecture Agent con borradores: la entrada son solo SPECs aprobadas.
+- **Salidas como evidencia**: todo el historial (borradores, análisis, aprobadas y `registro.md`) queda guardado para explicar por qué existe cada decisión.
+
+### Ejemplo de recorrido real (lo que dejó la Fase C)
+- SPEC-001 (aviso de privacidad y consentimiento, EPIC-001) y SPEC-002 (identificadores de Telegram, EPIC-002) quedaron aprobadas en `salidas/specification-agent/aprobadas/`.
+- Con `--aprobada SPEC-001 SPEC-002` el Architecture Agent produjo el análisis `ARQ-001` (`analisis/ARQ-001/ARQ-001_v0.1.md`), luego la propuesta Candidata `ARQ-001 v1.0` y su versión aprobada en `salidas/architecture-agent/aprobadas/ARQ-001_v1.0.md` (monolito modular con adaptadores de canal y PostgreSQL local, decidido por el equipo).
+- Con `--epica EPIC-002` produjo el análisis `ARQ-002`.
 
 ---
 
