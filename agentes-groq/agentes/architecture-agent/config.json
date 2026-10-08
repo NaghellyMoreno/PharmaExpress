@@ -1,0 +1,22 @@
+{
+  "nombre": "Architecture Agent",
+  "descripcion": "Recibe una o varias SPEC aprobadas y congeladas y devuelve preguntas de análisis (ARCH-Q) y una propuesta de arquitectura justificable: Architecture Package, ADR, diagrama conceptual y trazabilidad, sin decisiones humanas tomadas por la IA.",
+  "proveedor": "gemini",
+  "modelo": "gemini-3.5-flash-lite",
+  "modelos_respaldo": [
+    "gemini-3.7-flash",
+    "gemini-3.6-flash",
+    "gemini-3.5-flash",
+    "gemini-3.5-flash-lite"
+  ],
+  "parametros": {
+    "temperature": 0.4,
+    "top_p": 0.95,
+    "max_tokens": 32000
+  },
+  "organizacion_salida": "spec",
+  "carpeta_salida": "agentes-groq/salidas/architecture-agent",
+  "prefijo_documento": "ARQ",
+  "numeracion_solo_documento": true,
+  "interactivo": true
+}

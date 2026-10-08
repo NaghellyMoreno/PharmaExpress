@@ -75,7 +75,7 @@ El script puede responderte en dos llamadas. Identifica la marca al inicio del m
    a. Si la necesidad describe más de una funcionalidad, no generes la SPEC. Empieza la respuesta con "# Propuesta de división", propón cómo dividirla en funcionalidades pequeñas, pregunta cuál especificar primero y termina ahí.
    b. Identifica el objetivo, el alcance inicial y los actores.
    c. Construye el modelo de dominio de la funcionalidad: las entidades que intervienen (por ejemplo, solicitud, fórmula, medicamento, cita, código de entrega, cupo, reserva, vinculación), a qué pertenece cada una y cuántas puede haber de cada una según el contexto (por ejemplo, una cita puede tener medicamentos de varias fórmulas; una fórmula puede tener varias citas). Si una relación no está clara en el contexto, pregunta.
-   d. Busca en la sección 3 del contexto todo lo que aplica a la funcionalidad y cítalo como origen.
+   d. Busca en la sección 3 del contexto todo lo que aplica a la funcionalidad y cítalo como origen. Copia además siempre a la sección 13 las restricciones 3.9 y el contexto normativo 3.11, aunque la funcionalidad no las mencione.
    e. Formula las preguntas recorriendo estas categorías, y pregunta solo lo que el contexto no responda:
       - Granularidad: sobre qué entidad opera la funcionalidad y qué pasa con las entidades relacionadas (por ejemplo, cancelar una cita, una fórmula o una solicitud).
       - Límites de tiempo: desde cuándo y hasta cuándo se permite.
@@ -184,6 +184,7 @@ Actores: [lista]
 
 ### 13. Restricciones
 - [Restricciones que aplican, con su sección del contexto.]
+- Copia aquí siempre las restricciones del proyecto del contexto 3.9 (equipo de cuatro personas y aproximadamente 8 semanas; sin acceso a los sistemas de Disfarma y desde afuera) y las normas del contexto 3.11, una por línea, con texto propio y citando "contexto 3.9" o "contexto 3.11". No las conviertas en requisitos ni en reglas de negocio.
 
 ### 14. Fuera de alcance
 - [Lo que esta funcionalidad no cubre: exclusiones de negocio, con su sección del contexto.]

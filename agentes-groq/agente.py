@@ -415,7 +415,7 @@ def mensaje_respuestas(preguntas, respuestas):
     """Arma el mensaje de la segunda fase con la respuesta del equipo a cada pregunta."""
     lineas = ["FASE=RESPUESTAS", ""]
     if not preguntas:
-        lineas.append("No hubo preguntas de aclaración. Genera la SPEC con la necesidad original.")
+        lineas.append("No hubo preguntas de aclaración. Genera el documento con la petición original.")
         return "\n".join(lineas)
     for pregunta in preguntas:
         respuesta = respuestas.get(pregunta["id"])
@@ -442,7 +442,7 @@ def flujo_interactivo(cliente, config, prompt_sistema, peticion, adjuntos, nombr
     respuestas = interactuar(preguntas)
     mensajes.append({"role": "assistant", "content": texto})
     mensajes.append({"role": "user", "content": mensaje_respuestas(preguntas, respuestas)})
-    print("\nGenerando la SPEC con tus respuestas...\n")
+    print("\nGenerando el documento con tus respuestas...\n")
     completado2 = llamar(cliente, config, mensajes, nombre_proveedor)
     respuesta = completado2.choices[0].message.content or ""
     avisar(completado2, "fase 2")
@@ -489,7 +489,14 @@ def sugerencia_siguiente(estado, id_doc, nombre_agente):
     """Qué hacer después, según el estado en que quedó el documento."""
     texto = estado.lower()
     if "aprobada" in texto:
-        return f"{id_doc} quedó aprobada y congelada; lista para el Architecture Agent."
+        siguiente = (
+            "Planning Agent"
+            if nombre_agente == "architecture-agent"
+            else "Architecture Agent"
+            if nombre_agente == "specification-agent"
+            else "el siguiente agente del flujo"
+        )
+        return f"{id_doc} quedó aprobada y congelada; lista para el {siguiente}."
     if "candidata" in texto:
         return (
             f'Para congelarla: python agente.py {nombre_agente} '
@@ -573,14 +580,17 @@ def numeracion_inicial(config, nombre_agente, prefijo):
     linea = f"{prefijo}-{(max(ids) if ids else 0) + 1:03d}"
 
     elementos = []
-    for tipo in ("HU", "RF", "RNF", "BR", "CL", "AC"):
-        encontrados = [
-            int(n)
-            for documento in documentos
-            for n in re.findall(rf"\b{tipo}-(\d+)\b", documento.read_text(encoding="utf-8"))
-        ]
-        if encontrados:
-            elementos.append(f"{tipo}-{max(encontrados) + 1:03d}")
+    # Para documentos como ARQ (que citan elementos calificados SPEC-001/RF-005 pero
+    # no los numeran como propios), "empieza en ..." sería engañoso: va solo el ID.
+    if not config.get("numeracion_solo_documento"):
+        for tipo in ("HU", "RF", "RNF", "BR", "CL", "AC"):
+            encontrados = [
+                int(n)
+                for documento in documentos
+                for n in re.findall(rf"\b{tipo}-(\d+)\b", documento.read_text(encoding="utf-8"))
+            ]
+            if encontrados:
+                elementos.append(f"{tipo}-{max(encontrados) + 1:03d}")
     if elementos:
         linea += ", empieza en " + ", ".join(elementos)
     return linea + "."
@@ -671,10 +681,19 @@ def main():
         print()
 
     # En la primera versión, el script le pasa la numeración al agente: el modelo no
-    # ve las salidas anteriores y no puede saber en qué SPEC se va ni por dónde sigue.
-    # Si el usuario ya indicó el número, o hay documentos adjuntos (--continuar), se omite.
+    # ve las salidas anteriores y no puede saber en qué documento se va ni por dónde
+    # sigue. Se omite si el usuario ya indicó el número, si se usa --continuar o si
+    # se adjunta un documento del propio tipo (ARQ-00x): eso ya trae su numeración.
     numeracion = ""
-    if por_spec and not adjuntos and not re.search(rf"{re.escape(prefijo)}-\d{{3}}", peticion):
+    hay_documento_propio = any(
+        re.search(rf"{re.escape(prefijo)}-\d{{3}}_v", Path(ruta).name) for ruta in adjuntos
+    )
+    if (
+        por_spec
+        and not args.continuar
+        and not hay_documento_propio
+        and not re.search(rf"{re.escape(prefijo)}-\d{{3}}", peticion)
+    ):
         numeracion = numeracion_inicial(config, args.agente, prefijo)
     mensaje = f"{numeracion} {peticion}" if numeracion else peticion
     if numeracion:
