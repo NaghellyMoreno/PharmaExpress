@@ -13,7 +13,6 @@ from ..errores import ErrorAgente
 from ..rutas import relativa_al_proyecto
 from .base import Almacen, escribir_con_encabezado, ruta_libre
 
-PATRON_ENCABEZADO = re.compile(r"^#\s*(SPEC-\d{3})\.\s*(.+?)\s*-\s*Versi[oó]n\s*(\d+\.\d+)\s*$", re.M)
 PATRON_ESTADO = re.compile(r"^Estado:\s*(.+?)\s*$", re.M)
 PATRON_VERSION_ARCHIVO = re.compile(r"_v(\d+)\.(\d+)")
 MARCA_INCOMPLETA = "_INCOMPLETA"
@@ -33,9 +32,16 @@ class EncabezadoSpec:
         return "aprobada" in self.estado.lower()
 
 
-def leer_encabezado_spec(texto):
+def patron_encabezado(prefijo):
+    """Encabezado "# SPEC-001. Nombre - Versión X.Y"; otros agentes usan su prefijo (por ejemplo, ARQ)."""
+    return re.compile(
+        rf"^#\s*({prefijo}-\d{{3}})\.\s*(.+?)\s*-\s*Versi[oó]n\s*(\d+\.\d+)\s*$", re.M
+    )
+
+
+def leer_encabezado_spec(texto, prefijo="SPEC"):
     """Devuelve el encabezado de la SPEC, o None si la respuesta no es una SPEC."""
-    encabezado = PATRON_ENCABEZADO.search(texto)
+    encabezado = patron_encabezado(prefijo).search(texto)
     if not encabezado:
         return None
     estado = PATRON_ESTADO.search(texto)
@@ -54,6 +60,10 @@ def clave_version(ruta):
 
 
 class AlmacenSpec(Almacen):
+    # Prefijo del encabezado y título del registro; las subclases los cambian.
+    PREFIJO = "SPEC"
+    TITULO_REGISTRO = "# Registro de ejecuciones del Specification Agent"
+
     @property
     def registro(self):
         return self.carpeta / "registro.md"
@@ -61,7 +71,7 @@ class AlmacenSpec(Almacen):
     def guardar(self, ejecucion):
         texto = ejecucion.respuesta.texto
         cortada = ejecucion.respuesta.cortada
-        spec = leer_encabezado_spec(texto)
+        spec = leer_encabezado_spec(texto, self.PREFIJO)
         if spec is None:
             destino = self.carpeta / "sin-clasificar" / f"{ejecucion.fecha:%Y%m%d-%H%M}_sin-clasificar.md"
         else:
@@ -94,7 +104,7 @@ class AlmacenSpec(Almacen):
         sueltos = [a for a in sorted(self.carpeta.glob("*.md")) if a.name != self.registro.name]
         for archivo in sueltos:
             texto = archivo.read_text(encoding="utf-8")
-            spec = leer_encabezado_spec(texto)
+            spec = leer_encabezado_spec(texto, self.PREFIJO)
             if spec is None:
                 destino = self.carpeta / "sin-clasificar" / archivo.name
             else:
@@ -112,11 +122,9 @@ class AlmacenSpec(Almacen):
 
     def _registrar(self, ejecucion, spec, archivo):
         if not self.registro.exists():
-            self.registro.write_text(
-                "# Registro de ejecuciones del Specification Agent\n\n", encoding="utf-8"
-            )
+            self.registro.write_text(f"{self.TITULO_REGISTRO}\n\n", encoding="utf-8")
         if spec is None:
-            id_spec, version, estado = "-", "-", "Sin encabezado de SPEC"
+            id_spec, version, estado = "-", "-", f"Sin encabezado de {self.PREFIJO}"
         else:
             id_spec, version, estado = spec.id, spec.version, spec.estado
         incompleta = " | INCOMPLETA" if ejecucion.respuesta.cortada else ""

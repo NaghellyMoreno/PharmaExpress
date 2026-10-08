@@ -1,0 +1,31 @@
+{
+  "nombre": "Architecture Agent",
+  "descripcion": "Recibe las SPEC aprobadas de Pharma Express y el contexto del producto y devuelve un Architecture Package versionado con drivers, alternativas comparadas, ADR, componentes, riesgos, preguntas técnicas y trazabilidad.",
+  "proveedor": "openrouter",
+  "modelo": "google/gemma-4-31b-it:free",
+  "modelos_respaldo": [
+    "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "openrouter/free",
+    {
+      "proveedor": "ollama",
+      "modelo": "pharma-qwen-arq",
+      "parametros": {
+        "temperature": 0.2,
+        "top_p": 0.95,
+        "max_tokens": 24000,
+        "reasoning_effort": "none"
+      }
+    }
+  ],
+  "parametros": {
+    "temperature": 0.2,
+    "top_p": 0.95,
+    "max_tokens": 32000
+  },
+  "organizacion_salida": "arquitectura",
+  "carpeta_salida": "agentes-ia/salidas/architecture-agent",
+  "carpeta_specs": "agentes-ia/salidas/specification-agent",
+  "specs_ignoradas": [
+    "SPEC-901"
+  ]
+}

@@ -17,6 +17,10 @@ class Proveedor:
     variable_llave: Optional[str] = None
     # Variable de agentes-ia/.env que permite cambiar la dirección del proveedor.
     variable_url: Optional[str] = None
+    # Segundos de espera por respuesta y reintentos. None usa los de la librería openai
+    # (10 minutos y 2 reintentos).
+    tiempo_espera: Optional[float] = None
+    reintentos: Optional[int] = None
 
     def llave(self):
         if not self.variable_llave:
@@ -39,7 +43,11 @@ PROVEEDORES = {
     "groq": Proveedor("https://api.groq.com/openai/v1", variable_llave="GROQ_API_KEY"),
     "openrouter": Proveedor("https://openrouter.ai/api/v1", variable_llave="OPENROUTER_API_KEY"),
     # IA local: no necesita llave. Se puede cambiar la dirección con OLLAMA_BASE_URL en .env.
-    "ollama": Proveedor("http://localhost:11434/v1", variable_url="OLLAMA_BASE_URL"),
+    # Un modelo local pequeño puede tardar más de una hora en una respuesta larga, y reintentar
+    # solo repite todo el trabajo: se espera hasta 2 horas y no se reintenta.
+    "ollama": Proveedor(
+        "http://localhost:11434/v1", variable_url="OLLAMA_BASE_URL", tiempo_espera=7200, reintentos=0
+    ),
 }
 PROVEEDOR_POR_DEFECTO = "openrouter"
 
@@ -65,7 +73,12 @@ def crear_cliente(nombre_proveedor):
         from openai import OpenAI
     except ImportError:
         raise ProveedorNoDisponible("Falta la librería openai. Ejecuta: pip install -r requirements.txt")
-    return OpenAI(api_key=llave, base_url=proveedor.url())
+    opciones = {}
+    if proveedor.tiempo_espera is not None:
+        opciones["timeout"] = proveedor.tiempo_espera
+    if proveedor.reintentos is not None:
+        opciones["max_retries"] = proveedor.reintentos
+    return OpenAI(api_key=llave, base_url=proveedor.url(), **opciones)
 
 
 def listar_modelos(nombre_proveedor):

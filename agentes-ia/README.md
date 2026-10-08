@@ -42,21 +42,26 @@ agentes-ia/
 │   ├── ejecutor.py            ← llama al modelo y pasa al respaldo si falla
 │   ├── mensajes.py            ← petición + archivos adjuntos
 │   ├── errores.py / rutas.py  ← errores mostrados en una línea y carpetas del proyecto
-│   └── salidas/               ← formas de guardar: simple.py (por defecto) y spec.py (por SPEC)
+│   └── salidas/               ← formas de guardar: simple.py (por defecto), spec.py (por SPEC)
+│                                 y arquitectura.py (por ARQ, y escoge las SPEC de entrada)
 ├── requirements.txt           ← dependencias (openai, python-dotenv)
 ├── .env                       ← llaves de API (no se sube a git)
 ├── ollama/
-│   └── Modelfile              ← modelo local "pharma-qwen" con el contexto ampliado
+│   ├── Modelfile              ← modelo local "pharma-qwen" con el contexto ampliado
+│   └── Modelfile-arquitectura ← modelo "pharma-qwen-arq" (65.536 tokens) para el Architecture Agent
 ├── agentes/
 │   ├── _plantilla/            ← copia esta carpeta para crear un agente nuevo
 │   ├── specification-agent/   ← genera preguntas y una SPEC de una funcionalidad
+│   ├── architecture-agent/    ← genera el Architecture Package (ARQ-001) desde las SPEC aprobadas
 │   └── generador-hu-invest/   ← genera historias de usuario y las evalúa con INVEST
 └── salidas/                   ← respuestas guardadas
     ├── specification-agent/   ← SPEC por versión y registro.md
+    ├── architecture-agent/    ← ARQ-001 por versión y registro.md
     └── User-Strories/         ← backlog (UserStory.md) e historias del generador en generadas/
 
 .claude/agents/                ← los mismos agentes como subagentes de Claude Code (raíz del proyecto)
 ├── specification-agent.md
+├── architecture-agent.md
 ├── generador-hu-invest.md
 └── user-story-reviewer.md
 ```
@@ -99,7 +104,7 @@ pip install -r requirements.txt
 python agente.py --listar
 ```
 
-Debe mostrar `generador-hu-invest` y `specification-agent`. Para confirmar que la llave funciona y ver los modelos disponibles:
+Debe mostrar `architecture-agent`, `generador-hu-invest` y `specification-agent`. Para confirmar que la llave funciona y ver los modelos disponibles:
 
 ```bash
 python agente.py --modelos openrouter
@@ -200,6 +205,73 @@ Edita `proveedor`, `modelo` y `modelos_respaldo` en el `config.json` del agente.
 
 ---
 
+## Parte 2B — Usar el Architecture Agent
+
+**Qué hace:** recibe las SPEC aprobadas y el contexto del producto y devuelve el **Architecture Package** del sistema (`ARQ-001`): reporte de cobertura de SPEC, Architecture Drivers (`DRV-001`...), restricciones, atributos de calidad, alternativas por dimensión con su matriz de decisión, arquitectura recomendada, diagramas Mermaid por niveles C4, componentes (`COMP-001`...), integraciones, ADR (`ADR-001`...), diseño, patrones, riesgos, supuestos, preguntas técnicas (`TQ-001`...) y trazabilidad. Sigue la guía del curso "Architecture Agent en Spec-Driven Development": **la IA propone, el equipo decide**.
+
+**Entradas automáticas:** el script adjunta la versión vigente de cada SPEC aprobada (la versión más alta y, a igual versión, el sufijo más alto: `SPEC-001_v1.3_2` antes que `SPEC-001_v1.3`) y un inventario de las SPEC que no están aprobadas. Las SPEC van sin sus secciones de proceso (análisis, preguntas, trazabilidad interna, historial y verificación), lo que ahorra unos 4.000 tokens; los requisitos, reglas, flujos, casos límite, criterios de aceptación y decisiones del equipo se conservan. Ignora las SPEC de `specs_ignoradas` en el `config.json` (hoy, `SPEC-901`, que es de prueba).
+
+**Arquitectura parcial:** las decisiones globales pueden basarse en la sección 3 del contexto; los componentes y las integraciones detalladas solo se definen para funcionalidades con SPEC aprobada. Las demás áreas quedan como "módulo previsto, pendiente de SPEC" y el reporte de cobertura propone la necesidad de cada SPEC faltante para el Specification Agent. Cuando se aprueban SPEC nuevas, la arquitectura se amplía con una nueva versión.
+
+**Versiones:** igual que la SPEC. Borradores `0.x` mientras haya preguntas técnicas críticas, candidata `1.0` y aprobada y congelada. Después de aprobar, cada ampliación sube a `1.1`, `1.2`... Los ADR quedan "Propuesto" hasta que el equipo aprueba el paquete; un ADR aceptado no se edita: se reemplaza con uno nuevo. Las respuestas a las TQ se registran en la propia TQ y los ADR las citan como evidencia.
+
+```
+salidas/architecture-agent/
+├── aprobadas/                 ← solo versiones aprobadas y congeladas (entrada del Planning Agent)
+├── borradores/
+│   └── ARQ-001/               ← borradores y candidatas
+├── sin-clasificar/            ← respuestas sin encabezado de ARQ
+└── registro.md
+```
+
+### Comandos
+
+1. Primera versión:
+
+```bash
+python agente.py architecture-agent "Diseñar la arquitectura inicial de Pharma Express"
+```
+
+2. Responder preguntas técnicas o pedir correcciones:
+
+```bash
+python agente.py architecture-agent "Respuestas del equipo. TQ-001: ... TQ-002: ..." --continuar ARQ-001
+```
+
+3. Aprobar:
+
+```bash
+python agente.py architecture-agent "El equipo aprueba la ARQ-001" --continuar ARQ-001
+```
+
+4. Ampliar después de aprobar una SPEC nueva:
+
+```bash
+python agente.py architecture-agent "Ampliar con la SPEC-004 aprobada" --continuar ARQ-001
+```
+
+### Con la IA local (Ollama)
+
+La petición ronda los 20.000 tokens y la respuesta puede pasar de 20.000, así que no cabe en los 32.768 de `pharma-qwen`. Este agente usa su propio modelo local, `pharma-qwen-arq`, con 65.536 tokens de contexto. Créalo una sola vez, después de los pasos de "IA local con Ollama":
+
+```bash
+ollama create pharma-qwen-arq -f ollama/Modelfile-arquitectura
+```
+
+Y ejecútalo con:
+
+```bash
+python agente.py architecture-agent "Diseñar la arquitectura inicial de Pharma Express" --proveedor ollama
+```
+
+- **Tiempo:** en un equipo de 8 GB, leer la petición toma unos 5 minutos y el modelo escribe unos 13 tokens por segundo, así que una versión completa puede tardar entre 30 y 60 minutos. El script espera hasta 2 horas y no reintenta.
+- **Sin razonamiento:** el `config.json` envía `reasoning_effort: "none"` a Ollama. Si no, qwen gasta miles de tokens "pensando" antes de responder, y no caben.
+- **Memoria:** con el motor MLX de Ollama, la memoria crece con los tokens que se usan: se midieron 5,25 GB con 25.000 tokens. Cierra las aplicaciones pesadas. Al continuar ARQ-001 también se adjunta la versión anterior del paquete y la petición crece; si el equipo se queda sin memoria, haz las iteraciones con Claude Code u OpenRouter.
+- **Calidad:** un modelo de 4B parámetros se equivoca más con la numeración, las matrices y la trazabilidad. Úsalo para borradores y revisa con más cuidado lo que produce; no apruebes una arquitectura sin revisarla.
+- Si la respuesta se corta (`_INCOMPLETA`), sube `max_tokens` del respaldo `pharma-qwen-arq` en el `config.json`, sin pasar de unos 40.000.
+
+---
+
 ## IA local con Ollama
 
 Sirve para trabajar sin internet, sin cupos y sin enviar datos a terceros. Con 8 GB de RAM el modelo recomendado es `qwen3.5:4b` (unos 3,4 GB). Un modelo de este tamaño tiene un puntaje muy inferior a los modelos en la nube, así que úsalo como respaldo o para borradores, no para aprobar SPEC.
@@ -234,6 +306,7 @@ Si tienes el plan Pro de Claude, también puedes ejecutar los agentes con Claude
 Los subagentes están en `.claude/agents/` (raíz del proyecto):
 
 - `specification-agent.md`: mismas reglas, convenciones y formato que `agentes/specification-agent/prompt.md`. Lee `PHARMA_EXPRESS_AGENTES.md` por su cuenta y guarda cada versión con la misma estructura de carpetas de la Parte 2.
+- `architecture-agent.md`: mismas reglas, convenciones y formato que `agentes/architecture-agent/prompt.md`. Busca por su cuenta las SPEC aprobadas vigentes y guarda cada versión con la estructura de la Parte 2B.
 - `generador-hu-invest.md`: mismas reglas que `agentes/generador-hu-invest/prompt.md`. Guarda en `agentes-ia/salidas/User-Strories/generadas/`.
 - `user-story-reviewer.md`: revisa y corrige historias de usuario existentes.
 
@@ -251,6 +324,11 @@ Desde la raíz del proyecto, abre Claude Code con `claude` y escríbele:
    *"Usa el agente specification-agent. Continuar SPEC-001. El equipo aprueba la SPEC."*
 
 Cada vez, el agente guarda un archivo nuevo y te muestra en la conversación las preguntas abiertas pendientes.
+
+Para la arquitectura:
+   *"Usa el agente architecture-agent para diseñar la arquitectura inicial"*
+   *"Usa el agente architecture-agent. Continuar ARQ-001. Respuestas del equipo: TQ-001: ..."*
+   *"Usa el agente architecture-agent. Continuar ARQ-001. El equipo aprueba la arquitectura."*
 
 Para historias de usuario:
    *"Usa el agente generador-hu-invest: genera 5 historias para la épica de cancelación de citas, empieza en HU-10"*
@@ -334,6 +412,7 @@ Haz commit de la carpeta nueva del agente (sin el `.env`). Así el equipo puede 
   - **503:** el modelo está saturado en ese momento; suele ser temporal.
   - Ante un 404, un 429, un 5xx o un error de conexión, el script prueba los `modelos_respaldo` del `config.json`, aunque sean de otro proveedor.
   - **404:** el modelo no existe o fue retirado en ese proveedor, o (en OpenRouter) la configuración de privacidad bloquea los modelos gratuitos; revisa con `--modelos`.
+- **IA local lenta:** con Ollama el script espera hasta 2 horas por respuesta y no reintenta, porque reintentar repite todo el trabajo. Si se agota el tiempo, muestra "Se agotó el tiempo de espera".
 - **Respuesta cortada:** si el script avisa que la respuesta se cortó, sube `max_tokens` en el `config.json`.
 - **Verificación:** la salida de un modelo puede contener errores. Toda cifra, norma o fuente debe verificarse antes de usarse en el proyecto.
 

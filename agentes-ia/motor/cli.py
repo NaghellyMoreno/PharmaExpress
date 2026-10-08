@@ -9,7 +9,7 @@ from .intentos import cadena_de_modelos, filtrar_cadena
 from .mensajes import construir_mensajes
 from .proveedores import PROVEEDORES, cargar_variables_entorno, listar_modelos
 from .rutas import relativa_al_proyecto
-from .salidas import AlmacenSpec, Ejecucion, crear_almacen
+from .salidas import AlmacenSpec, Ejecucion, compactar_spec, crear_almacen, entradas_arquitectura
 
 
 def crear_parser():
@@ -26,7 +26,7 @@ def crear_parser():
     )
     parser.add_argument(
         "--continuar", metavar="SPEC-00X",
-        help="Adjunta automáticamente la última versión completa de esa SPEC",
+        help="Adjunta automáticamente la última versión completa de esa SPEC (o de ARQ-001)",
     )
     parser.add_argument(
         "--proveedor", choices=sorted(PROVEEDORES),
@@ -79,8 +79,21 @@ def comando_ejecutar(args):
         print(f"Adjuntando la última versión: {relativa_al_proyecto(anterior)}\n")
         adjuntos.insert(0, str(anterior))
 
+    textos = []
+    # Agentes que trabajan sobre las SPEC aprobadas (como el Architecture Agent) las reciben siempre.
+    if "carpeta_specs" in agente.config:
+        specs, inventario = entradas_arquitectura(agente.config)
+        for spec in specs:
+            print(f"Adjuntando SPEC aprobada: {relativa_al_proyecto(spec)}")
+            textos.append((
+                f"SPEC aprobada: {spec.name} (sin las secciones de proceso)",
+                compactar_spec(spec.read_text(encoding="utf-8")),
+            ))
+        print()
+        textos.append(("Inventario de SPEC no aprobadas", inventario))
+
     print(f"Agente: {agente.nombre}")
-    mensajes = construir_mensajes(agente.prompt_sistema, peticion, adjuntos)
+    mensajes = construir_mensajes(agente.prompt_sistema, peticion, adjuntos, textos)
     # Si un modelo está saturado, sin cupo o sin conexión, se prueba el siguiente de "modelos_respaldo".
     respuesta = EjecutorConRespaldo().ejecutar(intentos, mensajes)
     _mostrar_respuesta(respuesta)

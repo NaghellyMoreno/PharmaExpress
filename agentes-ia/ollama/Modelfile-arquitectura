@@ -1,0 +1,11 @@
+# Modelo local del Architecture Agent para Ollama.
+# Crear una sola vez (desde agentes-ia/), después de descargar qwen3.5:4b:
+#   ollama create pharma-qwen-arq -f ollama/Modelfile-arquitectura
+#
+# El Architecture Agent recibe unos 20.000 tokens (prompt, contexto y SPEC aprobadas) y puede
+# responder hasta 24.000; al continuar ARQ-001 se suma la versión anterior del paquete.
+# No cabe en los 32.768 tokens de pharma-qwen, por eso aquí se fija en 65.536.
+# Con el motor MLX la memoria crece con los tokens que se usan, no con este límite:
+# se midieron 5,25 GB con 25.000 tokens en un equipo de 8 GB.
+FROM qwen3.5:4b
+PARAMETER num_ctx 65536

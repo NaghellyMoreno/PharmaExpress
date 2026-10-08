@@ -65,12 +65,20 @@ class EjecutorConRespaldo:
             raise _IntentoFallido(f"no se puede usar {intento.proveedor}: {error}", str(error))
 
         # Se importa aquí porque, si falta la librería, la fábrica ya avisó arriba.
-        from openai import APIConnectionError, APIError
+        from openai import APIConnectionError, APIError, APITimeoutError
 
         self._avisar(f"Ejecutando con {intento}...\n")
+        if intento.proveedor == "ollama":
+            self._avisar("Con la IA local, una respuesta larga puede tardar más de 30 minutos.\n")
         try:
             return cliente.chat.completions.create(
                 model=intento.modelo, messages=mensajes, **intento.parametros
+            )
+        except APITimeoutError as error:
+            # Va antes de APIConnectionError porque es una subclase suya.
+            raise _IntentoFallido(
+                f"{intento.modelo} no respondió a tiempo.",
+                f"Se agotó el tiempo de espera ({intento.proveedor}): {error}",
             )
         except APIConnectionError as error:
             # Pasa con Ollama cuando la aplicación no está abierta.
