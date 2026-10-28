@@ -1,0 +1,291 @@
+// Pharma Express — modelo de datos del MVP.
+// Las tablas con prefijo Sim* representan las fuentes externas SIMULADAS (EPS e inventario, SPEC-08).
+// Pharma Express no registra pacientes (DEC-05): el paciente se identifica por la cédula de la EPS simulada.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Fuentes simuladas y catálogos (SPEC-08) ----------
+
+model SimPacienteEps {
+  cedula           String   @id
+  nombre           String
+  eps              String // "Salud Total" | "Sanitas" (DEC-31: mismas reglas)
+  afiliacionActiva Boolean
+  celular          String?
+  correo           String?
+  formulas         SimFormulaEps[]
+}
+
+model SimFormulaEps {
+  numero         String              @id
+  pacienteCedula String
+  paciente       SimPacienteEps      @relation(fields: [pacienteCedula], references: [cedula])
+  diagnostico    String // CIE-10; lo usa la clasificación agudo/crónico (DEC-41)
+  vigencia       DateTime            @db.Date // dato de la EPS (DEC-13)
+  habilitada     DateTime?           @db.Date // próxima entrega crónica (SUP-01)
+  items          SimFormulaEpsItem[]
+}
+
+model SimFormulaEpsItem {
+  id                String        @id @default(cuid())
+  formulaNumero     String
+  formula           SimFormulaEps @relation(fields: [formulaNumero], references: [numero])
+  medicamentoCodigo String
+  medicamento       Medicamento   @relation(fields: [medicamentoCodigo], references: [codigo])
+  cantidad          Int
+  autorizado        Boolean       @default(false)
+}
+
+model Medicamento {
+  codigo     String              @id
+  nombre     String
+  pbs        Boolean // catálogo PBS simulado (SUP-09)
+  inventario Inventario[]
+  itemsEps   SimFormulaEpsItem[]
+}
+
+model DiagnosticoCronico {
+  codigo      String @id
+  descripcion String
+}
+
+model ContenidoEps {
+  eps             String @id
+  autorizaciones  String // puntos, enlaces o trámites de autorización (DEC-15)
+  actualizarDatos String // orientación para actualizar contacto (DEC-08)
+}
+
+model MotivoNoEntrega {
+  codigo          String  @id
+  descripcion     String
+  exigeDescripcion Boolean @default(false)
+}
+
+model Punto {
+  id         String       @id
+  nombre     String // nombres ficticios (DEC-30)
+  dias       Int[] // 0=domingo … 6=sábado
+  abre       Int // hora de inicio de la primera ventana
+  cierra     Int // hora de fin de la última ventana
+  capacidad  Int // cupos por ventana de 1 hora
+  inventario Inventario[]
+  cupos      CupoVentana[]
+  citas      Cita[]
+  dispensadores Dispensador[]
+}
+
+model Inventario {
+  puntoId           String
+  medicamentoCodigo String
+  existencias       Int
+  punto             Punto       @relation(fields: [puntoId], references: [id])
+  medicamento       Medicamento @relation(fields: [medicamentoCodigo], references: [codigo])
+
+  @@id([puntoId, medicamentoCodigo])
+}
+
+// ---------- Identidad, consentimiento y canales (SPEC-01, SPEC-02) ----------
+
+enum TipoAceptante {
+  TITULAR
+  TERCERO
+}
+
+enum Canal {
+  WEB
+  TELEGRAM
+}
+
+model Consentimiento {
+  id               String        @id @default(cuid())
+  pacienteCedula   String
+  tipo             TipoAceptante
+  canal            Canal
+  aceptadoEn       DateTime
+  saludAutorizada  Boolean       @default(false)
+  saludAutorizadaEn DateTime?
+  revocadoEn       DateTime?
+}
+
+model CodigoVerificacion {
+  id             String    @id @default(cuid())
+  pacienteCedula String
+  hash           String // scrypt(código, sal) — nunca el código en claro
+  venceEn        DateTime
+  intentos       Int       @default(0)
+  anuladoEn      DateTime?
+  usadoEn        DateTime?
+  creadoEn       DateTime  @default(now())
+}
+
+enum EstadoVinculacion {
+  ACTIVA
+  REVOCADA
+}
+
+model Vinculacion {
+  id             String            @id @default(cuid())
+  canal          Canal
+  destino        String // id del navegador (cookie httpOnly) o chat_id de Telegram; nunca prueba identidad
+  pacienteCedula String
+  estado         EstadoVinculacion @default(ACTIVA)
+  verificadaEn   DateTime
+  venceEn        DateTime // verificadaEn + 90 días (DEC-10); vencida = no vinculada (DEC-46)
+
+  @@unique([canal, destino, pacienteCedula])
+}
+
+// ---------- Solicitudes y prevalidación (SPEC-03) ----------
+
+enum EstadoFormula {
+  CARGADA
+  APTA
+  NO_APTA
+  SIN_DISPONIBILIDAD
+  AGENDADA
+  ENTREGADA
+  CERRADA_NO_ENTREGADOS
+  LIBERADA
+}
+
+enum TipoTratamiento {
+  AGUDO
+  CRONICO
+}
+
+model Solicitud {
+  id             String      @id @default(cuid())
+  pacienteCedula String
+  canal          Canal
+  creadaEn       DateTime
+  formulas       Formula[]
+  documentos     Documento[]
+}
+
+model Documento {
+  id          String    @id @default(cuid())
+  solicitudId String
+  solicitud   Solicitud @relation(fields: [solicitudId], references: [id], onDelete: Cascade)
+  tipo        String // FORMULA | HISTORIA_CLINICA
+  ruta        String
+  mime        String
+}
+
+model Formula {
+  id          String           @id @default(cuid())
+  solicitudId String
+  solicitud   Solicitud        @relation(fields: [solicitudId], references: [id], onDelete: Cascade)
+  numero      String
+  tipo        TipoTratamiento?
+  estado      EstadoFormula    @default(CARGADA)
+  motivo      String?
+  siguiente   String?
+  items       FormulaItem[]
+}
+
+enum EstadoItem {
+  PENDIENTE
+  RESERVADO
+  ENTREGADO
+  NO_ENTREGADO
+  PERDIDO
+  LIBERADO
+}
+
+model FormulaItem {
+  id                String     @id @default(cuid())
+  formulaId         String
+  formula           Formula    @relation(fields: [formulaId], references: [id], onDelete: Cascade)
+  medicamentoCodigo String
+  cantidad          Int
+  estado            EstadoItem @default(PENDIENTE)
+  citaItems         CitaItem[]
+}
+
+// ---------- Reserva y agenda (SPEC-04) ----------
+
+model CupoVentana {
+  puntoId String
+  inicio  DateTime
+  usados  Int      @default(0)
+  punto   Punto    @relation(fields: [puntoId], references: [id])
+
+  @@id([puntoId, inicio])
+}
+
+enum EstadoCita {
+  RESERVADA
+  CUMPLIDA
+  CERRADA
+  CANCELADA
+  EXPIRADA
+}
+
+enum EstadoCodigo {
+  EMITIDO
+  USADO
+  ANULADO
+}
+
+model Cita {
+  id             String       @id @default(cuid())
+  pacienteCedula String
+  puntoId        String
+  punto          Punto        @relation(fields: [puntoId], references: [id])
+  inicio         DateTime
+  fin            DateTime
+  estado         EstadoCita   @default(RESERVADA)
+  codigo         String       @unique // numérico de 8 dígitos; el QR codifica "PX:<codigo>"
+  estadoCodigo   EstadoCodigo @default(EMITIDO)
+  creadaEn       DateTime
+  llegadaEn      DateTime?
+  items          CitaItem[]
+}
+
+model CitaItem {
+  id            String      @id @default(cuid())
+  citaId        String
+  cita          Cita        @relation(fields: [citaId], references: [id], onDelete: Cascade)
+  formulaItemId String
+  formulaItem   FormulaItem @relation(fields: [formulaItemId], references: [id], onDelete: Cascade)
+  resultado     String? // ENTREGADO | NO_ENTREGADO
+  motivo        String?
+  descripcion   String?
+  dispensador   String?
+  cerradoEn     DateTime?
+}
+
+// ---------- Dispensación (SPEC-06) ----------
+
+model Dispensador {
+  id        String @id @default(cuid())
+  usuario   String @unique
+  claveHash String
+  puntoId   String
+  punto     Punto  @relation(fields: [puntoId], references: [id])
+}
+
+// ---------- Notificaciones y trazabilidad (SPEC-05, RNF-08, RNF-16) ----------
+
+model NotificacionWeb {
+  id             String   @id @default(cuid())
+  navegadorId    String
+  pacienteCedula String
+  texto          String
+  creadaEn       DateTime
+  leida          Boolean  @default(false)
+}
+
+model Evento {
+  id       String   @id @default(cuid())
+  tipo     String
+  detalle  Json
+  creadoEn DateTime
+}
