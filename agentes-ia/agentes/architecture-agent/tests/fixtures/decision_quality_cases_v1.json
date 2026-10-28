@@ -1,0 +1,74 @@
+[
+  {
+    "id": "A",
+    "scenario": "Contexto suficiente",
+    "source": "club.md",
+    "document": "SPEC aprobada. Un club con dos desarrolladoras debe gestionar reservas de salas en seis semanas. No se permite confirmar dos reservas de la misma sala y franja. El prototipo se despliega como una unidad en la infraestructura institucional aprobada. No se exige despliegue independiente de funciones.",
+    "preflight": "Infraestructura institucional aprobada",
+    "expected_status": "READY",
+    "review_focus": "Consistencia de reservas y costo operativo; no atribuir atomicidad automática al estilo arquitectónico."
+  },
+  {
+    "id": "B",
+    "scenario": "Dos alternativas razonables",
+    "source": "biblioteca.md",
+    "document": "SPEC aprobada. Una biblioteca digital separa catálogo público y préstamos internos. Dos equipos coordinados pueden desplegar juntos o por separado. Catálogo necesita crecimiento de lectura; préstamos requiere integridad de disponibilidad. Ambas operaciones comparten reglas de disponibilidad aprobadas. El entorno institucional admite ambos modos de despliegue.",
+    "preflight": "Entorno institucional; ambos modos permitidos",
+    "expected_status": "READY",
+    "review_focus": "Comparar coordinación, integridad y despliegue; reconocer ventajas y costos de ambas opciones."
+  },
+  {
+    "id": "C",
+    "scenario": "Restricción humana excluyente",
+    "source": "avisos.md",
+    "document": "SPEC aprobada. El sistema programa avisos a estudiantes y registra entregas. Un bus de mensajes externo era candidato, pero la institución aprobó una restricción: el prototipo no puede usar infraestructura de mensajería externa. El entorno de despliegue institucional dispone de procesos programados.",
+    "preflight": "Entorno institucional aprobado; sin mensajería externa",
+    "expected_status": "READY",
+    "review_focus": "Descartar cualquier opción que dependa obligatoriamente de mensajería externa; no declarar inviables otras opciones por ausencia de datos."
+  },
+  {
+    "id": "D",
+    "scenario": "Información insuficiente",
+    "source": "idea.md",
+    "document": "Se necesita una plataforma para coordinar actividades. No se especifican actores, operaciones, límites ni restricciones aprobadas.",
+    "preflight": "NO_DEFINIDO_PROPONER_ALTERNATIVAS",
+    "expected_status": "NEEDS_INFORMATION",
+    "review_focus": "Preguntar solo por hechos que cambian límites o responsabilidades; no inventar arquitectura."
+  },
+  {
+    "id": "E",
+    "scenario": "Decisiones contradictorias",
+    "source": "decision_a.md + decision_b.md",
+    "document": "Documento aprobado A: todos los datos deben permanecer en infraestructura local. Documento aprobado B, de igual autoridad: todos los datos deben alojarse exclusivamente en nube pública. No hay regla de precedencia.",
+    "preflight": "Decisiones aprobadas contradictorias",
+    "expected_status": "NEEDS_INFORMATION",
+    "review_focus": "Pedir resolución humana de la contradicción antes de recomendar."
+  },
+  {
+    "id": "F",
+    "scenario": "Monolito no automático",
+    "source": "municipio.md",
+    "document": "SPEC aprobada. Tres dominios municipales tienen equipos y ciclos de entrega independientes. Cada dominio debe desplegarse por separado, sin detener los otros. Las integraciones entre dominios están definidas como contratos institucionales. Existe equipo de operación para varios despliegues. La plataforma institucional está aprobada.",
+    "preflight": "Plataforma institucional aprobada",
+    "expected_status": "READY",
+    "review_focus": "Evaluar servicios independientes y sus costos; no elegir monolito modular por defecto."
+  },
+  {
+    "id": "G",
+    "scenario": "Reutilización fuera de farmacia",
+    "source": "sensores.md",
+    "document": "SPEC aprobada. Una cooperativa agrícola recibe mediciones de sensores cada hora y publica reportes diarios. Un equipo de tres personas mantiene el sistema. No se exige tiempo real ni disponibilidad continua. El despliegue local está aprobado.",
+    "preflight": "Servidor local aprobado",
+    "expected_status": "READY",
+    "review_focus": "No trasladar identidad, reservas, EPS, OTP ni otros supuestos de farmacia."
+  },
+  {
+    "id": "H",
+    "scenario": "Cambio de restricción material",
+    "source": "club.md",
+    "document": "Mismas necesidades funcionales del caso A, pero una decisión humana posterior exige despliegue independiente de reservas y facturación por equipos distintos. La infraestructura institucional soporta ambos despliegues.",
+    "preflight": "Infraestructura institucional aprobada; despliegue independiente obligatorio",
+    "expected_status": "READY",
+    "review_focus": "Comparar con A: reconsiderar límites y alternativa; explicar cualquier continuidad o cambio de recomendación."
+  }
+]
