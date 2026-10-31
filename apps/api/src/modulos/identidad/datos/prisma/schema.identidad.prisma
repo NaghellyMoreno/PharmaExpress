@@ -1,0 +1,20 @@
+// Esquema PostgreSQL del módulo `identidad` (un esquema por módulo — ver docs/arquitectura/propuesta-tecnologica.md).
+
+model Consentimiento {
+  id          String   @id @default(uuid())
+  solicitud  String?
+  condicion   String
+  fechaHora String
+  canal       String
+  estado      String
+  createdAt  DateTime @default(now())
+}
+
+model CodigoVerificacion {
+  id        String   @id @default(uuid())
+  codigo    String   @unique
+  emisionMs DateTime
+  intentosFallidos Int
+  inactivo Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
