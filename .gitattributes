@@ -1,0 +1,2 @@
+# Las SPEC se validan por hash de bytes: los finales de línea no deben variar entre equipos.
+*.md text eol=lf
