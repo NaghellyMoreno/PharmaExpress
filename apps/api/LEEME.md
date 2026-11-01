@@ -27,4 +27,22 @@ src/
 - Las migraciones de Prisma viven con su módulo.
 - No se modifica `qa/` ni las pruebas desde B1/B2.
 
-Aún no hay código: lo crea la primera iteración de B1 cuando el MVP esté aprobado y las pruebas rojas existan.
+## Cómo ejecutar
+
+```bash
+cd apps/api
+npm install
+npm run test:unidad                      # sin Docker
+npm test -- src/modulos/identidad        # un módulo (integración requiere Docker)
+python3 ../../qa/scripts/guardian.py rojas --modulo identidad   # ¿fallan por la razón correcta?
+```
+
+Base de datos local: `docker compose up -d postgres` desde la raíz del repo.
+
+## Estado
+
+- `identidad`: hay un código v0 (commit `b5f0ae2`) que **no sirve como base**; ver
+  `qa/incidentes/INC-20261031-001-identidad-v0.md`. B1 lo rehace cuando se respondan
+  PREG-003, PREG-004 y PREG-005 y S3 corrija las pruebas sospechosas.
+- El guardián (`qa/scripts/guardian.py`) revisa cada paso B: no se pueden tocar pruebas
+  ni dejar valores de prueba, `catch` vacíos o ramas «para que pase» en producción.

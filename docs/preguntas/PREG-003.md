@@ -1,4 +1,4 @@
-# PREG-003. <Pregunta concreta>
+# PREG-003. ¿La prueba «límite inferior» de TC-006 contradice CL-003 de la SPEC-001 v1.1?
 
 Origen: B1 (backend-servicios-api) — detectado en `apps/api/src/modulos/identidad/pruebas/dominio.spec.ts` (TC-006, caso «límite inferior»)
 SPEC: SPEC-001 (módulo `identidad`), CL-003 / SPEC-001/AC-009

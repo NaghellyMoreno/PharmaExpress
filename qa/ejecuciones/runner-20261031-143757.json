@@ -1,0 +1,18 @@
+{
+  "fecha": "20261031-143757",
+  "backend": "opencode",
+  "pasos": [
+    {
+      "paso": "S1",
+      "modulo": "identidad"
+    }
+  ],
+  "detenido_en": {
+    "motivo": "NO_APTA",
+    "paso": "S1",
+    "modulo": "identidad",
+    "responsable": "S1 Revisor de SPEC",
+    "accion": "Ejecutar revisión estática y resolver hallazgos bloqueantes.",
+    "bloqueado_por": "revision = pendiente"
+  }
+}

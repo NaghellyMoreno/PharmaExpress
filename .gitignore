@@ -6,3 +6,15 @@ __pycache__/
 
 
 *:Zone.Identifier
+
+# Node / builds
+node_modules/
+dist/
+apps/api/.env
+
+# Ruido de Windows / OneDrive
+desktop.ini
+Thumbs.db
+
+# Estado temporal del guardián
+qa/ejecuciones/.guardian-foto.json

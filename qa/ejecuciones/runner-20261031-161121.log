@@ -1,0 +1,2353 @@
+Runner 20261031-161121 | backend=opencode
+
+== Paso 1: [identidad] B1/B4 — B1 Servicios y API + B4 Ejecutor
+  Implementar el módulo y corregir hasta verde (máx. 3 iteraciones).
+  Bloqueado por: implementacion = pendiente ==
+[0m
+> general · flint-40b-free
+[0m→ [0mRead . 
+[0m→ [0mRead .claude/agents/backend-servicios-api.md 
+> general · flint-40b-free
+[0m→ [0mRead docs/mvp.md 
+[0m$ [0mls -la /home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs /home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps /home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa /home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia 2>&1
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude:
+total 24
+drwxr-xr-x  4 camila-giraldo camila-giraldo 4096 Oct 31 14:24 .
+drwxr-xr-x 12 camila-giraldo camila-giraldo 4096 Oct 31 16:00 ..
+-rw-r--r--  1 camila-giraldo camila-giraldo 4506 Oct 31 14:25 LEEME-agentes.md
+drwxr-xr-x  2 camila-giraldo camila-giraldo 4096 Oct 31 14:26 agents
+drwxr-xr-x 20 camila-giraldo camila-giraldo 4096 Oct 31 14:24 skills
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia:
+total 88
+drwxr-xr-x  4 camila-giraldo camila-giraldo  4096 Oct 31 14:26 .
+drwxr-xr-x 12 camila-giraldo camila-giraldo  4096 Oct 31 16:00 ..
+-rw-r--r--  1 camila-giraldo camila-giraldo    68 Oct  7 10:04 .env
+-rw-r--r--  1 camila-giraldo camila-giraldo 28972 Oct 31 14:26 README.md
+-rw-r--r--  1 camila-giraldo camila-giraldo 31911 Oct 31 14:26 agente.py
+drwxr-xr-x  6 camila-giraldo camila-giraldo  4096 Oct  7 18:45 agentes
+-rw-r--r--  1 camila-giraldo camila-giraldo    50 Oct  5 20:01 requirements.txt
+drwxr-xr-x  4 camila-giraldo camila-giraldo  4096 Oct  7 18:50 salidas
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps:
+total 16
+drwxr-xr-x  4 camila-giraldo camila-giraldo 4096 Oct 31 14:18 .
+drwxr-xr-x 12 camila-giraldo camila-giraldo 4096 Oct 31 16:00 ..
+drwxr-xr-x  3 camila-giraldo camila-giraldo 4096 Oct 31 15:55 api
+drwxr-xr-x  2 camila-giraldo camila-giraldo 4096 Oct 31 14:23 web
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs:
+total 48
+drwxr-xr-x  5 camila-giraldo camila-giraldo  4096 Oct 31 14:31 .
+drwxr-xr-x 12 camila-giraldo camila-giraldo  4096 Oct 31 16:00 ..
+-rw-r--r--  1 camila-giraldo camila-giraldo  5750 Oct 31 14:31 COMO-PROBAR.md
+-rw-r--r--  1 camila-giraldo camila-giraldo  2908 Oct 31 14:19 LEEME.md
+drwxr-xr-x  2 camila-giraldo camila-giraldo  4096 Oct 31 14:22 arquitectura
+-rw-r--r--  1 camila-giraldo camila-giraldo 13875 Oct 31 14:37 mvp.md
+drwxr-xr-x  2 camila-giraldo camila-giraldo  4096 Oct 31 15:42 preguntas
+drwxr-xr-x  2 camila-giraldo camila-giraldo  4096 Oct 31 14:22 specs
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa:
+total 40
+drwxr-xr-x  8 camila-giraldo camila-giraldo 4096 Oct 31 14:22 .
+drwxr-xr-x 12 camila-giraldo camila-giraldo 4096 Oct 31 16:00 ..
+drwxr-xr-x  2 camila-giraldo camila-giraldo 4096 Oct 31 15:40 casos
+drwxr-xr-x  2 camila-giraldo camila-giraldo 4096 Oct 31 16:11 ejecuciones
+drwxr-xr-x  2 camila-giraldo camila-giraldo 4096 Oct 31 14:22 humo
+drwxr-xr-x  2 camila-giraldo camila-giraldo 4096 Oct 31 14:22 incidentes
+-rw-r--r--  1 camila-giraldo camila-giraldo 1394 Oct 31 15:42 oraculos-pendientes.md
+drwxr-xr-x  2 camila-giraldo camila-giraldo 4096 Oct 31 14:46 revision
+drwxr-xr-x  2 camila-giraldo camila-giraldo 4096 Oct 31 14:35 scripts
+-rw-r--r--  1 camila-giraldo camila-giraldo 3469 Oct 31 15:59 trazabilidad.md
+> general · flint-40b-free
+[0m$ [0mfind /home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api -type f -name "*.ts" | grep -v node_modules | grep -v dist | head -100
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api/src/modulos/identidad/pruebas/dominio.spec.ts
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api/src/modulos/identidad/pruebas/servicios.spec.ts
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api/src/modulos/identidad/pruebas/concurrencia.spec.ts
+[0m$ [0mfind /home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude -type f | head -50; echo "---AGENTES---"; find /home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia -type f | head -50; echo "---SALIDAS---"; find /home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas -type f | head; echo "---PLANNING---"; find /home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes -type f | head -50
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/LEEME-agentes.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/user-story-reviewer.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/qa-s1-revisor-spec.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/qa-r2-triage.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/architecture-agent.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/ejecutor-corrector.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/frontend-interfaz-web.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/backend-servicios-api.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/qa-r1-humo.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/specification-agent.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/backend-bot-telegram.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/qa-s2-disenador-casos.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/qa-s3-generador-pruebas.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/negociacion-de-mvp/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/nestjs-modulo-estandar/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/formato-de-hallazgos/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/componentes-shadcn/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/registro-de-ejecucion/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/transaccion-reserva/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/tecnicas-de-diseno-de-casos/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/cuando-escalar/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/plantilla-jest-nestjs/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/politica-de-oraculos/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/grammy-handlers/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/formularios-rhf-zod/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/plantilla-playwright-humo/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/plantillas-sin-datos-de-salud/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/criterios-calidad-de-spec/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/matriz-de-trazabilidad/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/cliente-api-tipado/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/manejo-de-ambiguedades/SKILL.md
+---AGENTES---
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/README.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agente.py
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/registro.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-004/SPEC-004_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-004/SPEC-004_v0.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-007/SPEC-007_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-008/SPEC-008_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-008/SPEC-008_v0.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-006/SPEC-006_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-003/SPEC-003_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-002/SPEC-002_v1.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-002/SPEC-002_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-001/SPEC-001_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-001/SPEC-001_v1.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-005/SPEC-005_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1754_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1756_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1755_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1753_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261031-1436_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1752_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/aprobadas/SPEC-001_v1.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/architecture-agent/registro.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/architecture-agent/sin-clasificar/20261031-1436_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/generador-hu-invest/prompt.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/generador-hu-invest/config.json
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/specification-agent/prompt.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/specification-agent/config.json
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/architecture-agent/prompt.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/architecture-agent/config.json
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/_plantilla/prompt.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/_plantilla/config.json
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/.env
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/requirements.txt
+---SALIDAS---
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/registro.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-004/SPEC-004_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-004/SPEC-004_v0.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-007/SPEC-007_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-008/SPEC-008_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-008/SPEC-008_v0.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-006/SPEC-006_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-003/SPEC-003_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-002/SPEC-002_v1.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-002/SPEC-002_v1.0.md
+---PLANNING---
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/Pharma_Express_Propuesta_tecnologica.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/desktop.ini
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/Pharma_Express_Propuesta_tecnologica.md:Zone.Identifier
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/plan_agentes_pharma_express.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/plan_agentes_pharma_express.md:Zone.Identifier
+> general · flint-40b-free
+[0m$ [0mfind /home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api -type f -not -path "*/node_modules/*" -not -path "*/dist/*" -not -path "*/.git/*" -not -name "*.log" | sort
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api/LEEME.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api/src/modulos/identidad/pruebas/concurrencia.spec.ts
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api/src/modulos/identidad/pruebas/dominio.spec.ts
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api/src/modulos/identidad/pruebas/servicios.spec.ts
+> general · flint-40b-free
+[0m$ [0mls -la /home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/specs /home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/preguntas /home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/arquitectura /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/humo /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/revision
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/arquitectura:
+total 20
+drwxr-xr-x 2 camila-giraldo camila-giraldo 4096 Oct 31 14:22 .
+drwxr-xr-x 5 camila-giraldo camila-giraldo 4096 Oct 31 14:31 ..
+-rw-r--r-- 1 camila-giraldo camila-giraldo 1272 Oct 31 14:22 LEEME.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo 5121 Oct 31 14:26 propuesta-tecnologica.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/preguntas:
+total 24
+drwxr-xr-x 2 camila-giraldo camila-giraldo 4096 Oct 31 15:42 .
+drwxr-xr-x 5 camila-giraldo camila-giraldo 4096 Oct 31 14:31 ..
+-rw-r--r-- 1 camila-giraldo camila-giraldo  625 Oct 31 14:22 LEEME.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo 1479 Oct 31 14:46 PREG-001.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo 1699 Oct 31 15:42 PREG-002.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo  586 Oct 31 14:22 _plantilla.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/specs:
+total 12
+drwxr-xr-x 2 camila-giraldo camila-giraldo 4096 Oct 31 14:22 .
+drwxr-xr-x 5 camila-giraldo camila-giraldo 4096 Oct 31 14:31 ..
+-rw-r--r-- 1 camila-giraldo camila-giraldo 1022 Oct 31 14:22 LEEME.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos:
+total 68
+drwxr-xr-x 2 camila-giraldo camila-giraldo 4096 Oct 31 15:40 .
+drwxr-xr-x 8 camila-giraldo camila-giraldo 4096 Oct 31 14:22 ..
+-rw-r--r-- 1 camila-giraldo camila-giraldo  709 Oct 31 14:22 LEEME.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo 1291 Oct 31 15:39 TC-001.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo  889 Oct 31 15:39 TC-002.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo  936 Oct 31 15:39 TC-003.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo 1188 Oct 31 15:43 TC-004.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo  900 Oct 31 15:43 TC-005.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo 1278 Oct 31 15:40 TC-006.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo 1055 Oct 31 15:39 TC-007.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo 1027 Oct 31 15:39 TC-008.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo  891 Oct 31 15:39 TC-009.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo  785 Oct 31 15:39 TC-010.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo  916 Oct 31 15:40 TC-011.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo  822 Oct 31 15:40 TC-012.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo 1126 Oct 31 15:40 TC-013.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo 1112 Oct 31 15:40 TC-014.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones:
+total 532
+drwxr-xr-x 2 camila-giraldo camila-giraldo   4096 Oct 31 16:11 .
+drwxr-xr-x 8 camila-giraldo camila-giraldo   4096 Oct 31 14:22 ..
+-rw-r--r-- 1 camila-giraldo camila-giraldo    388 Oct 31 14:22 LEEME.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo    395 Oct 31 14:47 runner-20261031-143757.json
+-rw-r--r-- 1 camila-giraldo camila-giraldo  64012 Oct 31 14:47 runner-20261031-143757.log
+-rw-r--r-- 1 camila-giraldo camila-giraldo    395 Oct 31 15:19 runner-20261031-150312.json
+-rw-r--r-- 1 camila-giraldo camila-giraldo 124475 Oct 31 15:19 runner-20261031-150312.log
+-rw-r--r-- 1 camila-giraldo camila-giraldo    425 Oct 31 15:44 runner-20261031-151935.json
+-rw-r--r-- 1 camila-giraldo camila-giraldo  77175 Oct 31 15:44 runner-20261031-151935.log
+-rw-r--r-- 1 camila-giraldo camila-giraldo 248866 Oct 31 16:02 runner-20261031-154427.log
+-rw-r--r-- 1 camila-giraldo camila-giraldo      0 Oct 31 16:11 runner-20261031-161121.log
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/humo:
+total 12
+drwxr-xr-x 2 camila-giraldo camila-giraldo 4096 Oct 31 14:22 .
+drwxr-xr-x 8 camila-giraldo camila-giraldo 4096 Oct 31 14:22 ..
+-rw-r--r-- 1 camila-giraldo camila-giraldo  584 Oct 31 14:22 LEEME.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/revision:
+total 20
+drwxr-xr-x 2 camila-giraldo camila-giraldo 4096 Oct 31 14:46 .
+drwxr-xr-x 8 camila-giraldo camila-giraldo 4096 Oct 31 14:22 ..
+-rw-r--r-- 1 camila-giraldo camila-giraldo  355 Oct 31 14:22 LEEME.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo 4966 Oct 31 15:19 informe-SPEC-001.md
+[0m$ [0mfind /home/camila-giraldo/SW3/pharma_express/PharmaExpress -maxdepth 2 -type d -not -path "*/node_modules*" -not -path "*/.git*" -not -path "*/venv*" -not -path "*__pycache__*" -not -path "*dist*" | sort
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories/generadas
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/web
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/arquitectura
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/preguntas
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/specs
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/humo
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/incidentes
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/revision
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/scripts
+> general · flint-40b-free
+[0m→ [0mRead apps/api/src/modulos/identidad/pruebas/dominio.spec.ts 
+[0m→ [0mRead apps/api/src/modulos/identidad/pruebas/servicios.spec.ts 
+[0m→ [0mRead apps/api/src/modulos/identidad/pruebas/concurrencia.spec.ts 
+> general · flint-40b-free
+[0m→ [0mRead .claude/LEEME-agentes.md 
+[0m→ [0mRead .claude/skills/nestjs-modulo-estandar/SKILL.md 
+> general · flint-40b-free
+[0m→ [0mRead .claude/skills/manejo-de-ambiguedades/SKILL.md 
+[0m→ [0mRead .claude/skills/plantillas-sin-datos-de-salud/SKILL.md 
+[0m→ [0mRead .claude/skills/transaccion-reserva/SKILL.md 
+> general · flint-40b-free
+[0m→ [0mRead qa/trazabilidad.md 
+[0m$ [0mfind /home/camila-giraldo/SW3/pharma_express/PharmaExpress -iname "*SPEC-001*" -not -path "*/node_modules/*" -not -path "*/.git/*" -not -name "*.Zone.Identifier"
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-001
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-001/SPEC-001_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-001/SPEC-001_v1.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/aprobadas/SPEC-001_v1.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/revision/informe-SPEC-001.md
+> general · flint-40b-free
+[0m→ [0mRead agentes-ia/salidas/specification-agent/aprobadas/SPEC-001_v1.1.md 
+> general · flint-40b-free
+[0m$ [0mfor f in /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos/TC-*.md; do echo "=== $f ==="; cat "$f"; done
+=== /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos/TC-001.md ===
+# TC-001. El aviso de privacidad y la declaración de titularidad se muestran antes de permitir el ingreso de ningún dato
+
+Origen: SPEC-001/AC-001
+REQ del MVP: SPEC-001/RF-001
+Técnica: GWT
+Oráculo: definitivo
+Origen del oráculo: CONFIRMADO
+@supuesto: no
+
+## Precondiciones
+- Usuario (titular) en canal web o Telegram sin aceptar el tratamiento de datos en la sesión actual.
+- No hay consentimiento vigente para la sesión.
+
+## Pasos
+1. El usuario intenta iniciar una gestión que requiere dato (p. ej., consultar estado de fórmula) en el canal elegido.
+2. El sistema muestra el aviso de privacidad y la declaración «soy el titular o actúo con su autorización».
+3. El usuario acepta la declaración como titular.
+
+## Datos de entrada (sintéticos)
+- Declaración: «soy el titular o actúo con su autorización».
+- Canal: web / Telegram.
+
+## Resultado esperado
+- El sistema muestra el aviso de privacidad y la declaración antes de solicitar cédula, celular, correo u otro dato.
+- Con la aceptación, el sistema registra titular, fecha, hora y canal y continúa en el estado «Pendiente de Verificación».
+
+## Casos negativos y de límite incluidos
+- Negativo: sin aceptación previa no se permite el ingreso de ningún dato; el aviso es obligatorio antes de cualquier acción.
+=== /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos/TC-002.md ===
+# TC-002. El rechazo del aviso informa la atención presencial y no registra ningún dato
+
+Origen: SPEC-001/AC-002
+REQ del MVP: SPEC-001/RF-003
+Técnica: GWT
+Oráculo: definitivo
+Origen del oráculo: CONFIRMADO
+@supuesto: no
+
+## Precondiciones
+- Usuario en canal web o Telegram con el aviso de privacidad mostrado y sin aceptar.
+
+## Pasos
+1. El usuario selecciona rechazar / no aceptar el tratamiento de datos.
+2. El sistema informa la atención presencial (orientación a punto físico).
+
+## Datos de entrada (sintéticos)
+- No se ingresa dato de consentimiento.
+
+## Resultado esperado
+- El sistema informa la atención presencial.
+- No se registra ningún dato en el sistema (ni aceptación, ni titular/tercero, ni fecha/hora/canal, ni cédula).
+
+## Casos negativos y de límite incluidos
+- Negativo: rechazo del aviso como titular o como tercero; sin registro de consentimiento alguno.
+=== /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos/TC-003.md ===
+# TC-003. La aceptación como tercero se registra con fecha, hora y canal sin cédula ni nombre
+
+Origen: SPEC-001/AC-006
+REQ del MVP: SPEC-001/RF-002
+Técnica: GWT
+Oráculo: definitivo
+Origen del oráculo: APROBADO
+@supuesto: no
+
+## Precondiciones
+- Usuario que actúa como tercero en nombre del titular, en canal web o Telegram.
+
+## Pasos
+1. El usuario acepta el tratamiento de datos con la declaración «soy el titular o actúo con su autorización» y se declara tercero.
+2. El sistema registra la aceptación.
+
+## Datos de entrada (sintéticos)
+- Declaración: «soy el titular o actúo con su autorización».
+- Condición registrada: tercero.
+
+## Resultado esperado
+- El sistema registra la aceptación como tercero con fecha, hora y canal.
+- No se solicita cédula ni nombre del tercero.
+
+## Casos negativos y de límite incluidos
+- Límite: la aceptación registrada como tercero no se confunde con la registrada como titular.
+=== /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos/TC-004.md ===
+# TC-004. La verificación de identidad valida la cédula registrada y el código correcto dentro de los 10 minutos
+
+Origen: SPEC-001/AC-004
+REQ del MVP: SPEC-001/RF-004
+Técnica: GWT
+Oráculo: definitivo
+Origen del oráculo: CONFIRMADO
+@supuesto: no
+
+## Precondiciones
+- Consentimiento aceptado (titular) vigente.
+- Cédula sintética registrada en la EPS simulada: `8.765.432-1`.
+- Código de un solo uso emitido (sintético) con vigencia vigente.
+
+## Pasos
+1. El usuario ingresa la cédula sintética registrada en la EPS simulada.
+2. El sistema consulta la EPS simulada, obtiene el celular/correo registrados y envía el código (SMS y correo si existe).
+3. El usuario ingresa el código correcto antes de que transcurra el límite de 10 minutos (intento 1).
+
+## Datos de entrada (sintéticos)
+- Cédula: `8.765.432-1`.
+- Código: `548920`.
+
+## Resultado esperado
+- El sistema valida el código correcto dentro del tiempo y en el intento permitido.
+- La identidad queda verificada y el acceso a la gestión queda habilitado.
+
+## Casos negativos y de límite incluidos
+- Límites: el código debe ingresarse dentro de los 10 minutos y en un intento permitido (intento 1 en este caso).
+=== /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos/TC-005.md ===
+# TC-005. Se exige autorización separada de datos de salud antes de cargar documentos
+
+Origen: SPEC-001/AC-005
+REQ del MVP: SPEC-001/RF-007
+Técnica: GWT
+Oráculo: definitivo
+Origen del oráculo: CONFIRMADO
+@supuesto: no
+
+## Precondiciones
+- Titular con identidad verificada y disposición de cargar fórmula o historia clínica.
+
+## Pasos
+1. El usuario se dispone a cargar el documento.
+2. El sistema solicita la autorización separada para datos de salud.
+3. El usuario acepta o no acepta.
+
+## Datos de entrada (sintéticos)
+- Autorización: separada de la aceptación general del tratamiento de datos.
+
+## Resultado esperado
+- Si acepta: el sistema continúa con la carga del documento.
+- Si no acepta: el sistema informa la atención presencial y no pide ni guarda datos de salud.
+
+## Casos negativos y de límite incluidos
+- Negativo: sin autorización separada no se solicitan datos de salud.
+=== /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos/TC-006.md ===
+# TC-006. El código emitido a las 10:00:00 acepta a las 10:09:59 y rechaza a las 10:10:00 con la ruta alternativa
+
+Origen: SPEC-001/AC-009
+REQ del MVP: SPEC-001/RF-005
+Técnica: Valores límite
+Oráculo: definitivo
+Origen del oráculo: APROBADO
+@supuesto: no
+
+## Precondiciones
+- Código de un solo uso emitido a las 10:00:00 (sintético), estado «Código Emitido».
+
+## Pasos
+1. El usuario ingresa el código correcto a las 10:09:59 → el sistema valida la identidad.
+2. El usuario ingresa el código correcto a las 10:10:00 → el sistema lo rechaza por expirado.
+
+## Datos de entrada (sintéticos)
+- Código: `548920`.
+- Momento de emisión: 10:00:00. Momentos de ingreso: 10:09:59 y 10:10:00.
+
+## Resultado esperado
+- A las 10:09:59: el código correcto se valida y la identidad queda verificada.
+- A las 10:10:00 o posterior (incluido el límite): el código se rechaza por expirado y se muestra la ruta alternativa (solicitar nuevo código, orientación EPS, atención presencial).
+
+## Casos negativos y de límite incluidos
+- Límites: 10:09:59 (válido) vs 10:10:00 (rechazado, límite superior de la vigencia); transición en el límite.
+- Límite inferior: código emitido a las 09:59:00, ingresado a las 10:00:00 (10m exactos) → rechazado por expirado (CL-003).
+=== /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos/TC-007.md ===
+# TC-007. Los intentos fallidos de 1.º y 2.º permiten reintento indicando los intentos restantes
+
+Origen: SPEC-001/AC-010
+REQ del MVP: SPEC-001/RF-005
+Técnica: Valores límite
+Oráculo: definitivo
+Origen del oráculo: CONFIRMADO
+@supuesto: no
+
+## Precondiciones
+- Código de un solo uso vigente (emitido hace menos de 10 minutos), estado «Código Emitido».
+
+## Pasos
+1. Intento 1 con código incorrecto: el sistema informa el error y muestra 2 intentos restantes; permite reintento.
+2. Intento 2 con código incorrecto: el sistema informa el error y muestra 1 intento restante; permite reintento.
+
+## Datos de entrada (sintéticos)
+- Código: `548920`.
+- Resultados de intento: fallido, fallido.
+
+## Resultado esperado
+- En intento 1: error, intentos restantes = 2, reintento permitido con el mismo código.
+- En intento 2: error, intentos restantes = 1, reintento permitido con el mismo código.
+
+## Casos negativos y de límite incluidos
+- Límites: el reintento procede en los intentos 1 y 2; el 3.º intento fallido inactiva el código (TC-008).
+=== /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos/TC-008.md ===
+# TC-008. El tercer intento fallido inactiva el código y deriva a la ruta alternativa
+
+Origen: SPEC-001/AC-011
+REQ del MVP: SPEC-001/RF-005
+Técnica: Valores límite
+Oráculo: definitivo
+Origen del oráculo: APROBADO
+@supuesto: no
+
+## Precondiciones
+- Código de un solo uso vigente (emitido hace menos de 10 minutos), estado «Código Emitido».
+
+## Pasos
+1. Intento 3 con código incorrecto: el sistema inactiva el código actual.
+2. El sistema muestra de inmediato la ruta alternativa: solicitar nuevo código, orientación para actualizar datos en la EPS o atención presencial.
+3. Se intenta el ingreso con el código ya inactivo.
+
+## Datos de entrada (sintéticos)
+- Código: `548920`.
+
+## Resultado esperado
+- Tras el 3.º intento fallido: el código queda inactivo y se deriva a la ruta alternativa.
+- Intento posterior sobre el código inactivo: rechazado.
+
+## Casos negativos y de límite incluidos
+- Límites: el 3.º intento fallido es el último permitido; el intento sobre código inactivo siempre es rechazado.
+=== /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos/TC-009.md ===
+# TC-009. La revocación elimina los datos personales y de salud conservando la auditoría disociada
+
+Origen: SPEC-001/AC-007
+REQ del MVP: SPEC-001/RF-008
+Técnica: Transición de estados
+Oráculo: definitivo
+Origen del oráculo: APROBADO
+@supuesto: no
+
+## Precondiciones
+- Titular con identidad verificada y consentimiento vigente; datos personales y de salud registrados.
+
+## Pasos
+1. El titular solicita la revocación del consentimiento con identidad verificada.
+
+## Datos de entrada (sintéticos)
+- Identidad: verificada (código válido ya consumido).
+
+## Resultado esperado
+- El sistema elimina los datos personales y de salud del titular.
+- Conserva únicamente los registros de auditoría disociados de la identidad.
+- Confirma la revocación al titular.
+
+## Casos negativos y de límite incluidos
+- Transición de estados: «Identidad Verificada» → «Revocado» (estado final).
+=== /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos/TC-010.md ===
+# TC-010. La revocación con citas activas cancela, anula, libera y desvincula
+
+Origen: SPEC-001/AC-008
+REQ del MVP: SPEC-001/RF-009
+Técnica: Transición de estados
+Oráculo: definitivo
+Origen del oráculo: APROBADO
+@supuesto: no
+
+## Precondiciones
+- Titular con identidad verificada y con citas/reservas activas (código de entrega vigente).
+
+## Pasos
+1. El titular revoca el consentimiento con citas activas.
+
+## Datos de entrada (sintéticos)
+- Citas/reservas: activas (sintéticas).
+
+## Resultado esperado
+- Se cancelan las citas activas.
+- Se anulan los códigos de entrega.
+- Se liberan existencias y cupos reservados.
+- Se desvinculan los canales (Telegram y web).
+
+## Casos negativos y de límite incluidos
+- Transición de estados: flujo de revocación con recursos activos.
+=== /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos/TC-011.md ===
+# TC-011. La cédula no registrada o la indisponibilidad de la EPS notifican y orientan
+
+Origen: SPEC-001/AC-012
+REQ del MVP: SPEC-001/RF-010
+Técnica: GWT
+Oráculo: definitivo
+Origen del oráculo: CONFIRMADO
+@supuesto: no
+
+## Precondiciones
+- Usuario en estado «Pendiente de Verificación» con cédula sintética no registrada en la EPS simulada (o EPS no responde).
+
+## Pasos
+1. El usuario ingresa la cédula no registrada.
+2. El sistema consulta la EPS simulada y detecta el fallo.
+
+## Datos de entrada (sintéticos)
+- Cédula: `7.654.321-0` (no registrada en la EPS simulada).
+
+## Resultado esperado
+- El sistema notifica la novedad (cédula no registrada / indisponibilidad).
+- El sistema presenta orientación para verificar datos en la EPS o acudir a la atención presencial.
+
+## Casos negativos y de límite incluidos
+- Flujo alternativo: E4 (cédula no encontrada o falla de consulta en la EPS simulada).
+=== /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos/TC-012.md ===
+# TC-012. El fallo en el envío de SMS o correo informa y ofrece reintentar o atención presencial
+
+Origen: SPEC-001/AC-013
+REQ del MVP: SPEC-001/RF-011
+Técnica: GWT
+Oráculo: definitivo
+Origen del oráculo: CONFIRMADO
+@supuesto: no
+
+## Precondiciones
+- Código de un solo uso emitido; fallo simulado en el servicio externo de SMS o correo.
+
+## Pasos
+1. El sistema detecta la falla de entrega del código.
+2. El sistema informa la novedad al usuario.
+
+## Datos de entrada (sintéticos)
+- Canal afectado: SMS y/o correo (según existencia registrada).
+
+## Resultado esperado
+- El sistema informa la falla y ofrece las opciones: reintentar el envío del código o acudir a la atención presencial.
+
+## Casos negativos y de límite incluidos
+- Flujo alternativo: E5 (fallo en el servicio externo de envío de SMS o correo).
+=== /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos/TC-013.md ===
+# TC-013. Solicitar un nuevo código anula el anterior; la solicitud simultánea deja solo el último vigente
+
+Origen: SPEC-001/AC-003
+REQ del MVP: SPEC-001/RF-005
+Técnica: Transición de estados + concurrencia
+Oráculo: definitivo
+Origen del oráculo: APROBADO
+@supuesto: no
+
+## Precondiciones
+- Usuario con código vigente (emitido hace menos de 10 minutos), estado «Código Emitido».
+
+## Pasos
+1. El usuario solicita un nuevo código mientras el actual sigue vigente.
+2. El sistema anula de inmediato el código anterior y genera/emite un nuevo (reinicia contador de intentos y tiempo de 10 minutos).
+3. (Concurrencia) Dos solicitudes simultáneas de nuevo código: el sistema debe dejar solo el último emitido como vigente.
+
+## Datos de entrada (sintéticos)
+- Código previo: `548920`. Nuevo código: `741203`.
+
+## Resultado esperado
+- El código anterior queda anulado y solo el nuevo es válido.
+- En la variante simultánea, el último código emitido es el único aceptable.
+
+## Casos negativos y de límite incluidos
+- Concurrencia: solicitudes simultáneas de nuevo código (CL-001); máximo 1 código vigente.
+=== /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos/TC-014.md ===
+# TC-014. Ningún mensaje ni log del flujo de revocación nombra medicamento, diagnóstico o dato personal
+
+Origen: SPEC-001/AC-008
+REQ del MVP: SPEC-001/RF-009
+Técnica: GWT
+Oráculo: definitivo
+Origen del oráculo: CONFIRMADO
+@supuesto: no
+
+## Precondiciones
+- Titular con identidad verificada y citas/reservas activas; existen mensajes/notificaciones y logs del flujo de revocación.
+
+## Pasos
+1. Ejecutar la revocación (cancelar citas, anular códigos, liberar existencias/cupos, desvincular canales, eliminar datos).
+2. Revisar los mensajes/notificaciones emitidos y los logs asociados.
+
+## Datos de entrada (sintéticos)
+- Medicamento sintético: `FA-017`. Registros con ids internos (`res-101`, `cita-101`).
+
+## Resultado esperado
+- Ningún mensaje ni log nombra un medicamento, un diagnóstico ni un dato personal.
+- Los mensajes/usos: plantillas fijas; logs: campos de auditoría disociados sin contenido clínico.
+
+## Casos negativos y de límite incluidos
+- Transversal (regla de datos de salud): verificar en el flujo de revocación que no haya fuga de medicamento/diagnóstico en mensajes ni logs.
+> general · flint-40b-free
+[0m→ [0mRead qa/oraculos-pendientes.md 
+[0m→ [0mRead docs/preguntas/PREG-001.md 
+[0m→ [0mRead docs/preguntas/PREG-002.md 
+> general · flint-40b-free
+[0m→ [0mRead qa/revision/informe-SPEC-001.md 
+[0m$ [0mls /home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/arquitectura/; echo ---; cat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/pipeline.json; echo ---; cat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api/LEEME.md; echo ---; cat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/arquitectura/LEEME.md; echo ---; cat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/preguntas/LEEME.md; echo ---; cat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/revision/LEEME.md
+LEEME.md
+propuesta-tecnologica.md
+---
+{
+  "version": 1,
+  "actualizado": "2026-10-31",
+  "spec_version_hash": null,
+  "mvp": {
+    "estado": "aprobado",
+    "ronda": 0,
+    "aprobado_por": "Camila",
+    "hash_specs": null,
+    "archivo": "docs/mvp.md"
+  },
+  "modulos": {
+    "identidad": {
+      "spec": "aprobada",
+      "revision": "APTA",
+      "oraculos": "aprobados",
+      "pruebas": "rojas",
+      "implementacion": "pendiente",
+      "humo": "pendiente"
+    },
+    "prevalidacion": {
+      "spec": "aprobada",
+      "revision": "pendiente",
+      "oraculos": "pendiente",
+      "pruebas": "pendiente",
+      "implementacion": "pendiente",
+      "humo": "pendiente"
+    },
+    "reservas": {
+      "spec": "aprobada",
+      "revision": "pendiente",
+      "oraculos": "pendiente",
+      "pruebas": "pendiente",
+      "implementacion": "pendiente",
+      "humo": "pendiente"
+    },
+    "notificaciones": {
+      "spec": "aprobada",
+      "revision": "pendiente",
+      "oraculos": "pendiente",
+      "pruebas": "pendiente",
+      "implementacion": "pendiente",
+      "humo": "pendiente"
+    },
+    "telegram": {
+      "spec": "aprobada",
+      "revision": "pendiente",
+      "oraculos": "pendiente",
+      "pruebas": "pendiente",
+      "implementacion": "pendiente",
+      "humo": "pendiente"
+    }
+  },
+  "iteraciones": {},
+  "escalados": [],
+  "presupuesto_diario_llamadas": {
+    "limite": 200,
+    "usadas": 0,
+    "fecha": null
+  },
+  "notas": "El orquestador no decide alcance. Solo habilita el siguiente paso cuando se cumplen las puertas humanas."
+}
+---
+# apps/api — NestJS modular
+
+Este directorio lo construyen **B1** (dominio, servicios, datos y API) y **B2** (entrada Telegram). Las pruebas las escribe **S3** y las ejecuta **B4**.
+
+## Estructura prevista
+
+```text
+src/
+├─ app/                 AppModule
+├─ entradas/
+│  ├─ web/
+│  ├─ telegram/         grammY (B2)
+│  └─ dispensador/
+├─ modulos/
+│  ├─ identidad/        api/ dominio/ servicios/ datos/ pruebas/
+│  ├─ reservas/         api/ dominio/ servicios/ datos/ pruebas/
+│  └─ …                 un módulo por SPEC
+└─ comunes/             pg-boss, eventos, pino
+```
+
+## Reglas
+
+- Un módulo solo accede a datos ajenos por la `api/` del otro módulo.
+- Un esquema de PostgreSQL por módulo.
+- Reservas: transacción real, `UPDATE` condicional y rollback (skill `transaccion-reserva`).
+- Ningún mensaje, log ni error nombra medicamentos, diagnósticos ni cédulas.
+- Las migraciones de Prisma viven con su módulo.
+- No se modifica `qa/` ni las pruebas desde B1/B2.
+
+Aún no hay código: lo crea la primera iteración de B1 cuando el MVP esté aprobado y las pruebas rojas existan.
+---
+# Arquitectura — documentos y dueño
+
+Esta carpeta la escribe el **Agente de Arquitectura**. Contiene:
+
+| Archivo | Qué es |
+|---|---|
+| `propuesta-tecnologica.md` | **Stack aprobado** por el equipo. Restricción de entrada, no propuesta a debatir. |
+| `ARQ-00x.md` | Propuesta de arquitectura por SPEC o épica, con drivers, alternativas, ADR y trazabilidad. |
+| `plan-<modulo>.md` | Plan de 5–8 pasos que escribe B1 antes de implementar un módulo. |
+
+## ¿De quién es el stack?
+
+Del **Agente de Arquitectura**. No del Agente de Especificaciones (las SPEC no eligen tecnología) ni de QA (QA solo lo usa para elegir herramientas).
+
+- Arquitectura lo lee en el modo «Cortar MVP» y en los ADR.
+- S1–S3 y R1–R2 lo leen para saber con qué se prueba: Jest + Testcontainers, Playwright, grammY, PostgreSQL.
+- B1–B3 lo heredan como stack de implementación.
+- B4 lo usa para ejecutar, no para decidir.
+
+## Reglas
+
+- Una arquitectura por ejecución; si hay varias independientes, se divide y se pregunta.
+- Cada decisión relevante lleva su ADR.
+- No se inventan drivers que ninguna SPEC pida; se preguntan.
+- La trazabilidad llega hasta `Implementación/TEST` como «pendiente de QA».
+- Ningún ARQ se marca como aprobado por el agente: lo aprueba una persona.
+---
+# Preguntas abiertas (PREG)
+
+Una pregunta por archivo, con la plantilla `_plantilla.md`.
+
+## Reglas
+
+- Numeración `PREG-001`, `PREG-002`…
+- `Origen`: el subagente que la creó (S1, S2, S3, B1–B4, R1, R2).
+- `Bloquea: sí` solo si impide seguir con el módulo, el caso o la prueba.
+- La propuesta del agente se marca como `PROPUESTA`; nunca se trata como decisión.
+- La respuesta la da una persona del equipo. Al responder, cambia el estado y conserva el archivo.
+- No incluyas datos reales de pacientes.
+
+## Índice
+
+| PREG | Pregunta | Origen | Bloquea | Estado |
+|---|---|---|---|---|
+| — | — | — | — | — |
+---
+# Revisiones de SPEC (S1)
+
+Un informe por SPEC: `informe-<spec>.md`.
+
+- Veredicto: `APTA` / `APTA_CON_RESERVAS` / `NO_APTA`.
+- Hallazgos con cita literal, severidad, impacto y AC afectado.
+- Preguntas creadas en `docs/preguntas/`.
+- No se marca una SPEC como aprobada: eso lo hace una persona.
+
+Skill: `formato-de-hallazgos`, `criterios-calidad-de-spec`.
+> general · flint-40b-free
+[0m$ [0mhead -100 /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones/runner-20261031-143757.json; echo ---LOG---; head -60 /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones/runner-20261031-143757.log
+{
+  "fecha": "20261031-143757",
+  "backend": "opencode",
+  "pasos": [
+    {
+      "paso": "S1",
+      "modulo": "identidad"
+    }
+  ],
+  "detenido_en": {
+    "motivo": "NO_APTA",
+    "paso": "S1",
+    "modulo": "identidad",
+    "responsable": "S1 Revisor de SPEC",
+    "accion": "Ejecutar revisión estática y resolver hallazgos bloqueantes.",
+    "bloqueado_por": "revision = pendiente"
+  }
+}
+---LOG---
+Runner 20261031-143757 | backend=opencode
+
+== Paso 1: [identidad] S1 — S1 Revisor de SPEC
+  Ejecutar revisión estática y resolver hallazgos bloqueantes.
+  Bloqueado por: revision = pendiente ==
+[0m
+> general · flint-40b-free
+[0m→ [0mRead docs/mvp.md 
+[0m→ [0mRead .claude/agents/qa-s1-revisor-spec.md 
+> general · flint-40b-free
+[0m$ [0mfind /home/camila-giraldo/SW3/pharma_express/PharmaExpress -maxdepth 2 -not -path '*/node_modules*' -not -path '*/.git/*' -not -path '*/.claude/*' | sort
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.env.example
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.git
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.gitignore
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/PHARMA_EXPRESS_AGENTES.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/PHARMA_EXPRESS_SPEC-1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/PHARMA_EXPRESS_SPEC-1.md:Zone.Identifier
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories/UserStory.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories/UserStory2.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories/generadas
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/__pycache__
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/__pycache__/orquestador.cpython-314.pyc
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/.env
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/README.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agente.py
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/requirements.txt
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/web
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/architucture-agent-guide.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/LEEME.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/arquitectura
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/mvp.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/preguntas
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/specs
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/orquestador.py
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/pipeline.json
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/Pharma_Express_Propuesta_tecnologica.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/Pharma_Express_Propuesta_tecnologica.md:Zone.Identifier
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/desktop.ini
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/plan_agentes_pharma_express.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/plan_agentes_pharma_express.md:Zone.Identifier
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/primary-needs-v2.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/primary-needs-v2.md:Zone.Identifier
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/humo
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/incidentes
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/oraculos-pendientes.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/revision
+[0m$ [0mcd /home/camila-giraldo/SW3/pharma_express/PharmaExpress && git status --short | head -30; echo ---; git log --oneline | head -20; echo ---; ls -la /home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api /home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/web; echo ---; find /home/camila-giraldo/SW3/pharma_express/PharmaExpress -maxdepth 3 -name "package.json" -not -path "*/node_modules/*" 2>/dev/null
+RM ".claude/agents/ Specification_agent.md" -> .claude/agents/specification-agent.md
+ D agentes-groq/README.md
+ D agentes-groq/agente.py
+ D agentes-groq/agentes/_plantilla/config.json
+ D agentes-groq/agentes/_plantilla/prompt.md
+ D agentes-groq/agentes/architecture-agent/config.json
+ D agentes-groq/agentes/architecture-agent/prompt.md
+ D agentes-groq/agentes/generador-hu-invest/config.json
+ D agentes-groq/agentes/generador-hu-invest/prompt.md
+ D agentes-groq/agentes/specification-agent/config.json
+ D agentes-groq/agentes/specification-agent/prompt.md
+ D agentes-groq/requirements.txt
+ D agentes-groq/salidas/architecture-agent/aprobadas/ARQ-003_v1.0.md
+ D agentes-groq/salidas/architecture-agent/aprobadas/ARQ-004_v1.0.md
+ D agentes-groq/salidas/architecture-agent/registro.md
+ D agentes-groq/salidas/specification-agent/aprobadas/SPEC-001_v1.0.md
+ D agentes-groq/salidas/specification-agent/aprobadas/SPEC-002_v1.0.md
+ D agentes-groq/salidas/specification-agent/aprobadas/SPEC-003_v1.0.md
+ D agentes-groq/salidas/specification-agent/aprobadas/SPEC-004_v0.1.md
+ D agentes-groq/salidas/specification-agent/aprobadas/SPEC-005_v1.0.md
+ D agentes-groq/salidas/specification-agent/borradores/SPEC-004/SPEC-004_v0.1.md
+ D agentes-groq/salidas/specification-agent/borradores/SPEC-005/SPEC-005_v0.1.md
+ D agentes-groq/salidas/specification-agent/registro.md
+?? .claude/LEEME-agentes.md
+?? .claude/agents/architecture-agent.md
+?? .claude/agents/backend-bot-telegram.md
+?? .claude/agents/backend-servicios-api.md
+?? .claude/agents/ejecutor-corrector.md
+?? .claude/agents/frontend-interfaz-web.md
+?? .claude/agents/qa-r1-humo.md
+---
+93a3bf2 Pruebas del agente de arquitectura
+a743f04 Fase D: README Parte 5 (Architecture Agent) y Parte 6 (flujo Spec-Driven con ambos agentes), --aprobada/--epica documentados y pruebas reales ARQ-001/ARQ-002
+2ac36a4 Fase C: Architecture Agent (ARQ-00x con análisis ARCH-Q → propuesta, ADR y trazabilidad), numeración automática con SPECs adjuntas y textos genéricos del script
+c6dd823 Fase B: flujo interactivo (preguntas con >, resumen sin markdown, aprobación [S/n], numeración automática), prefijo_documento y anti-duplicidad FROZEN
+d426804 Fase 0 + limpieza + Fase A: archivado de SPEC-001 v1.3, purga de salidas y flujo de épica por pregunta
+a8c518b Instalando dependencias y creando archivo con necesidades principales
+d9cacf4 refactor: Clean up agent.py by removing unused functions and updating default provider
+f294f95 Add SPEC-003 and SPEC-901 specifications; update registro with execution history
+5849ef7 Add SPEC-001 version 1.3: Cancellation of medication delivery appointment
+bbc27d4 feat: Add user story generator agent for Pharma Express with groq
+4485e2b feat: Create agente for user stories, add user story reviewer and initial user stories documentation
+---
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api:
+total 16
+drwxr-xr-x 3 camila-giraldo camila-giraldo 4096 Oct 31 15:55 .
+drwxr-xr-x 4 camila-giraldo camila-giraldo 4096 Oct 31 14:18 ..
+-rw-r--r-- 1 camila-giraldo camila-giraldo 1141 Oct 31 14:23 LEEME.md
+drwxr-xr-x 3 camila-giraldo camila-giraldo 4096 Oct 31 15:55 src
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/web:
+total 12
+drwxr-xr-x 2 camila-giraldo camila-giraldo 4096 Oct 31 14:23 .
+drwxr-xr-x 4 camila-giraldo camila-giraldo 4096 Oct 31 14:18 ..
+-rw-r--r-- 1 camila-giraldo camila-giraldo  956 Oct 31 14:23 LEEME.md
+---
+> general · flint-40b-free
+[0m$ [0mhead -80 /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones/runner-20261031-154427.log; echo ...; grep -n -i "test\|jest\|npm" /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones/runner-20261031-154427.log | head -50
+Runner 20261031-154427 | backend=opencode
+
+== Paso 1: [identidad] S3 — S3 Generador de pruebas
+  Generar pruebas ejecutables que fallen primero.
+  Bloqueado por: pruebas = pendiente ==
+[0m
+> general · flint-40b-free
+[0m→ [0mRead .claude/agents/qa-s3-generador-pruebas.md 
+[0m$ [0mfind /home/camila-giraldo/SW3/pharma_express/PharmaExpress -maxdepth 2 -not -path '*/node_modules*' -not -path '*/.git/*' | head -60
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/architucture-agent-guide.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/pipeline.json
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/orquestador.py
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.git
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/primary-needs-v2.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories/generadas
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories/UserStory2.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories/UserStory.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/Pharma_Express_Propuesta_tecnologica.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/desktop.ini
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/Pharma_Express_Propuesta_tecnologica.md:Zone.Identifier
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/plan_agentes_pharma_express.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/plan_agentes_pharma_express.md:Zone.Identifier
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/README.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agente.py
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/.env
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/requirements.txt
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.env.example
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/oraculos-pendientes.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/humo
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/trazabilidad.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/incidentes
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/revision
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/scripts
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/primary-needs-v2.md:Zone.Identifier
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/PHARMA_EXPRESS_SPEC-1.md:Zone.Identifier
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/web
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/LEEME-agentes.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/__pycache__
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/__pycache__/orquestador.cpython-314.pyc
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/venv
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/venv/include
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/venv/lib
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/venv/lib64
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/venv/bin
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/venv/pyvenv.cfg
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/venv/.gitignore
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/specs
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/preguntas
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/LEEME.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/mvp.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/arquitectura
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/PHARMA_EXPRESS_AGENTES.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.gitignore
+> general · flint-40b-free
+[0m→ [0mRead docs/mvp.md 
+[0m$ [0mls -R /home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa /home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs | head -150
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude:
+LEEME-agentes.md
+agents
+skills
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents:
+architecture-agent.md
+backend-bot-telegram.md
+...
+grep: /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones/runner-20261031-154427.log: binary file matches
+104:plantilla-jest-nestjs
+145:/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/plantilla-jest-nestjs:
+607:[0m$ [0mcat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/plantilla-jest-nestjs/SKILL.md
+609:name: plantilla-jest-nestjs
+610:description: Estructura de pruebas para el stack aprobado Jest + Testcontainers + Playwright + grammY simulado. Úsalo en S3 al convertir casos TC-* en pruebas ejecutables que fallan primero.
+612:# Plantilla Jest + NestJS + Testcontainers + Playwright
+618:| Reglas de dominio puras | Jest unitario | `apps/api/src/modulos/<x>/pruebas/dominio.spec.ts` |
+619:| Servicios y API | Jest + Nest Testing | `apps/api/src/modulos/<x>/pruebas/servicios.spec.ts` |
+620:| Base de datos y transacciones | Jest + Testcontainers PostgreSQL | `apps/api/src/modulos/<x>/pruebas/integracion.spec.ts` |
+621:| Concurrencia | Jest + Testcontainers + `Promise.all` | `apps/api/src/modulos/reservas/pruebas/concurrencia.spec.ts` |
+644:## Integración con Testcontainers
+647:import { PostgreSqlContainer } from '@testcontainers/postgresql';
+840:  "comando": "npm test -- modulos/reservas",
+2084:3. Tras cada paso ejecuta `npm test -- modulos/<nombre>` y avanza solo si no empeora el número de pruebas verdes.
+2484:| **Calidad** | **Jest** + Testcontainers · **Playwright** · **Docker Compose** · GitHub Actions |
+2608:| S3 Generador de pruebas | `qa-s3-generador-pruebas.md` | TC + oráculos aprobados | Pruebas Jest/Playwright + trazabilidad | 5 |
+2646:- `plantilla-jest-nestjs` (S3)
+2746:- `data-testid` acordados en los TC; no se modifican las pruebas de Playwright.
+2750:[0m$ [0mcat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones/runner-20261031-154427.json /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones/runner-20261031-151935.json; echo ===; cat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/preguntas/PREG-001.md /home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/preguntas/PREG-002.md; echo ===; ls -a /home/camila-giraldo/SW3/pharma_express/PharmaExpress | grep -i -E 'package|jest|playwright|nest|tsconfig|docker' ; find /home/camila-giraldo/SW3/pharma_express/PharmaExpress -maxdepth 2 -name 'package.json' -o -maxdepth 2 -name '*.spec.ts' -o -maxdepth 2 -name 'jest.config*' | grep -v venv
+2906:[0m$ [0mcd /home/camila-giraldo/SW3/pharma_express/PharmaExpress && git status --short | head -30 && git log --oneline | head -10; echo ===; find . -name 'package.json' -not -path './venv/*' -not -path './.git/*' -not -path '*/node_modules/*' 2>/dev/null; echo ===; which node npm npx docker 2>&1; node --version 2>&1; echo ===; find . -name '*.spec.ts' -o -name '*.test.ts' -o -name '*.e2e.ts' -not -path './venv/*' -not -path './.git/*' 2>/dev/null | grep -v node_modules | head
+2949:/mnt/c/Program Files/nodejs//npm
+2969:├─ pruebas/       Jest unitario, integración y concurrencia
+2985:3. `datos/` + migración + pruebas de integración con Testcontainers.
+2999:npm test -- modulos/<nombre>
+3053:- Usa PostgreSQL real (Testcontainers), no un mock.
+3109:[0m$ [0mls /mnt/c/Program\ Files/nodejs 2>&1 | head; ls /mnt/c/Program\ Files/nodejs/bin 2>&1 | head; find / -maxdepth 4 -name 'node' -type f 2>/dev/null | grep -v proc | head; echo ===; find /home/camila-giraldo/SW3/pharma_express/PharmaExpress -iname '*jest*' -o -iname '*playwright*' -not -path '*/.git/*' -not -path '*/venv/*' 2>/dev/null | grep -v '\.git/' | head
+3116:npm
+3117:npm.cmd
+3118:npm.ps1
+3122:/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/plantilla-jest-nestjs
+3571:npm
+3575:description: Estructura de un recorrido de humo con Playwright para Pharma Express, con datos sintéticos, selectores data-testid y evidencia. Úsalo en R1 y en las pruebas E2E de S3.
+3594:test('humo: sesión → prevalidar → reservar → ver QR', async ({ page }) => {
+3596:  await page.getByTestId('cedula').fill(DATOS.cedula);
+3597:  await page.getByTestId('codigo').fill(DATOS.codigo);
+3598:  await page.getByTestId('btn-ingresar').click();
+3600:  await page.getByTestId('input-formula').setInputFiles(DATOS.formulaImpresora);
+3601:  await page.getByTestId('btn-prevalidar').click();
+3602:  await page.getByTestId('btn-confirmar-medicamentos').click();
+3604:  await page.getByTestId('btn-reservar').click();
+3605:  await expect(page.getByTestId('qr-reserva')).toBeVisible();
+3614:2. Selectores por `data-testid` acordados en el TC; no por texto visible.
+3643:- El arreglo exige tocar una prueba (`*.test.*`, `*.spec.*`, `e2e/`, `pruebas/`).
+3820:npm
+[0m$ [0mcat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones/LEEME.md; echo ---; cat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones/runner-20261031-161121.log; echo ---; cat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones/runner-20261031-151935.json; echo ---; cat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones/runner-20261031-150312.json
+# Ejecuciones (RUN)
+
+Un archivo JSON por ejecución: `RUN-<fecha>.json`.
+
+- Lo escribe B4 (suite de módulo) y R1 (humo, con su propio formato).
+- No se sobrescribe: si el nombre existe, agrega `_2`, `_3`.
+- Contiene id de prueba, estado, duración, mensaje y clasificación.
+- No inventes duraciones ni mensajes.
+- Enmascara datos personales o de salud.
+
+Skill: `registro-de-ejecucion`.
+---
+---
+{
+  "fecha": "20261031-151935",
+  "backend": "opencode",
+  "pasos": [
+    {
+      "paso": "S2",
+      "modulo": "identidad"
+    }
+  ],
+  "detenido_en": {
+    "motivo": "marcado manual",
+    "paso": "S2",
+    "modulo": "identidad",
+    "responsable": "S2 Diseñador de casos + persona",
+    "accion": "Diseñar TC y oráculos; una persona aprueba qa/oraculos-pendientes.md.",
+    "bloqueado_por": "oraculos = pendiente"
+  }
+}
+---
+{
+  "fecha": "20261031-150312",
+  "backend": "opencode",
+  "pasos": [
+    {
+      "paso": "S1",
+      "modulo": "identidad"
+    }
+  ],
+  "detenido_en": {
+    "motivo": "NO_APTA",
+    "paso": "S1",
+    "modulo": "identidad",
+    "responsable": "S1 Revisor de SPEC",
+    "accion": "Ejecutar revisión estática y resolver hallazgos bloqueantes.",
+    "bloqueado_por": "revision = pendiente"
+  }
+}
+> general · flint-40b-free
+[0m$ [0mwhich node npm npx docker; node --version; npm --version; ls /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/scripts; echo ---; cat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/scripts/* 2>/dev/null | head -120
+/mnt/c/Program Files/nodejs//npm
+/mnt/c/Program Files/nodejs//npx
+/bin/bash: line 1: node: command not found
+11.12.1
+lint_spec.py
+marcar.py
+probar_todo.py
+runner.py
+---
+#!/usr/bin/env python3
+"""Lint barato de SPECs de Pharma Express (sin LLM).
+
+Comprueba lo mecánico que S1 no debería gastar en razonar:
+  - RF/BR/CL sin AC en la sección de trazabilidad.
+  - AC que no siguen Dado / Cuando / Entonces.
+  - Palabras vagas en requisitos, reglas o criterios.
+  - Límites numéricos sin un AC que los mencione.
+  - AC huérfanos (no referenciados por ningún RF/BR).
+
+Uso:
+    python qa/scripts/lint_spec.py docs/specs/SPEC-001.md
+    python qa/scripts/lint_spec.py docs/specs/
+    python qa/scripts/lint_spec.py --strict docs/specs/SPEC-001.md
+    python qa/scripts/lint_spec.py --json docs/specs/SPEC-001.md
+
+Salida: informe legible. Con --strict, código 1 si hay hallazgos bloqueantes.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+
+DEFINICION = re.compile(
+    r"^\s*[-*]\s*(?P<tipo>REQ|RF|BR|RNF|CL|AC)-(?P<num>\d{3})\.\s*(?P<texto>.+)$"
+)
+AC_GWT = re.compile(
+    r"\b(?:dado|dada)\b.*\bcu[aá]n(?:do|to)\b.*\bentonces\b",
+    re.IGNORECASE | re.DOTALL,
+)
+PALABRAS_VAGAS = [
+    "rápido", "rápida", "adecuado", "adecuada", "fácil", "amigable",
+    "óptimo", "óptima", "eficiente", "según corresponda", "y demás",
+    "entre otros", "etc.", "lo antes posible", "suficiente",
+]
+LIMITE = re.compile(
+    r"\b(\d{1,4})\s*(unidades?|minutos?|min|horas?|días?|dias?|intentos?|meses)\b",
+    re.IGNORECASE,
+)
+SECCION_TRAZABILIDAD = re.compile(
+    r"^#{1,4}\s*16\.?\s*Trazabilidad.*?$", re.IGNORECASE | re.MULTILINE
+)
+SECCION_SIGUIENTE = re.compile(
+    r"^#{1,4}\s*17\.?\s*Historial.*?$", re.IGNORECASE | re.MULTILINE
+)
+
+
+def leer(path: Path) -> str:
+    try:
+        return path.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        return path.read_text(encoding="utf-8", errors="replace")
+
+
+def extraer_definiciones(texto: str):
+    definiciones = []
+    for n, linea in enumerate(texto.splitlines(), start=1):
+        m = DEFINICION.match(linea)
+        if m:
+            definiciones.append(
+                {
+                    "tipo": m.group("tipo"),
+                    "id": f"{m.group('tipo')}-{m.group('num')}",
+                    "texto": m.group("texto").strip(),
+                    "linea": n,
+                }
+            )
+    return definiciones
+
+
+def extraer_trazabilidad(texto: str):
+    """Devuelve {RF/BR/CL/REQ: set(AC)} a partir de la sección 16."""
+    inicio = SECCION_TRAZABILIDAD.search(texto)
+    if not inicio:
+        return None
+    fin = SECCION_SIGUIENTE.search(texto, pos=inicio.end())
+    seccion = texto[inicio.end(): fin.start() if fin else len(texto)]
+    mapa = {}
+    for linea in seccion.splitlines():
+        ids = re.findall(r"\b(REQ|RF|BR|CL)-(\d{3})\b", linea)
+        acs = re.findall(r"\bAC-(\d{3})\b", linea)
+        if not ids or not acs:
+            continue
+        for tipo, num in ids:
+            mapa.setdefault(f"{tipo}-{num}", set()).update(f"AC-{a}" for a in acs)
+    return mapa
+
+
+def revisar(path: Path):
+    texto = leer(path)
+    definiciones = extraer_definiciones(texto)
+    por_tipo = {}
+    for d in definiciones:
+        por_tipo.setdefault(d["tipo"], []).append(d)
+
+    hallazgos = []
+
+    def add(severidad, tipo, linea, id_, mensaje, cita):
+        hallazgos.append(
+            {
+                "severidad": severidad,
+                "tipo": tipo,
+                "linea": linea,
+                "id": id_,
+                "mensaje": mensaje,
+                "cita": cita,
+            }
+        )
+
+    # 1. AC con formato Dado/Cuando/Entonces
+    for ac in por_tipo.get("AC", []):
+        if not AC_GWT.search(ac["texto"]):
+            add(
+                "bloqueante",
+                "formato-AC",
+                ac["linea"],
+[0m$ [0mcd /home/camila-giraldo/SW3/pharma_express/PharmaExpress && git status --porcelain --ignored=no | grep -v "^ D\|^RM" | head -40; echo ---UNTRACKED-COUNT---; git status --porcelain | grep -c "^??"; echo ---; ls -a /home/camila-giraldo/SW3/pharma_express/PharmaExpress | grep -iE "package|jest|playwright|nest|tsconfig|docker|compose"; echo ---; find / -maxdepth 6 -name "node" -type f -not -path "/proc/*" -not -path "/sys/*" 2>/dev/null | head -5
+?? .claude/LEEME-agentes.md
+?? .claude/agents/architecture-agent.md
+?? .claude/agents/backend-bot-telegram.md
+?? .claude/agents/backend-servicios-api.md
+?? .claude/agents/ejecutor-corrector.md
+?? .claude/agents/frontend-interfaz-web.md
+?? .claude/agents/qa-r1-humo.md
+?? .claude/agents/qa-r2-triage.md
+?? .claude/agents/qa-s1-revisor-spec.md
+?? .claude/agents/qa-s2-disenador-casos.md
+?? .claude/agents/qa-s3-generador-pruebas.md
+?? .claude/skills/
+?? .env.example
+?? PHARMA_EXPRESS_SPEC-1.md
+?? agentes-ia/
+?? apps/
+?? docs/
+?? orquestador.py
+?? pipeline.json
+?? plan-agentes/
+?? qa/
+---UNTRACKED-COUNT---
+21
+---
+---
+/home/camila-giraldo/.vscode-server/bin/2c33b50b16c472efe58357d1d2a8a5414bc23fbf/node
+> general · flint-40b-free
+[0m$ [0mls -la /home/camila-giraldo/.vscode-server/bin/2c33b50b16c472efe58357d1d2a8a5414bc23fbf/ 2>&1; file /home/camila-giraldo/.vscode-server/bin/2c33b50b16c472efe58357d1d2a8a5414bc23fbf/node 2>&1; /home/camila-giraldo/.vscode-server/bin/2c33b50b16c472efe58357d1d2a8a5414bc23fbf/node --version 2>&1; ls /mnt/c/Program\ Files/nodejs/ 2>&1 | head; cat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/.env.example; echo ---; cat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/.env.example 2>/dev/null; echo ---; cat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/web/LEEME.md
+total 124024
+drwxr-xr-x   6 camila-giraldo camila-giraldo      4096 Oct 29 19:27 .
+drwxr-xr-x   3 camila-giraldo camila-giraldo      4096 Oct 29 19:27 ..
+-rw-r--r--   1 camila-giraldo camila-giraldo     13380 Oct 27 15:25 LICENSE
+drwxr-xr-x   5 camila-giraldo camila-giraldo      4096 Oct 27 15:42 bin
+drwxr-xr-x  37 camila-giraldo camila-giraldo      4096 Oct 27 15:31 extensions
+-rwxr-xr-x   1 camila-giraldo camila-giraldo 126879696 Oct 20 13:40 node
+drwxr-xr-x 100 camila-giraldo camila-giraldo      4096 Oct 27 15:31 node_modules
+drwxr-xr-x   3 camila-giraldo camila-giraldo      4096 Oct 27 15:31 out
+-rw-r--r--   1 camila-giraldo camila-giraldo       839 Oct 27 15:24 package.json
+-rw-r--r--   1 camila-giraldo camila-giraldo     68077 Oct 27 15:25 product.json
+/home/camila-giraldo/.vscode-server/bin/2c33b50b16c472efe58357d1d2a8a5414bc23fbf/node: ELF 64-bit LSB executable, x86-64, version 1 (GNU/Linux), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=5f8561a0db5b06f690174a3903e258e2918c27c6, for GNU/Linux 3.2.0, with debug_info, not stripped, too many notes (256)
+v24.22.1
+corepack
+corepack.cmd
+install_tools.bat
+node.exe
+node_modules
+nodevars.bat
+npm
+npm.cmd
+npm.ps1
+npx
+# Modelos de IA por subagente (no escribir modelos dentro de los prompts).
+# Copia este archivo a .env y completa los nombres exactos del proveedor que uses.
+# .env está en .gitignore: nunca lo subas.
+
+PROVEEDOR_POR_DEFECTO=gemini
+
+# Categoría fuerte: juicio y negociación; el error se propaga.
+MODELO_ESPECIFICACIONES=
+MODELO_ARQUITECTURA=
+MODELO_S1=
+MODELO_S2=
+MODELO_B1=
+
+# Categoría intermedia: siguen plantillas y un resultado verificable.
+MODELO_S3=
+MODELO_B2=
+MODELO_B3=
+MODELO_B4=
+MODELO_R2=
+
+# Categoría barata / intermedia: siguen un guion.
+MODELO_R1=
+
+# Presupuesto global de llamadas (además del tope de 3 iteraciones y 8 pasos de R2).
+PRESUPUESTO_DIARIO_LLAMADAS=200
+---
+# Modelos de IA por subagente (no escribir modelos dentro de los prompts).
+# Copia este archivo a .env y completa los nombres exactos del proveedor que uses.
+# .env está en .gitignore: nunca lo subas.
+
+PROVEEDOR_POR_DEFECTO=gemini
+
+# Categoría fuerte: juicio y negociación; el error se propaga.
+MODELO_ESPECIFICACIONES=
+MODELO_ARQUITECTURA=
+MODELO_S1=
+MODELO_S2=
+MODELO_B1=
+
+# Categoría intermedia: siguen plantillas y un resultado verificable.
+MODELO_S3=
+MODELO_B2=
+MODELO_B3=
+MODELO_B4=
+MODELO_R2=
+
+# Categoría barata / intermedia: siguen un guion.
+MODELO_R1=
+
+# Presupuesto global de llamadas (además del tope de 3 iteraciones y 8 pasos de R2).
+PRESUPUESTO_DIARIO_LLAMADAS=200
+---
+# apps/web — PWA React + Vite
+
+Este directorio lo construye **B3** (Interfaz web). Las pruebas E2E las escribe **S3** con Playwright y las ejecuta **B4**.
+
+## Estructura prevista
+
+```text
+src/
+├─ api/          cliente tipado de la API (nada de fetch suelto)
+├─ componentes/  shadcn/ui
+├─ pantallas/    sesión, prevalidación, reservar, mi reserva, dispensador
+├─ formularios/  React Hook Form + Zod
+└─ pwa/          manifest + service worker
+```
+
+## Reglas
+
+- Ningún dato de salud en `localStorage`, `sessionStorage`, consola ni analítica.
+- OCR local con Tesseract.js y pantalla de confirmación humana.
+- Fórmulas manuscritas: fuera de alcance, con mensaje claro.
+- QR con `qrcode`; lectura con `@zxing/browser`.
+- `data-testid` acordados en los TC; no se modifican las pruebas de Playwright.
+- Cookies httpOnly gestionadas por el backend.
+
+Aún no hay código: lo crea B3 cuando el MVP esté aprobado y el flujo de API exista.
+> general · flint-40b-free
+[0m$ [0mcat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/plantilla-jest-nestjs/SKILL.md
+---
+name: plantilla-jest-nestjs
+description: Estructura de pruebas para el stack aprobado Jest + Testcontainers + Playwright + grammY simulado. Úsalo en S3 al convertir casos TC-* en pruebas ejecutables que fallan primero.
+---
+# Plantilla Jest + NestJS + Testcontainers + Playwright
+
+## Dónde va cada prueba
+
+| Qué se prueba | Herramienta | Ubicación |
+|---|---|---|
+| Reglas de dominio puras | Jest unitario | `apps/api/src/modulos/<x>/pruebas/dominio.spec.ts` |
+| Servicios y API | Jest + Nest Testing | `apps/api/src/modulos/<x>/pruebas/servicios.spec.ts` |
+| Base de datos y transacciones | Jest + Testcontainers PostgreSQL | `apps/api/src/modulos/<x>/pruebas/integracion.spec.ts` |
+| Concurrencia | Jest + Testcontainers + `Promise.all` | `apps/api/src/modulos/reservas/pruebas/concurrencia.spec.ts` |
+| Flujos web | Playwright | `apps/web/e2e/<flujo>.spec.ts` |
+| Bot Telegram | grammY con updates simulados | `apps/api/src/entradas/telegram/pruebas/` |
+| SMS / correo | Stub/spy del proveedor | junto al servicio que los usa |
+
+## Convención de nombres
+
+```ts
+it('AC-36 / TC-041: 50 confirmaciones sobre 10 unidades dejan máximo 10 reservas', async () => { ... });
+it('@supuesto AC-12 / TC-018: ...', async () => { ... });
+```
+
+## Unitario (dominio)
+
+```ts
+describe('Reserva', () => {
+  it('AC-31 / TC-001: no reserva si el cupo está lleno', () => {
+    const ventana = crearVentana({ capacidad: 1, ocupados: 1 });
+    expect(puedeReservar(ventana)).toBe(false);
+  });
+});
+```
+
+## Integración con Testcontainers
+
+```ts
+import { PostgreSqlContainer } from '@testcontainers/postgresql';
+
+let container: StartedPostgreSqlContainer;
+
+beforeAll(async () => {
+  container = await new PostgreSqlContainer().start();
+  // aplicar migraciones del módulo
+}, 60_000);
+
+afterAll(async () => { await container.stop(); });
+```
+
+## Concurrencia (AC-36)
+
+```ts
+it('AC-36 / TC-036: 50 confirmaciones sobre 10 unidades dejan máximo 10 reservas', async () => {
+  const intentos = Array.from({ length: 50 }, () => confirmarReserva(datos));
+  const resultados = await Promise.allSettled(intentos);
+  const confirmadas = resultados.filter(r => r.status === 'fulfilled' && r.value.ok).length;
+  expect(confirmadas).toBeLessThanOrEqual(10);
+});
+```
+
+## grammY simulado
+
+```ts
+const update = { message: { text: '/start', chat: { id: 1 } } } as Update;
+await bot.handleUpdate(update);
+expect(respuestas[0]).toContain('Tu reserva');
+expect(respuestas[0]).not.toMatch(/medicamento|diagnóstico/i);
+```
+
+## Reglas
+
+1. La prueba debe fallar por «no implementado», no por error de sintaxis.
+2. No toques código de producción.
+3. No uses `skip`/`only` para evitar fallos.
+4. Datos sintéticos y plantillas fijas.
+5. Toda prueba debe poder rastrearse a un `TC` y un `AC`.
+[0m$ [0mls /home/camila-giraldo/.vscode-server/bin/2c33b50b16c472efe58357d1d2a8a5414bc23fbf/bin/; echo ---; which docker; docker info 2>&1 | head -5; echo ---; ls /home/camila-giraldo/SW3/pharma_express/PharmaExpress/venv/bin | head -20; echo ---; cat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/.gitignore
+code-server
+copilot-shim
+helpers
+remote-cli
+---
+/bin/bash: line 1: docker: command not found
+---
+Activate.ps1
+activate
+activate.csh
+activate.fish
+distro
+dotenv
+httpx
+httpx2
+idna
+pip
+pip3
+pip3.14
+python
+python3
+python3.14
+𝜋thon
+---
+# Llaves y entornos locales
+.env
+.venv/
+__pycache__/
+
+
+
+*:Zone.Identifier
+> general · flint-40b-free
+[0m$ [0mcat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md; echo =====; cat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/LEEME.md
+# Cómo probar los agentes y correr la secuencia
+
+Hay tres niveles de prueba. Empieza por el 1, que no gasta llamadas de IA.
+
+## 1. Prueba mecánica (sin IA, segundos)
+
+Comprueba sintaxis, frontmatter de agentes y skills, secciones de `docs/mvp.md`,
+`pipeline.json`, el lint y las 12 transiciones del orquestador:
+
+```bash
+python3 qa/scripts/probar_todo.py --verbose
+```
+
+Debe terminar con `8/8 pruebas pasaron` y código de salida 0.
+
+Pruebas sueltas:
+
+```bash
+python3 qa/scripts/lint_spec.py PHARMA_EXPRESS_SPEC-1.md
+python3 qa/scripts/lint_spec.py --strict docs/specs/
+python3 orquestador.py
+python3 orquestador.py --check   # código 1 mientras haya una puerta humana pendiente
+```
+
+## 2. Probar cada agente
+
+### 2.1 Agentes base con el runner de Python
+
+Solo `specification-agent` y `architecture-agent` corren con `agente.py`. Necesitan
+una llave en `.env` (ver `.env.example`) y conexión a Internet.
+
+```bash
+python3 agentes-ia/agente.py --listar
+python3 agentes-ia/agente.py --modelos gemini
+```
+
+Modo normal (SPEC):
+
+```bash
+python3 agentes-ia/agente.py specification-agent \
+  "Necesitamos que el paciente pueda cancelar su reserva"
+```
+
+Modo MVP (los dos agentes, en orden):
+
+```bash
+# 1. Especificaciones prioriza
+python3 agentes-ia/agente.py specification-agent "priorizar MVP" \
+  --adjuntar docs/mvp.md primary-needs-v2.md \
+  agentes-ia/salidas/specification-agent/borradores/SPEC-001/SPEC-001_v1.0.md
+
+# 2. Arquitectura corta
+python3 agentes-ia/agente.py architecture-agent "cortar MVP" \
+  --adjuntar docs/mvp.md docs/arquitectura/propuesta-tecnologica.md
+```
+
+Si el agente devuelve el texto en pantalla, cópialo a la sección correspondiente de
+`docs/mvp.md`. El runner de Python no escribe en archivos arbitrarios del repo.
+
+### 2.2 Subagentes S1–R2 con Claude Code
+
+Estos subagentes viven en `.claude/agents/` y los ejecuta Claude Code. En este
+equipo hay que tener Claude Code instalado y autenticado (`claude`). Desde la raíz:
+
+```text
+Usa el subagente qa-s1-revisor-spec para revisar docs/specs/SPEC-001.md contra docs/mvp.md.
+
+Usa el subagente qa-s2-disenador-casos con docs/specs/SPEC-001.md y docs/mvp.md.
+
+Usa el subagente qa-s3-generador-pruebas con los TC de qa/casos/ y los oráculos aprobados.
+
+Usa el subagente backend-servicios-api para implementar el módulo identidad.
+
+Usa el subagente ejecutor-corrector para dejar en verde el módulo identidad.
+
+Usa el subagente qa-r1-humo contra el entorno de prueba.
+
+Usa el subagente qa-r2-triage con el hallazgo de qa/humo/RUN-humo-<fecha>.md.
+```
+
+Cada subagente tiene sus entradas y salidas en el frontmatter y en el cuerpo del
+archivo. El mapa completo está en `.claude/LEEME-agentes.md`.
+
+## 3. Correr la secuencia
+
+El orquestador **no ejecuta agentes**: aplica el orden y las puertas humanas, y te
+dice qué toca. La secuencia real es:
+
+```text
+Especificaciones (priorizar MVP)
+  → Arquitectura (cortar MVP)
+  → persona aprueba docs/mvp.md
+  → S1 → S2 → persona aprueba oráculos → S3
+  → B1/B4 → B2/B3 → R1 → R2 (opcional)
+  → persona aprueba la entrega
+```
+
+Después de cada paso, marca el resultado y consulta el siguiente:
+
+```bash
+python3 qa/scripts/marcar.py mostrar
+python3 orquestador.py
+```
+
+### 3.1 Comandos para avanzar el estado
+
+```bash
+# Puerta humana del MVP
+python3 qa/scripts/marcar.py mvp --estado aprobado --aprobado-por "Nombre Apellido"
+
+# Módulo: registrar y avanzar
+python3 qa/scripts/marcar.py modulo identidad --spec aprobada
+python3 qa/scripts/marcar.py modulo identidad --revision APTA
+python3 qa/scripts/marcar.py modulo identidad --oraculos aprobados
+python3 qa/scripts/marcar.py modulo identidad --pruebas rojas
+python3 qa/scripts/marcar.py modulo identidad --implementacion verde
+python3 qa/scripts/marcar.py modulo identidad --humo verde
+
+# Bucles y escalamientos
+python3 qa/scripts/marcar.py iteracion identidad
+python3 qa/scripts/marcar.py escalar identidad "3 intentos sin progreso"
+python3 qa/scripts/marcar.py resolver-escalado identidad
+```
+
+Valores válidos:
+
+| Campo | Valores |
+|---|---|
+| `--spec` | `pendiente`, `borrador`, `candidata`, `aprobada` |
+| `--revision` | `pendiente`, `APTA`, `APTA_CON_RESERVAS`, `NO_APTA` |
+| `--oraculos` | `pendiente`, `aprobados` |
+| `--pruebas` | `pendiente`, `rojas`, `verdes` |
+| `--implementacion` | `pendiente`, `en_curso`, `verde` |
+| `--humo` | `pendiente`, `en_curso`, `verde`, `fallido` |
+
+### 3.2 Ensayo completo sin tocar el pipeline real
+
+Copia el pipeline a un archivo temporal y recorre todas las transiciones:
+
+```bash
+DEMO="$(mktemp -d)/pipeline.json"
+cp pipeline.json "$DEMO"
+
+python3 qa/scripts/marcar.py --archivo "$DEMO" mvp --estado aprobado --aprobado-por "Demo"
+python3 qa/scripts/marcar.py --archivo "$DEMO" modulo identidad --spec aprobada
+python3 qa/scripts/marcar.py --archivo "$DEMO" modulo identidad --revision APTA
+python3 qa/scripts/marcar.py --archivo "$DEMO" modulo identidad --oraculos aprobados
+python3 qa/scripts/marcar.py --archivo "$DEMO" modulo identidad --pruebas rojas
+python3 qa/scripts/marcar.py --archivo "$DEMO" modulo identidad --implementacion verde
+python3 qa/scripts/marcar.py --archivo "$DEMO" modulo identidad --humo verde
+python3 orquestador.py --archivo "$DEMO"
+```
+
+La última salida debe proponer `entrega`.
+
+## 4. Qué no es automático
+
+- No hay un runner que encadene los 11 agentes de punta a punta: S1–R2 son
+  subagentes de Claude Code y hay puertas humanas en medio.
+- El orquestador solo habilita el siguiente paso; no decide alcance ni escribe código.
+- El runner de Python solo ejecuta los dos agentes base y no puede editar `docs/mvp.md`.
+- Para una corrida realmente automática haría falta invocar Claude Code en modo
+  headless (`claude -p`) o montar una API propia. No está implementado.
+=====
+# Documentación de Pharma Express — guía de agentes
+
+Esta carpeta es la fuente de verdad del flujo Spec-Driven. Ningún agente decide alcance por su cuenta.
+
+## Orden del flujo
+
+```text
+Necesidad
+  → Agente de Especificaciones (SPEC-*)
+  → Agente de Arquitectura (ARQ-*)
+  → docs/mvp.md: Requisitos (Especificaciones) + Corte técnico (Arquitectura)
+  → Puerta humana: una persona escribe aprobado_por en docs/mvp.md
+  → QA shift-left: S1 revisa → S2 diseña casos y oráculos → S3 genera pruebas rojas
+  → Puerta humana: aprobar oráculos
+  → Backend/Frontend: B1, B2, B3 + B4 hasta verde
+  → QA shift-right: R1 humo sobre el entorno desplegado
+  → Puerta humana: aprobar entrega
+```
+
+## Quién es dueño de qué
+
+| Archivo o carpeta | Dueño | Regla |
+|---|---|---|
+| `docs/specs/` | Agente de Especificaciones | Solo SPEC aprobadas y congeladas entran al flujo. |
+| `docs/arquitectura/` | Agente de Arquitectura | Incluye el stack aprobado y los ARQ. |
+| `docs/mvp.md` → **Requisitos** | Especificaciones | Arquitectura no la edita; deja observaciones. |
+| `docs/mvp.md` → **Corte técnico** | Arquitectura | Especificaciones no la edita; deja observaciones. |
+| `docs/preguntas/` | Cualquier agente que detecte una ambigüedad | Una pregunta por archivo `PREG-xxx.md`. |
+| `qa/revision/` | S1 | Informes de revisión estática. |
+| `qa/casos/` | S2 | Casos `TC-*.md` con su oráculo. |
+| `qa/trazabilidad.md` | S2, S3 y B4 | Se actualiza, no se reescribe a mano sin evidencia. |
+| `apps/api/` y `apps/web/` | B1–B4 | B4 solo corrige código de producción. |
+| `qa/ejecuciones/` | B4 y R1 | Registros `RUN-*.json`; solo se agregan. |
+| `qa/humo/` | R1 | Reportes de humo. |
+| `.claude/agents/` | Equipo | Un archivo por subagente. |
+| `.claude/skills/` | Equipo | Un procedimiento repetible por carpeta. |
+| `pipeline.json` | Orquestador | Estado del flujo; no es una decisión de alcance. |
+
+## El stack tecnológico: ¿de quién es?
+
+**Del Agente de Arquitectura.** El stack es una decisión técnica y una restricción de construcción, no un requisito de negocio. Por eso:
+
+- **Especificaciones** no lo lee para priorizar; si necesita una decisión técnica, la deja como «tema para arquitectura».
+- **Arquitectura** lo lee como entrada aprobada (`docs/arquitectura/propuesta-tecnologica.md`) y lo usa para el corte técnico y los ADR.
+- **QA (S1–S3, R1–R2)** lo lee solo para elegir herramientas: Jest + Testcontainers, Playwright, grammY simulado, etc.
+- **B1–B3** lo heredan en su prompt base y lo implementan.
+- **B4** lo usa para ejecutar las pruebas, no para decidir tecnología.
+
+## Puertas humanas
+
+1. Aprobar la SPEC.
+2. Aprobar `docs/mvp.md` (con `aprobado_por`).
+3. Aprobar los oráculos (`qa/oraculos-pendientes.md`).
+4. Aprobar la entrega (reporte de humo + `pipeline.json`).
+
+Sin estas aprobaciones, el orquestador no habilita el siguiente paso.
+[0m$ [0mexport NODE=/home/camila-giraldo/.vscode-server/bin/2c33b50b16c472efe58357d1d2a8a5414bc23fbf/node; $NODE /home/camila-giraldo/.vscode-server/bin/2c33b50b16c472efe58357d1d2a8a5414bc23fbf/node_modules/npm/bin/npm-cli.js --version 2>&1 | tail -3; ls /home/camila-giraldo/.vscode-server/bin/2c33b50b16c472efe58357d1d2a8a5414bc23fbf/node_modules | head -30
+}
+
+Node.js v24.22.1
+@devcontainers
+@github
+@hpke
+@isaacs
+@microsoft
+@parcel
+@pondwader
+@tootallnate
+@vscode
+@xterm
+agent-base
+asn1
+base64-js
+bcrypt-pbkdf
+bindings
+bl
+buffer
+buffer-crc32
+buildcheck
+chownr
+commander
+cookie
+debug
+decompress-response
+deep-extend
+detect-libc
+end-of-stream
+expand-template
+file-uri-to-path
+fs-constants
+> general · flint-40b-free
+[0m→ [0mRead .claude/agents/ejecutor-corrector.md 
+[0m→ [0mRead .claude/agents/backend-bot-telegram.md 
+> general · flint-40b-free
+[0m$ [0mcat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/registro-de-ejecucion/SKILL.md; echo =====; sed -n 1,120p /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/scripts/marcar.py
+---
+name: registro-de-ejecucion
+description: Formato del registro RUN-*.json para guardar resultados de pruebas con id, estado, duración y mensaje. Úsalo en B4 y R1 para dejar evidencia reproducible.
+---
+# Registro de ejecución
+
+Cada ejecución deja un archivo en `qa/ejecuciones/RUN-<fecha>.json`. No se sobrescribe: si el nombre existe, agrega `_2`, `_3`.
+
+## Formato
+
+```json
+{
+  "run": "RUN-2026-11-05T14-30-00",
+  "fecha": "2026-11-05T14:30:00-05:00",
+  "modulo": "reservas",
+  "entorno": "local | docker-compose | prueba",
+  "commit": "abc1234",
+  "comando": "npm test -- modulos/reservas",
+  "duracion_ms": 48210,
+  "resumen": {
+    "total": 24,
+    "verdes": 22,
+    "rojas": 2,
+    "omitidas": 0
+  },
+  "pruebas": [
+    {
+      "id": "AC-36 / TC-036",
+      "estado": "verde",
+      "duracion_ms": 3200,
+      "mensaje": ""
+    },
+    {
+      "id": "AC-31 / TC-001",
+      "estado": "rojo",
+      "duracion_ms": 180,
+      "mensaje": "Expected true, received false"
+    }
+  ],
+  "clasificacion": {
+    "DEFECTO_CODIGO": 1,
+    "PRUEBA_SOSPECHOSA": 1,
+    "ENTORNO": 0
+  },
+  "escalados": ["AC-31 / TC-001 → PREG-004"]
+}
+```
+
+## Reglas
+
+1. `id` de prueba = `<AC> / <TC>: <descripción>` (el mismo nombre de la prueba).
+2. `estado`: `verde`, `rojo`, `omitida`, `error`.
+3. No inventes duraciones ni mensajes: cópialos de la salida real.
+4. Un `RUN` por ejecución de suite; no mezcles módulos.
+5. Enmascara cualquier dato personal o de salud que aparezca en el mensaje.
+6. El registro es evidencia: no lo edites después para «mejorar» el resultado. Agrega uno nuevo.
+7. En `qa/trazabilidad.md` usa el nombre del RUN, no el JSON completo.
+=====
+#!/usr/bin/env python3
+"""Marca el estado del pipeline sin editar pipeline.json a mano.
+
+No ejecuta agentes: solo actualiza el estado y valida los valores permitidos.
+Después de marcar, corre `python3 orquestador.py` para ver el siguiente paso.
+
+Uso:
+    python3 qa/scripts/marcar.py mostrar
+    python3 qa/scripts/marcar.py mvp --estado aprobado --aprobado-por "Nombre"
+    python3 qa/scripts/marcar.py modulo identidad --spec aprobada
+    python3 qa/scripts/marcar.py modulo identidad --revision APTA
+    python3 qa/scripts/marcar.py modulo identidad --oraculos aprobados
+    python3 qa/scripts/marcar.py modulo identidad --pruebas rojas
+    python3 qa/scripts/marcar.py modulo identidad --implementacion verde
+    python3 qa/scripts/marcar.py modulo identidad --humo verde
+    python3 qa/scripts/marcar.py iteracion identidad
+    python3 qa/scripts/marcar.py escalar identidad "3 intentos sin progreso"
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from datetime import date
+from pathlib import Path
+
+RAIZ = Path(__file__).resolve().parents[2]
+PIPELINE = RAIZ / "pipeline.json"
+
+VALORES = {
+    "mvp_estado": {"borrador", "en_negociacion", "aprobado"},
+    "spec": {"pendiente", "borrador", "candidata", "aprobada"},
+    "revision": {"pendiente", "APTA", "APTA_CON_RESERVAS", "NO_APTA"},
+    "oraculos": {"pendiente", "aprobados"},
+    "pruebas": {"pendiente", "rojas", "verdes"},
+    "implementacion": {"pendiente", "en_curso", "verde"},
+    "humo": {"pendiente", "en_curso", "verde", "fallido"},
+}
+
+
+def cargar(path: Path) -> dict:
+    if not path.is_file():
+        sys.exit(f"No existe {path}")
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        sys.exit(f"{path} no es JSON válido: {exc}")
+
+
+def guardar(path: Path, datos: dict) -> None:
+    datos["actualizado"] = date.today().isoformat()
+    temporal = path.with_suffix(".tmp")
+    temporal.write_text(json.dumps(datos, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    temporal.replace(path)
+
+
+def validar(campo: str, valor: str) -> str:
+    permitidos = VALORES[campo]
+    if valor not in permitidos:
+        sys.exit(f"Valor inválido para {campo}: «{valor}». Permitidos: {', '.join(sorted(permitidos))}")
+    return valor
+
+
+def modulo(datos: dict, nombre: str) -> dict:
+    return datos.setdefault("modulos", {}).setdefault(
+        nombre,
+        {
+            "spec": "pendiente",
+            "revision": "pendiente",
+            "oraculos": "pendiente",
+            "pruebas": "pendiente",
+            "implementacion": "pendiente",
+            "humo": "pendiente",
+        },
+    )
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Marca el estado del pipeline.")
+    parser.add_argument("--archivo", default=str(PIPELINE), help="Ruta alternativa de pipeline.json.")
+    sub = parser.add_subparsers(dest="comando", required=True)
+
+    p_mostrar = sub.add_parser("mostrar", help="Imprime el pipeline actual.")
+    p_mostrar.set_defaults(func=lambda d, a: None)
+
+    p_mvp = sub.add_parser("mvp", help="Actualiza el estado del MVP.")
+    p_mvp.add_argument("--estado", choices=sorted(VALORES["mvp_estado"]))
+    p_mvp.add_argument("--aprobado-por", dest="aprobado_por")
+    p_mvp.add_argument("--ronda", type=int)
+
+    p_mod = sub.add_parser("modulo", help="Actualiza el estado de un módulo.")
+    p_mod.add_argument("nombre")
+    for campo in ("spec", "revision", "oraculos", "pruebas", "implementacion", "humo"):
+        p_mod.add_argument(f"--{campo}", choices=sorted(VALORES[campo]))
+
+    p_it = sub.add_parser("iteracion", help="Suma una iteración de corrección a un módulo.")
+    p_it.add_argument("nombre")
+
+    p_esc = sub.add_parser("escalar", help="Registra un escalamiento.")
+    p_esc.add_argument("nombre")
+    p_esc.add_argument("motivo")
+
+    p_res = sub.add_parser("resolver-escalado", help="Quita el escalamiento de un módulo.")
+    p_res.add_argument("nombre")
+
+    args = parser.parse_args()
+    path = Path(args.archivo)
+    datos = cargar(path)
+
+    if args.comando == "mostrar":
+        print(json.dumps(datos, ensure_ascii=False, indent=2))
+        return 0
+
+    if args.comando == "mvp":
+        mvp = datos.setdefault("mvp", {})
+        if args.estado:
+            mvp["estado"] = validar("mvp_estado", args.estado)
+        if args.ronda is not None:
+            mvp["ronda"] = args.ronda
+[0m$ [0mexport PATH=/home/camila-giraldo/.vscode-server/bin/2c33b50b16c472efe58357d1d2a8a5414bc23fbf:$PATH; timeout 60 npm ping 2>&1 | tail -5
+npm notice
+npm notice New major version of npm available! 11.12.1 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice
+> general · flint-40b-free
+[0m$ [0mcat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/PHARMA_EXPRESS_AGENTES.md | head -150
+# Pharma Express - Contexto para agentes de IA
+
+Versión: 1
+Estado: Aprobado
+Propósito: dar a cualquier agente de IA que trabaje en Pharma Express las reglas de trabajo, el dominio y el contexto del producto, sin importar la tarea que realice.
+
+# 1. Reglas de trabajo
+
+1. Redactar en español de Colombia.
+2. Seguir el principio del proyecto: la IA propone, una persona del equipo decide y el equipo valida.
+3. Si falta información para cumplir la tarea, preguntar al equipo. No completar vacíos con suposiciones ni inventar reglas, cifras, normas, integraciones o comportamientos.
+4. En toda respuesta, distinguir tres tipos de contenido:
+   - Confirmado: lo que está en este archivo o lo que el equipo respondió.
+   - Inferido: una conclusión propia del agente. Se marca como tal y requiere confirmación.
+   - Pendiente: lo que aún no está decidido.
+   Una inferencia nunca se convierte en regla sin aprobación del equipo.
+5. Si una solicitud contradice el contexto del producto (sección 3), señalar la contradicción y preguntar antes de continuar. No resolverla por cuenta propia.
+
+# 2. Dominio
+
+## 2.1. Producto
+
+- Nombre: Pharma Express.
+- Tipo: sistema multicanal de pre-dispensación farmacéutica. El entregable es un prototipo funcional con sistemas externos simulados.
+- Propósito: que el paciente conozca antes de desplazarse la validez preliminar de sus fórmulas y la disponibilidad de sus medicamentos, y que reciba una cita solo cuando los medicamentos estén reservados.
+- Lugar: puntos de dispensación del gestor farmacéutico Disfarma en Manizales, Caldas.
+- Población: afiliados de Salud Total y Sanitas. Se prioriza a personas con tratamientos crónicos, adultos mayores y personas con barreras digitales.
+- Diferenciador: prevalidación anticipada y reserva del medicamento antes de asignar la cita.
+
+## 2.2. Problema
+
+- En los puntos de dispensación, las validaciones para entregar un medicamento (afiliación, vigencia de la fórmula, cobertura PBS, autorización y disponibilidad) ocurren cuando el paciente ya está en la ventanilla.
+- El paciente descubre las novedades tarde, después de desplazarse y esperar. En Manizales se han reportado esperas de 3 a 5 horas y cientos de usuarios con medicamentos pendientes.
+- Consecuencias: desplazamientos inútiles, congestión en los puntos, riesgo de interrumpir tratamientos crónicos y exclusión de quienes no usan tecnología.
+- El producto no resuelve el desabastecimiento, las autorizaciones, las deudas entre actores del sistema de salud ni el inventario real del gestor.
+
+## 2.3. Actores
+
+- Paciente: afiliado que gestiona sus fórmulas por la web o por Telegram.
+- Persona que actúa por el paciente: cuidador, tutor o familiar que recibe el código en el celular o el correo del paciente. El sistema no la distingue del paciente.
+- Facilitador comunitario: apoya a varias personas desde su propio chat o navegador. Opera igual que un cuidador.
+- Dispensador: personal del punto. Es el único actor con usuario y rol en el sistema.
+- EPS simulada: fuente de afiliación, datos de contacto, vigencia de fórmulas, autorizaciones y habilitación de entregas crónicas.
+- Inventario simulado: fuente de existencias por medicamento y por punto.
+- Servicios externos reales: Telegram, SMS y correo. Solo transportan mensajes; no son fuente de identidad.
+
+## 2.4. Glosario
+
+- Pre-dispensación: gestión previa a la entrega: prevalidación, reserva y cita antes del desplazamiento.
+- Solicitud: conjunto de fórmulas y medicamentos de un mismo paciente gestionados en una misma gestión.
+- Fórmula: prescripción con uno o más medicamentos. Es la unidad de validación y es todo o nada.
+- Prevalidación: verificación preliminar de afiliación, vigencia, cobertura PBS, autorización y, si la fórmula es crónica, habilitación de entrega. No sustituye la validación oficial.
+- Validación oficial: la que registra el dispensador en el punto.
+- Tratamiento agudo o crónico: clasificación de una fórmula según el diagnóstico de la historia clínica.
+- Fecha habilitada de entrega: fecha desde la cual se puede entregar la siguiente dosis de una fórmula crónica.
+- Ventana: bloque de 1 hora en un punto, con capacidad limitada. Equivale a franja.
+- Cita: ventana escogida en un punto para recoger los medicamentos reservados en ese punto.
+- Reserva: existencias y cupo apartados para una cita.
+- Sobre-reserva: comprometer más existencias o cupos de los disponibles.
+- Código de entrega: código de un solo uso, en QR y numérico, ligado a una cita.
+- Vinculación: asociación de un chat de Telegram o de un navegador con un paciente después de verificar su identidad.
+- PBS: Plan de Beneficios en Salud.
+- UPC: Unidad de Pago por Capitación.
+- MIPRES: plataforma de prescripción de tecnologías no financiadas con la UPC.
+
+# 3. Contexto del producto
+
+Esta sección describe cómo funciona Pharma Express según lo aprobado por el equipo.
+
+## 3.1. Canales
+
+- El producto funciona por una aplicación web y por un bot de Telegram. Ambos permiten el recorrido completo: verificar la identidad, vincular el canal, cargar documentos, prevalidar, agendar, consultar, cancelar y recibir notificaciones.
+- La atención presencial sigue disponible fuera del sistema, incluso si la persona no acepta el tratamiento de datos.
+- El bot de Telegram solo escribe después de que la persona lo inicia.
+- Los identificadores de Telegram (usuario, número de chat, nombre visible) no prueban la identidad de nadie.
+- Se pueden usar enlaces directos al bot de Telegram como apoyo opcional. Esos enlaces nunca llevan cédula, diagnósticos, medicamentos ni otros datos sensibles.
+
+## 3.2. Identidad y consentimiento
+
+- Pharma Express no registra pacientes ni crea cuentas para ellos. Los datos de afiliación y contacto vienen de la EPS simulada.
+- Antes de pedir cualquier dato, el sistema muestra el aviso de privacidad y pide aceptar el tratamiento de datos, con la declaración "soy el titular o actúo con su autorización". Se registra si aceptó el titular o un tercero, la fecha y el canal. Si la persona no acepta, no se registra nada.
+- La identidad se verifica con la cédula y un código de un solo uso. El código llega por SMS al celular registrado en la EPS y, si existe, al correo registrado. Los envíos son reales; las pruebas usan números y correos de los integrantes del equipo.
+- El código dura 10 minutos y admite 3 intentos. Si vence o se agotan los intentos, se ofrecen tres caminos: pedir un código nuevo, recibir orientación para actualizar los datos en la EPS o acudir a la atención presencial.
+- La actualización de datos y el cambio de celular o correo se hacen en la EPS. El sistema solo orienta.
+- La autorización para tratar datos de salud es separada y se pide antes de cargar cualquier documento.
+- El titular puede revocar el consentimiento y pedir que se eliminen sus datos. Si tiene reservas activas, se eliminan y el cupo y los medicamentos quedan disponibles para otras personas.
+
+## 3.3. Vinculación de canales y apoyo de terceros
+
+- Después de verificar la identidad, el chat de Telegram o el navegador queda vinculado al paciente.
+- Un mismo chat o navegador puede quedar vinculado a varios pacientes, sin límite. Si hay más de uno, se escoge el paciente antes de cada gestión.
+- Toda vinculación vence a los 3 meses y exige un código nuevo. Mientras está vencida, ese canal no muestra información, no permite gestiones y no recibe notificaciones. Los SMS y correos siguen llegando.
+- Quien ingresa el código correcto puede hacer todas las gestiones del paciente. El sistema no distingue entre paciente, cuidador, tutor o facilitador.
+- Esto aplica también a menores y a personas con tutor, cuyo número registrado suele ser el del tutor.
+- El apoyo de terceros no es una interfaz aparte: es un cuidador o un facilitador comunitario usando la web o Telegram en nombre del paciente.
+
+## 3.4. Documentos y prevalidación
+
+- El usuario carga las fórmulas y la historia clínica, en foto o PDF, por la web o por Telegram.
+- Si de un documento no se obtienen los datos (ilegible, incompleto, sin diagnóstico o sin coincidencia con la EPS simulada), se pide cargarlo de nuevo. Si el problema persiste, la fórmula queda no apta y se orienta a la atención presencial.
+- El tipo de tratamiento sale del diagnóstico. Un catálogo configurable define qué diagnósticos son crónicos; cualquier otro se trata como agudo.
+- La prevalidación sigue este orden:
+  1. Afiliación activa. Se verifica una vez por solicitud. Si está inactiva, se detiene toda la solicitud y se orienta hacia la EPS.
+  2. Vigencia de la fórmula. Es un dato de la EPS simulada; en los datos de prueba va de 8 a 9 meses después de la consulta. No se usa la regla antigua de 30 días. Si no está vigente, se indica que requiere una nueva valoración médica.
+  3. Cobertura PBS de cada medicamento. Un medicamento no cubierto solo continúa si está autorizado.
+  4. Autorización de cada medicamento, consultada en la EPS simulada. Si falta, el sistema solo muestra los puntos, enlaces o trámites de autorización de la EPS del paciente. No tramita autorizaciones ni vigila su estado; el usuario vuelve a consultar por su cuenta.
+  5. Habilitación de entrega, solo para fórmulas crónicas. La fórmula es apta si la fecha habilitada es igual o anterior a la fecha de la cita posible.
+- Cada fórmula es todo o nada: si un medicamento no cumple, toda la fórmula queda no apta.
+- Las fórmulas separadas son independientes. Las aptas continúan; para las no aptas se indica que se gestionen con la EPS.
+- Todo resultado se presenta como preliminar, con el aviso de que la validación oficial ocurre en el punto.
+
+## 3.5. Disponibilidad, reserva y agenda
+
+- Tanto los tratamientos agudos como los crónicos verifican disponibilidad, reservan y agendan.
+- Nunca existe una cita sin medicamentos reservados ni se supera la capacidad de una ventana. La meta es cero sobre-reservas.
+- Cuándo puede ser la cita:
+  - Agudo: el mismo día, en ventanas que inicien al menos una hora después de agendar, o el día siguiente.
+  - Crónico: solo el día calendario siguiente.
+  - Si una cita incluye algún medicamento crónico, aplica la regla del crónico.
+- La cita es una ventana de 1 hora. Si el paciente llega antes, espera a que inicie. La reserva expira al terminar la ventana.
+- La reserva se hace por solicitud. Si los medicamentos están en puntos distintos, se agenda una cita por punto.
+- La confirmación es atómica: las citas de una misma fórmula se reservan todas o ninguna. Si otra persona confirmó antes, se informa y se muestran las opciones actualizadas.
+- Cada cita tiene un código de entrega de un solo uso, en QR y numérico. El usuario lo consulta en la web o en Telegram cuando lo necesita; no tiene que guardarlo al agendar.
+- No hay reprogramación. El usuario puede cancelar en cualquier momento. Para obtener otra cita debe iniciar una nueva solicitud.
+- Si el paciente ya recibió parte de una fórmula y no recoge el resto (porque cancela o no llega), lo no recogido se pierde y la fórmula se cierra. Si no recibió nada, todo se libera.
+- Si un medicamento no tiene existencias en ningún punto, o no hay ventanas con cupo en los días permitidos, no se crea un pendiente. Se informa que debe esperar 48 horas para volver a validar y se envía un único recordatorio a las 48 horas. El sistema no vigila el inventario.
+
+## 3.6. Notificaciones y recordatorios
+
+- Cada notificación se envía por todos los medios del paciente: notificación de la web a los navegadores vinculados, Telegram a los chats vinculados, SMS al celular registrado y correo si existe.
+- Ninguna notificación, por ningún medio, incluye nombres de medicamentos ni diagnósticos.
+- Hay dos recordatorios por cita:
+  - Entre las 19:00 y las 21:00 del día anterior. No se envía si la cita se agendó después de las 21:00 ni en citas del mismo día.
+  - Una hora antes de la cita. Lo reciben todos.
+- Los recordatorios solo informan y ofrecen cancelar. No piden confirmación.
+- Al enviar el recordatorio de una hora antes, el sistema vuelve a verificar afiliación, vigencia y autorizaciones. Si algo cambió, cancela las citas de la fórmula, libera los medicamentos y cupos, deja la fórmula no apta, registra qué dato cambió y cuándo, y notifica el motivo y el siguiente paso.
+- No existe cita de continuidad. Después de entregar una fórmula crónica, el sistema avisa 2 días antes de la siguiente fecha habilitada para que el usuario inicie una nueva prevalidación.
+- El sistema no avisa cuando llega un medicamento ni cuando la EPS aprueba una autorización.
+
+## 3.7. Atención en el punto
+
+- El dispensador entra al sistema con su usuario de rol dispensador.
+- La hora de llegada del paciente es el momento en que el dispensador valida el código.
+- El código solo es válido en su punto, dentro de su ventana y una sola vez.
+- El dispensador ve la prevalidación, registra la validación oficial y cierra cada medicamento como entregado o no entregado.
+- Motivos de no entrega: afiliación inactiva; fórmula vencida o inválida; autorización no vigente; medicamento no cubierto; datos del paciente no coinciden; sin existencias pese a reserva; otro, con descripción.
+- Si en el punto hay una novedad con algún medicamento, el usuario la gestiona con Disfarma. El sistema no crea pendientes ni gestiona entregas parciales.
+
+## 3.8. Datos simulados y configuración
+[0m$ [0mcd /home/camila-giraldo/SW3/pharma_express/PharmaExpress && git rev-parse --show-toplevel; echo ---; export PATH=/home/camila-giraldo/.vscode-server/bin/2c33b50b16c472efe58357d1d2a8a5414bc23fbf:$PATH; npm ls -g --depth=0 2>&1 | head; echo ---; cat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/humo/LEEME.md; ls /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/incidentes /home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories/generadas /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/humo
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress
+---
+npm error code ENOENT
+npm error syscall lstat
+npm error path C:\Users\User\AppData\Roaming\npm
+npm error errno -4058
+npm error enoent ENOENT: no such file or directory, lstat 'C:\Users\User\AppData\Roaming\npm'
+npm error enoent This is related to npm not being able to find a file.
+npm error enoent
+npm error A complete log of this run can be found in: C:\Users\User\AppData\Local\npm-cache\_logs\2026-10-31T21_15_35_519Z-debug-0.log
+---
+# Humo (R1)
+
+Reportes `RUN-humo-<fecha>.md` contra el entorno desplegado.
+
+Caminos mínimos:
+
+1. Web: sesión → prevalidar → confirmar → reservar → QR.
+2. Dispensador: escanear QR → entregar; segundo escaneo rechazado.
+3. Telegram: vincular → aviso con plantilla fija.
+4. Tareas: recordatorio y expiración (reloj adelantado en prueba).
+5. Concurrencia ligera: 20 sobre 5 ⇒ máximo 5.
+
+Chequeos transversales: sin medicamentos, diagnósticos ni cédulas en pantalla, mensajes o logs.
+
+Skill: `plantilla-playwright-humo`, `formato-de-hallazgos`, `registro-de-ejecucion`.
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories/generadas:
+20260923-1706_genera-5-historias-para-la-pica-de-atenc.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/humo:
+LEEME.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/incidentes:
+LEEME.md
+> general · flint-40b-free
+[0m$ [0mcd /home/camila-giraldo/SW3/pharma_express/PharmaExpress && grep -rn --include="*.ts" --include="*.md" --include="*.py" --include="*.json" -l -e "AutorizacionDatosSalud" -e "puedeCargar" -e "atencionPresencial" -e "intentosRestantes" . 2>/dev/null | grep -v node_modules | grep -v "\.git/"
+./apps/api/src/modulos/identidad/servicios/consentimiento.service.ts
+./apps/api/src/modulos/identidad/servicios/verificacion.service.ts
+./apps/api/src/modulos/identidad/servicios/autorizacion-datos-salud.service.ts
+./apps/api/src/modulos/identidad/pruebas/servicios.spec.ts
+./docs/arquitectura/plan-identidad.md
+[0m$ [0mcd /home/camila-giraldo/SW3/pharma_express/PharmaExpress && grep -rn --include="*.ts" -l -e "class.*Service" -e "export function" apps/ 2>/dev/null; echo ---; grep -rn "VerificacionIdentidadService\|ConsentimientoService\|RevocacionService\|SolicitudCodigoService" -r . --include="*.md" --include="*.py" --include="*.ts" -l 2>/dev/null | grep -v node_modules | grep -v "\.git/" | head -20
+apps/api/src/modulos/identidad/servicios/consentimiento.service.ts
+apps/api/src/modulos/identidad/servicios/verificacion.service.ts
+apps/api/src/modulos/identidad/servicios/autorizacion-datos-salud.service.ts
+apps/api/src/modulos/identidad/dominio/reglas.ts
+---
+./apps/api/src/modulos/identidad/servicios/consentimiento.service.ts
+./apps/api/src/modulos/identidad/servicios/verificacion.service.ts
+./apps/api/src/modulos/identidad/pruebas/servicios.spec.ts
+./apps/api/src/modulos/identidad/pruebas/concurrencia.spec.ts
+./docs/arquitectura/plan-identidad.md
+> general · flint-40b-free
+[0m$ [0mcd /home/camila-giraldo/SW3/pharma_express/PharmaExpress && find apps/api -type f -not -path "*/node_modules/*" -not -path "*/dist/*" | sort; echo =====; find apps -type d -not -path "*/node_modules/*" -not -path "*/dist/*" | sort
+apps/api/LEEME.md
+apps/api/src/modulos/identidad/dominio/index.ts
+apps/api/src/modulos/identidad/dominio/reglas.ts
+apps/api/src/modulos/identidad/pruebas/concurrencia.spec.ts
+apps/api/src/modulos/identidad/pruebas/dominio.spec.ts
+apps/api/src/modulos/identidad/pruebas/servicios.spec.ts
+apps/api/src/modulos/identidad/servicios/autorizacion-datos-salud.service.ts
+apps/api/src/modulos/identidad/servicios/consentimiento.service.ts
+apps/api/src/modulos/identidad/servicios/verificacion.service.ts
+=====
+apps
+apps/api
+apps/api/src
+apps/api/src/modulos
+apps/api/src/modulos/identidad
+apps/api/src/modulos/identidad/dominio
+apps/api/src/modulos/identidad/pruebas
+apps/api/src/modulos/identidad/servicios
+apps/web
+> general · flint-40b-free
+[0m→ [0mRead apps/api/src/modulos/identidad/dominio/reglas.ts 
+[0m→ [0mRead apps/api/src/modulos/identidad/dominio/index.ts 
+[0m→ [0mRead apps/api/src/modulos/identidad/servicios/consentimiento.service.ts 
+[0m→ [0mRead apps/api/src/modulos/identidad/servicios/verificacion.service.ts 
+[0m→ [0mRead apps/api/src/modulos/identidad/servicios/autorizacion-datos-salud.service.ts 
+> general · flint-40b-free
+[0m$ [0mcd /home/camila-giraldo/SW3/pharma_express/PharmaExpress && ls -la docs/arquitectura/ && echo ===== && git status --porcelain | grep -v "^ D\|^RM\|^?? .claude\|^?? agentes-groq\|^?? apps\|^?? docs\|^?? qa\|^?? plan-agentes\|^?? User\|^?? .env\|^?? PHARMA\|^?? orquestador\|^?? pipeline\|^?? primary\|^?? architucture\|^?? __pycache__\|^?? venv" | head -40
+total 24
+drwxr-xr-x 2 camila-giraldo camila-giraldo 4096 Oct 31 16:16 .
+drwxr-xr-x 5 camila-giraldo camila-giraldo 4096 Oct 31 14:31 ..
+-rw-r--r-- 1 camila-giraldo camila-giraldo 1272 Oct 31 14:22 LEEME.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo 3937 Oct 31 16:16 plan-identidad.md
+-rw-r--r-- 1 camila-giraldo camila-giraldo 5121 Oct 31 14:26 propuesta-tecnologica.md
+=====
+?? agentes-ia/
+[0m$ [0mcd /home/camila-giraldo/SW3/pharma_express/PharmaExpress && git log --oneline -8 -- apps/api docs/arquitectura/plan-identidad.md; echo =====; git diff --stat HEAD -- apps/api docs/arquitectura | head; echo =====; git status --porcelain -- apps docs/arquitectura apps/api | head -30
+=====
+=====
+?? apps/api/
+?? apps/web/
+?? docs/arquitectura/
+> general · flint-40b-free
+[0m→ [0mRead docs/arquitectura/plan-identidad.md 
+[0m$ [0mdate; ps aux | grep -i -E "node|python|claude|agent|opencode" | grep -v grep | head -30
+Sat Oct 31 16:19:16 -05 2026
+root         159  0.0  0.1 454136 11344 ?        Ssl  14:11   0:00 snapfuse /var/lib/snapd/snaps/snapd_28254.snap /snap/snapd/28254 -o ro,nodev,allow_other,suid
+root         160  0.0  0.0 159208  1540 ?        Ssl  14:11   0:00 snapfuse /var/lib/snapd/snaps/core20_2922.snap /snap/core20/2922 -o ro,nodev,allow_other,suid
+root         194  0.0  0.3  43956 28544 ?        Ss   14:11   0:00 /usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers
+root         239  0.0  0.3 123464 31612 ?        Ssl  14:11   0:00 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal
+camila-+     590  6.9  3.1 11317816 254364 pts/0 Sl+  14:12   8:48 opencode
+camila-+     608  5.7  4.8 13381280 390664 ?     Ssl  14:12   7:20 /home/camila-giraldo/.opencode/bin/opencode serve --service
+camila-+    5902  0.0  0.0   4944  3584 ?        Ss   16:11   0:00 /bin/bash -c python3 qa/scripts/runner.py --seguir --auto-marcar 2>&1 | tail -50; echo "exit=${PIPESTATUS[0]}"
+camila-+    5903  0.0  0.2  24164 17280 ?        S    16:11   0:00 python3 qa/scripts/runner.py --seguir --auto-marcar
+camila-+    5905  0.8  1.0 6933624 87980 ?       Sl   16:11   0:03 opencode run --agent general --auto --format default Trabaja en el repositorio /home/camila-giraldo/SW3/pharma_express/PharmaExpress. Módulo: identidad. Sigue al pie de la letra el archivo .claude/agents/backend-servicios-api.md. Lee primero docs/mvp.md y tu archivo de agente. No pidas confirmación interactiva: ejecuta hasta terminar o hasta una puerta humana. No inventes datos de salud: usa solo datos sintéticos. Cuando termines, escribe tus salidas en las rutas que indica el agente.  TAREA: Ejecuta tu tarea.
+> general · flint-40b-free
+[0m$ [0msed -n 1,80p /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/scripts/runner.py; echo ...; grep -n "seguir\|auto-marcar\|def main\|add_argument" /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/scripts/runner.py | head -40
+#!/usr/bin/env python3
+"""Runner secuencial del pipeline de Pharma Express.
+
+Ejecuta el siguiente paso que indique orquestador.py, o recorre la secuencia
+hasta la próxima puerta humana. No aprueba nada por su cuenta: las puertas de
+MVP, oráculos, SPEC y entrega siempre se detienen.
+
+Backends:
+  - claude    : usa `claude -p` y los subagentes de .claude/agents/.
+  - opencode  : usa `opencode run --agent general` y le pasa el archivo del
+                subagente como instrucción (respaldo cuando no hay Claude Code).
+  - python    : usa agentes-ia/agente.py para Especificaciones y Arquitectura.
+
+Uso:
+    python3 qa/scripts/runner.py --estado
+    python3 qa/scripts/runner.py --dry-run
+    python3 qa/scripts/runner.py --todo
+    python3 qa/scripts/runner.py --paso S1 --modulo identidad
+    python3 qa/scripts/runner.py --todo --backend opencode
+
+Código de salida: 0 si terminó o se detuvo en una puerta humana; 1 si falló.
+"""
+
+from __future__ import annotations
+
+import argparse
+import importlib.util
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import time
+from datetime import datetime
+from pathlib import Path
+
+RAIZ = Path(__file__).resolve().parents[2]
+ORQUESTADOR = RAIZ / "orquestador.py"
+PIPELINE = RAIZ / "pipeline.json"
+MARCAR = RAIZ / "qa" / "scripts" / "marcar.py"
+LOG_DIR = RAIZ / "qa" / "ejecuciones"
+AGENTES_DIR = RAIZ / ".claude" / "agents"
+
+# paso del orquestador -> (agente de Claude/OpenCode, archivo, tipo)
+AGENTES = {
+    "S1": ("qa-s1-revisor-spec", "qa-s1-revisor-spec.md", "subagente"),
+    "S2": ("qa-s2-disenador-casos", "qa-s2-disenador-casos.md", "subagente"),
+    "S3": ("qa-s3-generador-pruebas", "qa-s3-generador-pruebas.md", "subagente"),
+    "B1/B4": ("backend-servicios-api", "backend-servicios-api.md", "subagente"),
+    "R1": ("qa-r1-humo", "qa-r1-humo.md", "subagente"),
+}
+
+PUERTAS = {"mvp", "registrar-modulos", "spec", "escalado", "escalar", "entrega"}
+
+
+def cargar_orquestador():
+    spec = importlib.util.spec_from_file_location("orquestador", ORQUESTADOR)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("No se pudo cargar orquestador.py")
+    modulo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modulo)
+    return modulo
+
+
+def leer_pipeline() -> dict:
+    try:
+        return json.loads(PIPELINE.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        sys.exit(f"No se pudo leer pipeline.json: {exc}")
+
+
+def siguiente() -> dict:
+    return cargar_orquestador().siguiente(leer_pipeline())[0]
+
+
+def detectar_backend(preferido: str) -> str | None:
+    if preferido != "auto":
+        return preferido
+    if shutil.which("claude"):
+...
+249:def main() -> int:
+251:    parser.add_argument("--estado", action="store_true", help="Muestra el siguiente paso y sale.")
+252:    parser.add_argument("--dry-run", action="store_true", help="Muestra la secuencia sin ejecutar agentes.")
+253:    parser.add_argument("--todo", action="store_true", help="Prueba mecánica + preflight + secuencia hasta una puerta.")
+254:    parser.add_argument("--seguir", action="store_true", help="Ejecuta pasos hasta una puerta humana.")
+255:    parser.add_argument("--paso", help="Fuerza un paso: S1, S2, S3, B1/B4, B2, B3, R1.")
+256:    parser.add_argument("--modulo", default=None, help="Módulo sobre el que trabaja el paso forzado.")
+257:    parser.add_argument("--backend", default="auto", choices=["auto", "claude", "opencode", "python"])
+258:    parser.add_argument("--timeout", type=int, default=1200, help="Segundos por agente (por defecto 1200).")
+259:    parser.add_argument("--auto-marcar", action="store_true", help="Marca S1/S3/R1 cuando el resultado es inequívoco.")
+260:    parser.add_argument("--max-pasos", type=int, default=20, help="Tope de pasos en --seguir/--todo.")
+[0m$ [0mps aux | grep -E "runner|opencode|python" | grep -v grep; echo =====; ls -la /home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api/src/modulos/identidad/ /home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api/src/modulos/identidad/servicios/ /home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api/src/modulos/identidad/dominio/
+root         194  0.0  0.3  43956 28544 ?        Ss   14:11   0:00 /usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers
+root         239  0.0  0.3 123464 31612 ?        Ssl  14:11   0:00 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal
+camila-+     590  6.9  3.1 11317816 253796 pts/0 Sl+  14:12   8:50 opencode
+camila-+     608  5.8  4.8 13381280 393384 ?     Ssl  14:12   7:23 /home/camila-giraldo/.opencode/bin/opencode serve --service
+camila-+    5902  0.0  0.0   4944  3584 ?        Ss   16:11   0:00 /bin/bash -c python3 qa/scripts/runner.py --seguir --auto-marcar 2>&1 | tail -50; echo "exit=${PIPESTATUS[0]}"
+camila-+    5903  0.0  0.2  24164 17280 ?        S    16:11   0:00 python3 qa/scripts/runner.py --seguir --auto-marcar
+camila-+    5905  0.8  1.1 6933624 88984 ?       Sl   16:11   0:04 opencode run --agent general --auto --format default Trabaja en el repositorio /home/camila-giraldo/SW3/pharma_express/PharmaExpress. Módulo: identidad. Sigue al pie de la letra el archivo .claude/agents/backend-servicios-api.md. Lee primero docs/mvp.md y tu archivo de agente. No pidas confirmación interactiva: ejecuta hasta terminar o hasta una puerta humana. No inventes datos de salud: usa solo datos sintéticos. Cuando termines, escribe tus salidas en las rutas que indica el agente.  TAREA: Ejecuta tu tarea.
+=====
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api/src/modulos/identidad/:
+total 32
+drwxr-xr-x 7 camila-giraldo camila-giraldo 4096 Oct 31 16:19 .
+drwxr-xr-x 3 camila-giraldo camila-giraldo 4096 Oct 31 15:55 ..
+drwxr-xr-x 3 camila-giraldo camila-giraldo 4096 Oct 31 16:19 api
+drwxr-xr-x 3 camila-giraldo camila-giraldo 4096 Oct 31 16:19 datos
+drwxr-xr-x 2 camila-giraldo camila-giraldo 4096 Oct 31 16:16 dominio
+-rw-r--r-- 1 camila-giraldo camila-giraldo  845 Oct 31 16:19 identidad.module.ts
+drwxr-xr-x 2 camila-giraldo camila-giraldo 4096 Oct 31 15:57 pruebas
+drwxr-xr-x 2 camila-giraldo camila-giraldo 4096 Oct 31 16:19 servicios
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api/src/modulos/identidad/dominio/:
+total 16
+drwxr-xr-x 2 camila-giraldo camila-giraldo 4096 Oct 31 16:16 .
+drwxr-xr-x 7 camila-giraldo camila-giraldo 4096 Oct 31 16:19 ..
+-rw-r--r-- 1 camila-giraldo camila-giraldo   26 Oct 31 16:16 index.ts
+-rw-r--r-- 1 camila-giraldo camila-giraldo 2487 Oct 31 16:16 reglas.ts
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api/src/modulos/identidad/servicios/:
+total 32
+drwxr-xr-x 2 camila-giraldo camila-giraldo 4096 Oct 31 16:19 .
+drwxr-xr-x 7 camila-giraldo camila-giraldo 4096 Oct 31 16:19 ..
+-rw-r--r-- 1 camila-giraldo camila-giraldo  826 Oct 31 16:16 autorizacion-datos-salud.service.ts
+-rw-r--r-- 1 camila-giraldo camila-giraldo 1657 Oct 31 16:16 consentimiento.service.ts
+-rw-r--r-- 1 camila-giraldo camila-giraldo  216 Oct 31 16:19 index.ts
+-rw-r--r-- 1 camila-giraldo camila-giraldo 1520 Oct 31 16:18 revocacion.service.ts
+-rw-r--r-- 1 camila-giraldo camila-giraldo 1700 Oct 31 16:18 solicitud-codigo.service.ts
+-rw-r--r-- 1 camila-giraldo camila-giraldo 4028 Oct 31 16:18 verificacion.service.ts
+> general · flint-40b-free
+[0m$ [0mps -eo pid,ppid,lstart,cmd --sort=pid | grep -v -E "grep|snapfuse|networkd|unattended|opencode serve|node" | tail -30; echo =====; ps -eo pid,ppid,cmd | grep -i opencode | grep -v grep
+2       1 Sat Oct 31 14:11:44 2026 /init
+      6       2 Sat Oct 31 14:11:44 2026 plan9 --control-socket 7 --log-level 4 --server-fd 8 --pipe-fd 10 --log-truncate
+     46       1 Sat Oct 31 14:11:45 2026 /usr/lib/systemd/systemd-journald
+     64       1 Sat Oct 31 14:11:45 2026 /usr/lib/systemd/systemd-resolved
+     84       1 Sat Oct 31 14:11:45 2026 /usr/lib/systemd/systemd-udevd
+    186       1 Sat Oct 31 14:11:46 2026 /bin/sh /usr/lib/systemd/scripts/chronyd-starter.sh -n -F 1
+    187       1 Sat Oct 31 14:11:46 2026 /usr/sbin/cron -f -P
+    188       1 Sat Oct 31 14:11:46 2026 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+    200       1 Sat Oct 31 14:11:46 2026 /snap/snapd/current/usr/lib/snapd/snapd
+    202       1 Sat Oct 31 14:11:46 2026 /usr/lib/systemd/systemd-logind
+    218       1 Sat Oct 31 14:11:46 2026 /usr/sbin/agetty --noreset --noclear --issue-file=/etc/issue:/etc/issue.d:/run/issue.d:/usr/lib/issue.d --keep-baud 115200,57600,38400,9600 - vt220
+    223       1 Sat Oct 31 14:11:46 2026 /usr/sbin/rsyslogd -n -iNONE
+    226       1 Sat Oct 31 14:11:46 2026 /usr/sbin/agetty --noreset --noclear --issue-file=/etc/issue:/etc/issue.d:/run/issue.d:/usr/lib/issue.d - linux

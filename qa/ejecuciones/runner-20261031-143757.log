@@ -1,0 +1,716 @@
+Runner 20261031-143757 | backend=opencode
+
+== Paso 1: [identidad] S1 — S1 Revisor de SPEC
+  Ejecutar revisión estática y resolver hallazgos bloqueantes.
+  Bloqueado por: revision = pendiente ==
+[0m
+> general · flint-40b-free
+[0m→ [0mRead docs/mvp.md 
+[0m→ [0mRead .claude/agents/qa-s1-revisor-spec.md 
+> general · flint-40b-free
+[0m$ [0mfind /home/camila-giraldo/SW3/pharma_express/PharmaExpress -maxdepth 2 -not -path '*/node_modules*' -not -path '*/.git/*' -not -path '*/.claude/*' | sort
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.env.example
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.git
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.gitignore
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/PHARMA_EXPRESS_AGENTES.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/PHARMA_EXPRESS_SPEC-1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/PHARMA_EXPRESS_SPEC-1.md:Zone.Identifier
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories/UserStory.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories/UserStory2.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories/generadas
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/__pycache__
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/__pycache__/orquestador.cpython-314.pyc
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/.env
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/README.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agente.py
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/requirements.txt
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/web
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/architucture-agent-guide.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/LEEME.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/arquitectura
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/mvp.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/preguntas
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/specs
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/orquestador.py
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/pipeline.json
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/Pharma_Express_Propuesta_tecnologica.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/Pharma_Express_Propuesta_tecnologica.md:Zone.Identifier
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/desktop.ini
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/plan_agentes_pharma_express.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/plan_agentes_pharma_express.md:Zone.Identifier
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/primary-needs-v2.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/primary-needs-v2.md:Zone.Identifier
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/humo
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/incidentes
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/oraculos-pendientes.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/revision
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/scripts
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/trazabilidad.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/venv
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/venv/.gitignore
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/venv/bin
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/venv/include
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/venv/lib
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/venv/lib64
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/venv/pyvenv.cfg
+[0m$ [0mls -R /home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa /home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs 2>/dev/null | head -150
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude:
+LEEME-agentes.md
+agents
+skills
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents:
+architecture-agent.md
+backend-bot-telegram.md
+backend-servicios-api.md
+ejecutor-corrector.md
+frontend-interfaz-web.md
+qa-r1-humo.md
+qa-r2-triage.md
+qa-s1-revisor-spec.md
+qa-s2-disenador-casos.md
+qa-s3-generador-pruebas.md
+specification-agent.md
+user-story-reviewer.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills:
+cliente-api-tipado
+componentes-shadcn
+criterios-calidad-de-spec
+cuando-escalar
+formato-de-hallazgos
+formularios-rhf-zod
+grammy-handlers
+manejo-de-ambiguedades
+matriz-de-trazabilidad
+negociacion-de-mvp
+nestjs-modulo-estandar
+plantilla-jest-nestjs
+plantilla-playwright-humo
+plantillas-sin-datos-de-salud
+politica-de-oraculos
+registro-de-ejecucion
+tecnicas-de-diseno-de-casos
+transaccion-reserva
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/cliente-api-tipado:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/componentes-shadcn:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/criterios-calidad-de-spec:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/cuando-escalar:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/formato-de-hallazgos:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/formularios-rhf-zod:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/grammy-handlers:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/manejo-de-ambiguedades:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/matriz-de-trazabilidad:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/negociacion-de-mvp:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/nestjs-modulo-estandar:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/plantilla-jest-nestjs:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/plantilla-playwright-humo:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/plantillas-sin-datos-de-salud:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/politica-de-oraculos:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/registro-de-ejecucion:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/tecnicas-de-diseno-de-casos:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/transaccion-reserva:
+SKILL.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs:
+COMO-PROBAR.md
+LEEME.md
+arquitectura
+mvp.md
+preguntas
+specs
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/arquitectura:
+LEEME.md
+propuesta-tecnologica.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/preguntas:
+LEEME.md
+_plantilla.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/specs:
+LEEME.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa:
+casos
+ejecuciones
+humo
+incidentes
+oraculos-pendientes.md
+revision
+scripts
+trazabilidad.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/casos:
+LEEME.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/ejecuciones:
+LEEME.md
+runner-20261031-143757.log
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/humo:
+LEEME.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/incidentes:
+LEEME.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/revision:
+LEEME.md
+
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/scripts:
+lint_spec.py
+marcar.py
+probar_todo.py
+runner.py
+> general · flint-40b-free
+[0m→ [0mRead PHARMA_EXPRESS_AGENTES.md 
+[0m$ [0mfind /home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/specs /home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/revision /home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/preguntas -type f -not -path '*venv*' | sort
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/.env
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/README.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agente.py
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/_plantilla/config.json
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/_plantilla/prompt.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/architecture-agent/config.json
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/architecture-agent/prompt.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/generador-hu-invest/config.json
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/generador-hu-invest/prompt.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/specification-agent/config.json
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/specification-agent/prompt.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/requirements.txt
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/architecture-agent/registro.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/architecture-agent/sin-clasificar/20261031-1436_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-001/SPEC-001_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-002/SPEC-002_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-002/SPEC-002_v1.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-003/SPEC-003_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-004/SPEC-004_v0.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-004/SPEC-004_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-005/SPEC-005_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-006/SPEC-006_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-007/SPEC-007_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-008/SPEC-008_v0.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-008/SPEC-008_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/registro.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1752_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1753_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1754_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1755_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1756_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261031-1436_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/preguntas/LEEME.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/preguntas/_plantilla.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/specs/LEEME.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/revision/LEEME.md
+> general · flint-40b-free
+[0m→ [0mRead .claude/skills/criterios-calidad-de-spec/SKILL.md 
+[0m→ [0mRead .claude/skills/manejo-de-ambiguedades/SKILL.md 
+[0m→ [0mRead .claude/skills/formato-de-hallazgos/SKILL.md 
+> general · flint-40b-free
+[0m→ [0mRead docs/specs/LEEME.md 
+[0m→ [0mRead qa/scripts/lint_spec.py 
+[0m→ [0mRead qa/revision/LEEME.md 
+> general · flint-40b-free
+[0m→ [0mRead docs/specs/LEEME.md 
+[0m$ [0mgrep -ril "identidad" /home/camila-giraldo/SW3/pharma_express/PharmaExpress --include='*.md' -l | grep -v venv | grep -v node_modules
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/primary-needs-v2.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories/generadas/20260923-1706_genera-5-historias-para-la-pica-de-atenc.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/Pharma_Express_Propuesta_tecnologica.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/plan_agentes_pharma_express.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/registro.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-004/SPEC-004_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-004/SPEC-004_v0.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-007/SPEC-007_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-003/SPEC-003_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-002/SPEC-002_v1.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-002/SPEC-002_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-001/SPEC-001_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-005/SPEC-005_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1756_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1753_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261031-1436_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1752_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/architecture-agent/sin-clasificar/20261031-1436_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/specification-agent/prompt.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/architecture-agent/prompt.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/apps/api/LEEME.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/architecture-agent.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/backend-servicios-api.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/specification-agent.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/backend-bot-telegram.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/nestjs-modulo-estandar/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/grammy-handlers/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/cliente-api-tipado/SKILL.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/mvp.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/arquitectura/propuesta-tecnologica.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/PHARMA_EXPRESS_AGENTES.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/PHARMA_EXPRESS_SPEC-1.md
+> general · flint-40b-free
+[0m→ [0mRead .claude/agents/specification-agent.md 
+[0m→ [0mRead agentes-ia/salidas/specification-agent/registro.md 
+> general · flint-40b-free
+[0m$ [0mgrep -rln "identidad" /home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa /home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs /home/camila-giraldo/SW3/pharma_express/PharmaExpress/PHARMA_EXPRESS_SPEC-1.md /home/camila-giraldo/SW3/pharma_express/PharmaExpress/primary-needs-v2.md /home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories -i | grep -v venv
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/scripts/runner.py
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/scripts/marcar.py
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/qa/scripts/probar_todo.py
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/mvp.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/arquitectura/propuesta-tecnologica.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/PHARMA_EXPRESS_SPEC-1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/primary-needs-v2.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/User-Strories/generadas/20260923-1706_genera-5-historias-para-la-pica-de-atenc.md
+[0m$ [0mgrep -rn "modulo\|módulo\|Modulo" /home/camila-giraldo/SW3/pharma_express/PharmaExpress --include='*.md' -i | grep -v venv | grep -v node_modules | grep -i "identidad\|módulo identidad\|modulo identidad" | head -40
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/Pharma_Express_Propuesta_tecnologica.md:47:- Un esquema por módulo: identidad, reservas, prevalidación…
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/plan_agentes_pharma_express.md:14:| **Agente de Arquitectura** (después) | Toma el "Debe" y propone **cómo se corta**: qué módulos, endpoints y canales (web + Telegram), en qué orden se construyen y qué se simula o se deja fuera. | Solo arquitectura sabe qué depende de qué (por ejemplo, `reservas` necesita `identidad`). |
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/plan_agentes_pharma_express.md:88:3. Define el orden de construcción vertical por módulo (identidad antes que reservas...).
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/plan_agentes_pharma_express.md:286:**Orden de construcción:** `identidad` → `reservas` → (prevalidación mínima) → bot → web. Siempre vertical: un módulo completo (dominio + datos + API + prueba verde) antes del siguiente.
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/plan-agentes/plan_agentes_pharma_express.md:341: - Handlers que SOLO llaman a la api/ de los módulos (identidad, reservas); sin
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/specification-agent/prompt.md:127:9. En "Dependencias", nombra funcionalidades o fuentes de datos (por ejemplo, "verificación de identidad", "inventario simulado"), no módulos ni componentes.
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/architecture-agent/prompt.md:60:   - Asigna un módulo (uno por SPEC; por ejemplo `identidad`, `reservas`, `prevalidacion`, `notificaciones`, `telegram`, `web`).
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/agentes/architecture-agent/prompt.md:70:3. Define el orden de construcción vertical por dependencias (por ejemplo, `identidad` antes de `reservas`). Un módulo completo antes del siguiente.
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/architecture-agent.md:103:1. Asigna **un módulo** (un módulo por SPEC; nombre corto, por ejemplo `identidad`, `reservas`, `prevalidacion`, `notificaciones`, `telegram`, `web`).
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/architecture-agent.md:113:6. Define el **orden de construcción vertical** por dependencias (por ejemplo, `identidad` antes de `reservas`). Un módulo completo (dominio + datos + API + prueba verde) antes del siguiente.
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/specification-agent.md:103:9. En "Dependencias", nombra funcionalidades o fuentes de datos (por ejemplo, "verificación de identidad", "inventario simulado"), no módulos ni componentes.
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/agents/backend-bot-telegram.md:24:1. Handlers que **solo llaman a la `api/`** de los módulos (`identidad`, `reservas`). Sin lógica de negocio en el bot.
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/nestjs-modulo-estandar/SKILL.md:23:- Un esquema PostgreSQL por módulo (`identidad`, `reservas`, `prevalidacion`…).
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/.claude/skills/cliente-api-tipado/SKILL.md:13:├─ identidad.ts     funciones del módulo identidad
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/arquitectura/propuesta-tecnologica.md:37:- **PostgreSQL**: transacciones ACID y bloqueo de filas; un esquema por módulo (`identidad`, `reservas`, `prevalidacion`…).
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md:72:Usa el subagente backend-servicios-api para implementar el módulo identidad.
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md:74:Usa el subagente ejecutor-corrector para dejar en verde el módulo identidad.
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md:112:python3 qa/scripts/marcar.py modulo identidad --spec aprobada
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md:113:python3 qa/scripts/marcar.py modulo identidad --revision APTA
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md:114:python3 qa/scripts/marcar.py modulo identidad --oraculos aprobados
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md:115:python3 qa/scripts/marcar.py modulo identidad --pruebas rojas
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md:116:python3 qa/scripts/marcar.py modulo identidad --implementacion verde
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md:117:python3 qa/scripts/marcar.py modulo identidad --humo verde
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md:145:python3 qa/scripts/marcar.py --archivo "$DEMO" modulo identidad --spec aprobada
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md:146:python3 qa/scripts/marcar.py --archivo "$DEMO" modulo identidad --revision APTA
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md:147:python3 qa/scripts/marcar.py --archivo "$DEMO" modulo identidad --oraculos aprobados
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md:148:python3 qa/scripts/marcar.py --archivo "$DEMO" modulo identidad --pruebas rojas
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md:149:python3 qa/scripts/marcar.py --archivo "$DEMO" modulo identidad --implementacion verde
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/docs/COMO-PROBAR.md:150:python3 qa/scripts/marcar.py --archivo "$DEMO" modulo identidad --humo verde
+> general · flint-40b-free
+[0m→ [0mRead docs/COMO-PROBAR.md 
+[0m→ [0mRead qa/scripts/marcar.py 
+> general · flint-40b-free
+[0m$ [0mhead -60 /home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-001/SPEC-001_v1.0.md
+<!--
+Agente: Specification Agent
+Proveedor: gemini
+Modelo: gemini-3.5-flash-lite
+Fecha: 2026-10-29 17:53
+Petición: FASE=RESPUESTAS
+
+Necesidad original: Consentimiento, identidad y derechos del titular. Antes de pedir cualquier dato, el sistema muestra el aviso de privacidad y exige aceptar el tratamiento de datos con la declaración "soy el titular o actúo con su autorización", registrando si aceptó el titular o un tercero, la fecha, la hora y el canal. Si no acepta, se informa la atención presencial y no se registra nada. La identidad se verifica con la cédula y un código de un solo uso enviado por SMS al celular registrado en la EPS simulada y, si existe, por correo; el código vence a los 10 minutos y admite 3 intentos. Si falla, se ofrece ruta alterna: nuevo código, orientación para actualizar datos en la EPS o atención presencial. Antes de cargar documentos se pide una autorización separada para datos de salud. Con identidad verificada, el titular puede revocar el consentimiento y pedir la eliminación de sus datos; se cancelan citas, se anulan códigos, se liberan existencias y cupos, se desvinculan los canales y se eliminan los datos personales y de salud. EPIC-001.
+
+Preguntas y respuestas del equipo:
+- OPEN-Q-001. Cuando se ofrece la ruta alterna tras fallar la verificación de identidad, ¿el sistema permite reintentar inmediatamente con un nuevo código tantas veces como se quiera, o existe un límite global de generación de códigos por tiempo o por número de cédula?
+  Respuesta: No se impone un límite global adicional en el prototipo. Se mantienen las reglas aprobadas del código: vence a los 10 minutos y admite 3 intentos (DEC-07). Si la persona pide un nuevo código mientras otro sigue vigente, el anterior queda anulado y solo vale el último (CL-04). La ruta alterna también ofrece orientación para actualizar datos en la EPS y atención presencial.
+- OPEN-Q-002. Respecto a la revocación del consentimiento y eliminación de datos, cuando se eliminan los datos personales y de salud del titular, ¿qué registro queda en el sistema (por ejemplo, para auditoría o estadísticas) o se borra absolutamente todo sin dejar rastro?
+  Respuesta: Se eliminan los datos personales y de salud tratados por el sistema. Se conservan únicamente los registros de auditoría disociados de la identidad, necesarios para la trazabilidad que exige RNF-08, sin datos personales ni de salud. La revocación se confirma al titular.
+- OPEN-Q-003. Cuando la persona indica que es un tercero actuando en nombre del titular, ¿el sistema le solicita algún dato adicional de identificación del tercero (como su cédula o nombre), o solo registra que aceptó un tercero con la declaración exigida?
+  Respuesta: Solo registra que aceptó un tercero con la declaración exigida, junto con la fecha, la hora y el canal. No solicita cédula ni nombre del tercero, porque el sistema no distingue entre paciente, cuidador, tutor o facilitador (DEC-09, DEC-11).
+-->
+
+# SPEC-001. Consentimiento, identidad y derechos del titular - Versión 1.0
+
+Estado: Candidata
+Modo: Iteración
+Necesidad original: "Consentimiento, identidad y derechos del titular. Antes de pedir cualquier dato, el sistema muestra el aviso de privacidad y exige aceptar el tratamiento de datos con la declaración 'soy el titular o actúo con su autorización', registrando si aceptó el titular o un tercero, la fecha, la hora y el canal. Si no acepta, se informa la atención presencial y no se registra nada. La identidad se verifica con la cédula y un código de un solo uso enviado por SMS al celular registrado en la EPS simulada y, si existe, por correo; el código vence a los 10 minutos y admite 3 intentos. Si falla, se ofrece ruta alterna: nuevo código, orientación para actualizar datos en la EPS o atención presencial. Antes de cargar documentos se pide una autorización separada para datos de salud. Con identidad verificada, el titular puede revocar el consentimiento y pedir la eliminación de sus datos; se cancelan citas, se anulan códigos, se liberan existencias y cupos, se desvinculan los canales y se eliminan los datos personales y de salud. EPIC-001."
+Épica: EPIC-001
+
+## Análisis
+- Objetivo: gestionar el aviso de privacidad, el consentimiento general y de salud, la verificación de identidad mediante código de un solo uso y el derecho de revocación y eliminación de datos del titular.
+- Alcance inicial: aceptación de aviso de privacidad y consentimiento, verificación de identidad, autorización separada de datos de salud y proceso de revocación con eliminación de datos y liberación de recursos.
+- Actores: paciente (titular), persona que actúa por el paciente (tercero), facilitador comunitario, EPS simulada, servicios externos (SMS, correo).
+- Contexto aplicable: 3.1, 3.2, 3.3, 3.8, 3.11.
+
+## Modelo de dominio
+- Consentimiento: pertenece al paciente o tercero; registra si aceptó el titular o un tercero, la fecha, la hora y el canal. Origen: contexto 3.2.
+- Código de un solo uso: pertenece al proceso de verificación de identidad; vigencia de 10 minutos, máximo 3 intentos, anulable al solicitar uno nuevo. Origen: contexto 3.2 y DEC-01.
+- Autorización de datos de salud: consentimiento separado exigido antes de cargar documentos. Origen: contexto 3.2.
+- Revocación: acción del titular con identidad verificada para eliminar datos y liberar recursos. Origen: contexto 3.2 y DEC-02.
+
+## Contradicciones detectadas
+- Ninguna.
+
+## Análisis de impacto
+- DEC-01: afecta BR-003, CL-001 y AC-003. Todos actualizados.
+- DEC-02: afecta RF-010, BR-004 y AC-008. Todos actualizados.
+- DEC-03: afecta RF-002, BR-001 y AC-001. Todos actualizados.
+
+## Preguntas de aclaración
+- No hay preguntas pendientes.
+
+## Especificación
+
+### 1. Objetivo
+Asegurar el cumplimiento normativo mediante la aceptación previa del aviso de privacidad y tratamiento de datos (incluyendo la declaración de titularidad o autorización), la verificación de identidad mediante código de un solo uso con canales reales, la obtención de autorización separada para datos de salud, y la ejecución del derecho de revocación con eliminación de datos y liberación de reservas.
+
+### 2. Contexto
+El sistema opera en canales web y bot de Telegram para afiliados de Salud Total y Sanitas en Manizales. Los datos de contacto provienen de la EPS simulada. El tratamiento de datos sensibles exige autorización explícita conforme a la Ley 1581 de 2012 y el Decreto 1377 de 2013.
+Decisiones del equipo:
+- DEC-01. No se impone un límite global adicional de generación de códigos de verificación. Se mantienen las reglas de vigencia de 10 minutos y 3 intentos; si se pide un nuevo código mientras otro sigue vigente, el anterior queda anulado y solo vale el último. Responde a OPEN-Q-001.
+- DEC-02. Al revocar el consentimiento y eliminar los datos personales y de salud, se conservan únicamente registros de auditoría disociados de la identidad necesarios para la trazabilidad, sin datos personales ni de salud. Se confirma la revocación al titular. Responde a OPEN-Q-002.
+- DEC-03. Cuando la persona indica que es un tercero actuando en nombre del titular, el sistema solo registra que aceptó un tercero con la declaración exigida, junto con la fecha, la hora y el canal, sin solicitar cédula ni nombre del tercero. Responde a OPEN-Q-003.
+[0m$ [0mfind /home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas -type f -not -path '*venv*' | sort
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/architecture-agent/registro.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/architecture-agent/sin-clasificar/20261031-1436_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-001/SPEC-001_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-002/SPEC-002_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-002/SPEC-002_v1.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-003/SPEC-003_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-004/SPEC-004_v0.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-004/SPEC-004_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-005/SPEC-005_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-006/SPEC-006_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-007/SPEC-007_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-008/SPEC-008_v0.1.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/borradores/SPEC-008/SPEC-008_v1.0.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/registro.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1752_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1753_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1754_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1755_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1756_sin-clasificar.md
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261031-1436_sin-clasificar.md
+> general · flint-40b-free
+[0m→ [0mRead agentes-ia/salidas/specification-agent/borradores/SPEC-001/SPEC-001_v1.0.md 
+> general · flint-40b-free
+[0m→ [0mRead .claude/LEEME-agentes.md 
+[0m$ [0mcat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/pipeline.json
+{
+  "version": 1,
+  "actualizado": "2026-10-31",
+  "spec_version_hash": null,
+  "mvp": {
+    "estado": "aprobado",
+    "ronda": 0,
+    "aprobado_por": "Camila",
+    "hash_specs": null,
+    "archivo": "docs/mvp.md"
+  },
+  "modulos": {
+    "identidad": {
+      "spec": "aprobada",
+      "revision": "pendiente",
+      "oraculos": "pendiente",
+      "pruebas": "pendiente",
+      "implementacion": "pendiente",
+      "humo": "pendiente"
+    },
+    "prevalidacion": {
+      "spec": "aprobada",
+      "revision": "pendiente",
+      "oraculos": "pendiente",
+      "pruebas": "pendiente",
+      "implementacion": "pendiente",
+      "humo": "pendiente"
+    },
+    "reservas": {
+      "spec": "aprobada",
+      "revision": "pendiente",
+      "oraculos": "pendiente",
+      "pruebas": "pendiente",
+      "implementacion": "pendiente",
+      "humo": "pendiente"
+    },
+    "notificaciones": {
+      "spec": "aprobada",
+      "revision": "pendiente",
+      "oraculos": "pendiente",
+      "pruebas": "pendiente",
+      "implementacion": "pendiente",
+      "humo": "pendiente"
+    },
+    "telegram": {
+      "spec": "aprobada",
+      "revision": "pendiente",
+      "oraculos": "pendiente",
+      "pruebas": "pendiente",
+      "implementacion": "pendiente",
+      "humo": "pendiente"
+    }
+  },
+  "iteraciones": {},
+  "escalados": [],
+  "presupuesto_diario_llamadas": {
+    "limite": 200,
+    "usadas": 0,
+    "fecha": null
+  },
+  "notas": "El orquestador no decide alcance. Solo habilita el siguiente paso cuando se cumplen las puertas humanas."
+}
+[0m$ [0mcd /home/camila-giraldo/SW3/pharma_express/PharmaExpress && python qa/scripts/lint_spec.py agentes-ia/salidas/specification-agent/borradores/SPEC-001/SPEC-001_v1.0.md; echo "EXIT=$?"
+/bin/bash: line 1: python: command not found
+EXIT=127
+> general · flint-40b-free
+[0m$ [0mcat /home/camila-giraldo/SW3/pharma_express/PharmaExpress/PHARMA_EXPRESS_SPEC-1.md | head -120
+# Pharma Express - Especificación para agentes de IA
+
+Versión: 1
+Estado: Aprobado
+Aprobación: equipo completo por consenso (Karen, Isabella, Juan Manuel y Camila)
+Fuentes: PHARMA_EXPRESS_CONTEXTO.md (contexto base), contexto_revision.md (versión anterior, reemplazada por este documento), sesiones de elicitación con el equipo, Resolución 1604 de 2013 y Guía de trabajo para el Specification Agent.
+
+# 0. Cómo usar este documento
+
+Este documento es la especificación de Pharma Express para los agentes de IA de las etapas posteriores: arquitectura, planificación, implementación y QA. Describe qué debe hacer el sistema y bajo qué condiciones se considera correcto. No define tecnologías, arquitectura, modelo de datos, endpoints ni código.
+
+Estructura:
+
+- Parte A: contexto global que aplica a todas las especificaciones.
+- Parte B: una especificación (SPEC) por módulo funcional, con las 17 secciones de la guía del Specification Agent.
+
+Identificadores. La numeración es única en todo el documento.
+
+- DEC: decisión del equipo.
+- SPEC: especificación de un módulo.
+- HU: historia de usuario.
+- RF: requisito funcional.
+- RNF: requisito no funcional.
+- BR: regla de negocio.
+- AC: criterio de aceptación.
+- CL: caso límite.
+- SUP: supuesto del prototipo.
+- OPEN-Q: pregunta abierta.
+
+Origen de cada elemento:
+
+- CB x: contexto base PHARMA_EXPRESS_CONTEXTO.md, sección x.
+- DEC-xx: decisión del equipo registrada en A3.
+- NORMA: norma citada en A13.
+- OPEN-Q-xx: pregunta abierta pendiente de decisión del equipo (A15). En esta versión no hay ninguna.
+
+Precedencia: cuando este documento contradice el contexto base, prevalece este documento, porque recoge las decisiones más recientes del equipo (CB 0.2). Las diferencias están listadas en A16.
+
+Reglas para cualquier agente:
+
+1. Redactar en español de Colombia.
+2. No inventar reglas, cifras, integraciones ni comportamientos. Si algo no está en este documento, registrarlo como pregunta abierta y consultar al equipo.
+3. No presentar como real lo que el prototipo simula.
+4. Presentar siempre la prevalidación como preliminar. La validación oficial ocurre en el punto de dispensación.
+5. No incluir nombres de medicamentos ni diagnósticos en ninguna notificación, por ningún canal.
+6. No eliminar la atención presencial.
+7. No asignar una cita sin existencias reservadas y cupo en la ventana.
+8. No tratar identificadores de Telegram (user_id, chat_id, username, nombre visible) como prueba de identidad.
+9. No reintroducir lo que este documento declara fuera de alcance (A5.2), en particular cita de continuidad, pendientes, entrega parcial gestionada, reprogramación y reporte de concordancia.
+10. Si surge una pregunta abierta, se registra en A15 como OPEN-Q y no se aplica hasta que el equipo la decida.
+11. Los mecanismos (cómo leer un documento, cómo enviar un SMS, cómo almacenar datos, qué proveedor usar) corresponden al agente de arquitectura.
+
+# Parte A. Contexto global
+
+## A1. Producto
+
+- Nombre: Pharma Express.
+- Tipo: sistema multicanal de pre-dispensación farmacéutica. El entregable es un prototipo funcional con sistemas externos simulados.
+- Propósito: que el paciente conozca antes de desplazarse la validez preliminar de sus fórmulas y la disponibilidad de sus medicamentos, y que reciba una cita solo cuando los medicamentos estén reservados.
+- Canales: aplicación web y bot de Telegram. Ambos permiten el flujo completo. La atención presencial se mantiene fuera del sistema.
+- Contexto geográfico: puntos de dispensación del gestor farmacéutico Disfarma en Manizales, Caldas. En el prototipo los puntos tienen nombres ficticios.
+- Población: afiliados de Salud Total y Sanitas. Se prioriza a personas con tratamientos crónicos, adultos mayores y personas con barreras digitales.
+- Diferenciador: prevalidación anticipada y reserva del medicamento antes de asignar la cita.
+- Resultado esperado: reducir tiempos de espera y desplazamientos innecesarios frente a una línea base externa del proceso presencial. El efecto se evalúa, no se asume.
+- Propuesta de valor: traslada el descubrimiento de novedades desde la fila hasta el momento previo al desplazamiento. No promete resolver el abastecimiento ni las autorizaciones.
+
+## A2. Problema
+
+- Problema central (CB 3.1): en los puntos de dispensación, las validaciones necesarias para entregar un medicamento (afiliación, vigencia de la fórmula, cobertura PBS, autorización y disponibilidad) ocurren cuando el paciente ya está en la ventanilla. El paciente puede descubrir una novedad después de una espera prolongada.
+- Causa que aborda el proyecto (CB 3.3): el momento y el lugar de la validación, que hoy es fragmentada y tardía.
+- Consecuencias que se busca reducir (CB 3.5): desplazamientos improductivos, esperas y congestión, descubrimiento tardío de novedades, riesgo de discontinuidad en tratamientos crónicos y exclusión digital.
+- Lo que no es objeto del proyecto (CB 3.1): conectividad, disponibilidad de personal, gestión de inventario del gestor, deudas entre actores y desabastecimiento.
+- Brecha frente a soluciones existentes (CB 3.4): otros gestores ofrecen turno virtual o preagendamiento, pero no garantizan que el usuario conozca el resultado preliminar de las validaciones ni que el medicamento esté reservado para su cita.
+- Pregunta problema (CB 4): ¿Cómo puede un sistema multicanal de pre-dispensación permitir a los usuarios de puntos de dispensación en Manizales conocer, antes de desplazarse, la validez preliminar de su solicitud y la disponibilidad de sus medicamentos, de forma accesible también para personas con barreras de uso de tecnología?
+- Evidencia resumida (CB 3.2): las tutelas en salud crecieron cerca de 18 % entre 2024 y 2025, y entre 36 % y 37 % se relacionan con entrega tardía o incompleta de medicamentos. En Manizales se reportaron esperas de 3 a 5 horas y miles de medicamentos pendientes entre 2025 y 2026. Cerca del 20 % de la población de Manizales es adulta mayor. Las cifras deben contrastarse con las fuentes de A17 antes de una entrega académica.
+
+## A3. Registro de decisiones del equipo
+
+- DEC-01. Telegram es el canal conversacional del prototipo, mediante un bot sobre la Bot API oficial (CB 16).
+- DEC-02. WhatsApp queda descartado: sus condiciones actuales para desarrolladores no son factibles para un proyecto estudiantil que busca operar de la forma más real posible.
+- DEC-03. Los canales son la aplicación web y el bot de Telegram. Ambos permiten el flujo completo: verificar identidad, vincular el canal, cargar documentos, prevalidar, agendar, consultar, cancelar y recibir notificaciones. No hay aplicación móvil instalable.
+- DEC-04. El canal asistido consiste en que un cuidador o un facilitador comunitario gestione en nombre del paciente usando la web o Telegram. La atención presencial sigue disponible fuera del sistema.
+- DEC-05. Pharma Express no registra pacientes ni crea cuentas de pacientes. Los datos de afiliación y contacto provienen de la EPS simulada, porque el registro corresponde a cada EPS. Solo el dispensador tiene usuario con rol en el sistema.
+- DEC-06. La identidad se verifica con la cédula y un código de un solo uso enviado por SMS al celular registrado en la EPS y, si existe, al correo registrado. Los envíos de SMS y correo son reales; las pruebas se hacen con números y correos de los integrantes del equipo.
+- DEC-07. El código de verificación dura 10 minutos y admite 3 intentos.
+- DEC-08. La actualización de datos y el cambio del medio de contacto se hacen en la EPS. Pharma Express solo orienta al usuario.
+- DEC-09. La aceptación del tratamiento de datos incluye la declaración "soy el titular o actúo con su autorización". El sistema registra si aceptó el titular o un tercero, la fecha y el canal. El titular puede revocar el consentimiento y pedir la eliminación de sus datos; si tiene reservas activas, se eliminan y el cupo y las existencias quedan disponibles para otros pacientes.
+- DEC-10. Un mismo chat de Telegram o un mismo navegador puede quedar vinculado a varios pacientes, sin límite. Toda vinculación se reverifica cada 3 meses.
+- DEC-11. Quien ingresa el código correcto puede hacer todas las gestiones del paciente. El sistema no distingue entre paciente, cuidador, tutor o facilitador. Esto aplica también a menores y a personas con tutor, cuyo número registrado suele ser el del tutor.
+- DEC-12. El usuario carga las fórmulas y la historia clínica en foto o PDF, por la web o por Telegram. El tipo de tratamiento (agudo o crónico) se obtiene del diagnóstico de la historia clínica.
+- DEC-13. La vigencia de la fórmula es responsabilidad de la EPS. En el prototipo es un dato de la EPS simulada; los datos de prueba la fijan entre 8 y 9 meses después de la consulta médica.
+- DEC-14. La prevalidación sigue este orden: afiliación, vigencia, cobertura PBS y autorización.
+- DEC-15. La autorización se consulta en la EPS simulada. Si falta, el sistema solo muestra los puntos, enlaces o trámites de autorización de la EPS del paciente (contenido configurable). El usuario vuelve a consultar por su cuenta; el sistema no tramita autorizaciones ni vigila su estado.
+- DEC-16. Una solicitud agrupa las fórmulas y medicamentos de un mismo paciente. La unidad de validación es la fórmula, y cada fórmula es todo o nada: si un medicamento de una fórmula no cumple, la fórmula completa se detiene. Las fórmulas separadas son independientes: las aptas continúan, y para las no aptas se indica que el usuario puede hacer la gestión con su EPS.
+- DEC-17. No existe cita de continuidad. Para tratamiento crónico se verifica que la entrega ya esté habilitada. Después de una entrega crónica, el sistema avisa al usuario 2 días antes de la siguiente fecha habilitada para que inicie una nueva prevalidación.
+- DEC-18. Los tratamientos agudo y crónico verifican disponibilidad, reservan y agendan. El agudo puede tener cita el mismo día o el día siguiente. El crónico solo puede tener cita el día calendario siguiente. La anticipación máxima es de 1 día.
+- DEC-19. La cita es una ventana de 1 hora; ventana y franja son el mismo concepto. Se elimina la tolerancia de 10 minutos. Si el usuario llega antes de la ventana, debe esperar su inicio. La reserva expira al terminar la ventana.
+- DEC-20. La reserva se hace por solicitud. Si los medicamentos están en puntos distintos, se informa al usuario y se le permite escoger una cita en cada punto. Si el usuario no recoge un medicamento de una fórmula de la que ya recibió otro medicamento, pierde el medicamento no recogido y el caso de esa fórmula se cierra. Si los medicamentos pertenecen a fórmulas o autorizaciones separadas, la reserva no recogida se libera y el usuario puede pedir otra cita.
+- DEC-21. La reserva se confirma de forma atómica al confirmar la cita. Si otra persona confirmó antes, se informa y se muestran otras opciones.
+- DEC-22. No hay reprogramación. El usuario puede cancelar en cualquier momento.
+- DEC-23. Los recordatorios se envían por todos los canales en dos momentos: entre las 19:00 y las 21:00 del día anterior a la cita y una hora antes de la cita. Todos los usuarios reciben el recordatorio de una hora antes. Los recordatorios solo informan y ofrecen cancelar; no piden confirmación. Al enviar el recordatorio de una hora antes, el sistema vuelve a prevalidar para detectar cambios de estado.
+- DEC-24. El código de entrega existe en formato QR y numérico, y el usuario usa el que le resulte más fácil. Es de un solo uso. El usuario lo consulta en la web o en Telegram cuando lo necesite; no tiene que guardarlo al agendar.
+- DEC-25. Si no hay disponibilidad, no se crea un pendiente. Se informa al usuario que debe esperar 48 horas para volver a validar y se envía un único recordatorio a las 48 horas. El usuario hace la validación repitiendo el flujo. El sistema no vigila el inventario.
+- DEC-26. En el punto, la hora de llegada es el momento en que el dispensador valida el código. El dispensador tiene usuario con rol, ve la prevalidación y registra el resultado de la validación oficial. Si en el punto hay una novedad con algún medicamento, el usuario debe gestionarla con Disfarma; eso no corresponde a Pharma Express.
+- DEC-27. Catálogo de motivos de no entrega aprobado: afiliación inactiva; fórmula vencida o inválida; autorización no vigente; medicamento no cubierto; datos del paciente no coinciden; sin existencias pese a reserva; otro, con descripción.
+- DEC-28. Las notificaciones se envían por todos los medios que tenga registrados o vinculados el paciente: notificación de la aplicación web, Telegram, SMS y correo. Ninguna notificación, en ningún canal, incluye nombres de medicamentos ni diagnósticos.
+- DEC-29. Se incluyen enlaces profundos de Telegram como apoyo opcional, sin datos sensibles en sus parámetros.
+- DEC-30. Todos los puntos se simulan con nombres ficticios. Horario, ventanas, capacidad e inventario son parámetros configurables por punto y los fijan los datos de prueba. Los puntos, enlaces y trámites de autorización por EPS también son contenido configurable.
+- DEC-31. Salud Total y Sanitas siguen las mismas reglas en la simulación; la EPS es un dato del paciente.
+- DEC-32. Quedan fuera de alcance: cita de continuidad, pendientes, entrega parcial gestionada por el sistema, reprogramación, reporte de concordancia, rol de equipo evaluador, medición SUS, metas de desempeño, plazo de conservación de datos, manejo de fallas de las fuentes simuladas y domicilio.
+- DEC-33. Se aplica WCAG 2.1 nivel AA a la aplicación web como referencia voluntaria; Telegram sigue las condiciones de su plataforma. La interfaz y los mensajes se redactan en español de Colombia.
+- DEC-34. Cuidadores y facilitadores comunitarios están dentro del alcance del prototipo.
+- DEC-35. El equipo completo (Karen, Isabella, Juan Manuel y Camila) aprueba por consenso y es responsable de las preguntas abiertas. No hay roles definidos.
+- DEC-36. Formato: un archivo Markdown simple para agentes, con parte global y una SPEC por módulo, historias de usuario dentro de cada SPEC y sin diagramas. Aparte, un documento para humanos con los flujos en Mermaid.
+- DEC-37. Agudo el mismo día. Para que todos reciban el recordatorio de una hora antes (DEC-23), el mismo día solo se ofrecen ventanas que inicien al menos una hora después del momento de agendar. Deriva de DEC-18 y DEC-23. Afecta: RF-38, BR-17. Aprobada por el equipo (antes OPEN-Q-01).
+- DEC-38. Recordatorio de la noche anterior. No se envía si la cita se agenda después de las 21:00 del día anterior, y no aplica a citas del mismo día. El de una hora antes siempre se envía. Deriva de DEC-23. Afecta: RF-55. Aprobada por el equipo (antes OPEN-Q-02).
+- DEC-39. Cambio de estado en el recordatorio de una hora antes. Si la nueva prevalidación falla, se cancelan las citas de la fórmula, se liberan existencias y cupos, la fórmula queda no apta y se notifican el motivo y el siguiente paso. Deriva de DEC-23 y CB 9.5. Afecta: RF-57, BR-26. Aprobada por el equipo (antes OPEN-Q-03).
+- DEC-40. Medicamento no cubierto por el PBS. Continúa si la EPS simulada lo reporta autorizado; si no, la fórmula queda no apta y se muestran los puntos, enlaces o trámites de la EPS. Esto resuelve una contradicción: una respuesta anterior indicaba terminar el flujo para medicamentos no PBS, y una posterior indica que un medicamento no PBS con autorización separada sí recibe cita. Deriva de DEC-14, DEC-15 y DEC-20. Afecta: RF-29, BR-12. Aprobada por el equipo (antes OPEN-Q-04).
+- DEC-41. Clasificación agudo o crónico. Se hace con un catálogo configurable de diagnósticos crónicos cuyo contenido fija el equipo en los datos de prueba; un diagnóstico que no está en el catálogo se trata como agudo. Deriva de DEC-12 y DEC-30. Afecta: RF-30, RF-77, BR-15. Aprobada por el equipo (antes OPEN-Q-05).
+- DEC-42. Documento del que no se obtienen los datos. Si el documento es ilegible, está incompleto, no tiene diagnóstico o no coincide con la EPS simulada, se pide cargarlo de nuevo. Si el problema persiste, la fórmula queda no apta y se orienta a la atención presencial. Deriva de DEC-12. Afecta: CL-08, CL-09. Aprobada por el equipo (antes OPEN-Q-06).
+[0m$ [0mcd /home/camila-giraldo/SW3/pharma_express/PharmaExpress && python3 qa/scripts/lint_spec.py agentes-ia/salidas/specification-agent/borradores/SPEC-001/SPEC-001_v1.0.md; echo "EXIT=$?"
+agentes-ia/salidas/specification-agent/borradores/SPEC-001/SPEC-001_v1.0.md
+  Definiciones: RF 9, BR 4, RNF 2, CL 2, AC 8
+  Sin hallazgos mecánicos. Falta la revisión de juicio de S1.
+EXIT=0
+> general · flint-40b-free
+[0m→ [0mRead agentes-ia/salidas/architecture-agent/registro.md 
+[0m$ [0mgrep -n "identidad" /home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/architecture-agent/sin-clasificar/*.md /home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/*.md | head -40
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/architecture-agent/sin-clasificar/20261031-1436_sin-clasificar.md:13:| REQ-001 | identidad | M | Validez de OTP de 10 min y límite de 3 intentos bajo concurrencia | real | 1 |
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/architecture-agent/sin-clasificar/20261031-1436_sin-clasificar.md:30:1. `identidad` y `telegram` (base de autenticación, vinculación y canales).
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1752_sin-clasificar.md:6:Petición: Consentimiento, identidad y derechos del titular. Antes de pedir cualquier dato, el sistema muestra el aviso de privacidad y exige aceptar el tratamiento de datos con la declaración "soy el titular o actúo con su autorización", registrando si aceptó el titular o un tercero, la fecha, la hora y el canal. Si no acepta, se informa la atención presencial y no se registra nada. La identidad se verifica con la cédula y un código de un solo uso enviado por SMS al celular registrado en la EPS simulada y, si existe, por correo; el código vence a los 10 minutos y admite 3 intentos. Si falla, se ofrece ruta alterna: nuevo código, orientación para actualizar datos en la EPS o atención presencial. Antes de cargar documentos se pide una autorización separada para datos de salud. Con identidad verificada, el titular puede revocar el consentimiento y pedir la eliminación de sus datos; se cancelan citas, se anulan códigos, se liberan existencias y cupos, se desvinculan los canales y se eliminan los datos personales y de salud. EPIC-001.
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1752_sin-clasificar.md:10:- OPEN-Q-001. Cuando se ofrece la ruta alterna tras fallar la verificación de identidad, ¿el sistema permite reintentar inmediatamente con un nuevo código tantas veces como se quiera, o existe un límite global de generación de códigos por tiempo o por número de cédula?
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1753_sin-clasificar.md:6:Petición: Canales, vinculación y selección de paciente. La aplicación web y el bot de Telegram permiten el flujo completo: verificar identidad, vincular el canal, cargar documentos, prevalidar, agendar, consultar el estado, ver el código de entrega, cancelar, desvincular y revocar. El bot solo interactúa después de que la persona lo inicia y publica una política de privacidad. Después de verificar la identidad, el chat o el navegador queda vinculado al paciente; un mismo canal puede quedar vinculado a varios pacientes sin límite y, si hay más de uno, se exige escoger el paciente antes de cada gestión y se muestra durante toda la gestión. La vinculación vence a los 3 meses y se reactiva con un nuevo código; mientras está vencida no muestra información, no permite gestiones y no recibe notificaciones por ese canal, aunque los SMS y correos continúan. Se puede desvincular un paciente. La web ofrece un enlace profundo al bot sin cédula, diagnósticos, medicamentos ni otros datos sensibles. El usuario consulta el estado de cada fórmula, las citas con punto y ventana, y el código de entrega en QR y numérico. EPIC-002.
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261029-1756_sin-clasificar.md:10:- OPEN-Q-001. Cuando un facilitador o cuidador gestiona a múltiples pacientes desde un mismo chat o navegador, ¿debe realizar el proceso de verificación de identidad con el código enviado al paciente (o al número del tutor registrado) cada vez que cambia de paciente activo, o la sesión de vinculación de ese paciente se mantiene activa en paralelo?
+/home/camila-giraldo/SW3/pharma_express/PharmaExpress/agentes-ia/salidas/specification-agent/sin-clasificar/20261031-1436_sin-clasificar.md:32:- `REQ-009` (Aislamiento de identidad de los canales): `Debe`. Evita suposiciones de identidad inseguras mediante identificadores de Telegram. Pendiente de SPEC (EPIC-002). `PROPUESTA`: Dado un usuario en la web o Telegram, cuando interactúa con el sistema, entonces se exige la verificación explicita mediante cédula y OTP sin derivar la identidad del canal de transporte.
+> general · flint-40b-free
+[0m→ [0mRead agentes-ia/salidas/architecture-agent/sin-clasificar/20261031-1436_sin-clasificar.md 
+> general · flint-40b-free
+[0m→ [0mRead qa/trazabilidad.md 
+[0m→ [0mRead docs/preguntas/LEEME.md 
+[0m$ [0mcd /home/camila-giraldo/SW3/pharma_express/PharmaExpress && git status --short && git log --oneline -8 -- agentes-ia/salidas/specification-agent/ docs/ qa/ | head -20
+RM ".claude/agents/ Specification_agent.md" -> .claude/agents/specification-agent.md
+ D agentes-groq/README.md
+ D agentes-groq/agente.py
+ D agentes-groq/agentes/_plantilla/config.json
+ D agentes-groq/agentes/_plantilla/prompt.md
+ D agentes-groq/agentes/architecture-agent/config.json
+ D agentes-groq/agentes/architecture-agent/prompt.md
+ D agentes-groq/agentes/generador-hu-invest/config.json
+ D agentes-groq/agentes/generador-hu-invest/prompt.md
+ D agentes-groq/agentes/specification-agent/config.json
+ D agentes-groq/agentes/specification-agent/prompt.md
+ D agentes-groq/requirements.txt
+ D agentes-groq/salidas/architecture-agent/aprobadas/ARQ-003_v1.0.md
+ D agentes-groq/salidas/architecture-agent/aprobadas/ARQ-004_v1.0.md
+ D agentes-groq/salidas/architecture-agent/registro.md
+ D agentes-groq/salidas/specification-agent/aprobadas/SPEC-001_v1.0.md
+ D agentes-groq/salidas/specification-agent/aprobadas/SPEC-002_v1.0.md
+ D agentes-groq/salidas/specification-agent/aprobadas/SPEC-003_v1.0.md
+ D agentes-groq/salidas/specification-agent/aprobadas/SPEC-004_v0.1.md
+ D agentes-groq/salidas/specification-agent/aprobadas/SPEC-005_v1.0.md
+ D agentes-groq/salidas/specification-agent/borradores/SPEC-004/SPEC-004_v0.1.md
+ D agentes-groq/salidas/specification-agent/borradores/SPEC-005/SPEC-005_v0.1.md
+ D agentes-groq/salidas/specification-agent/registro.md
+?? .claude/LEEME-agentes.md
+?? .claude/agents/architecture-agent.md
+?? .claude/agents/backend-bot-telegram.md
+?? .claude/agents/backend-servicios-api.md
+?? .claude/agents/ejecutor-corrector.md
+?? .claude/agents/frontend-interfaz-web.md
+?? .claude/agents/qa-r1-humo.md
+?? .claude/agents/qa-r2-triage.md
+?? .claude/agents/qa-s1-revisor-spec.md
+?? .claude/agents/qa-s2-disenador-casos.md
+?? .claude/agents/qa-s3-generador-pruebas.md
+?? .claude/skills/
+?? .env.example
+?? PHARMA_EXPRESS_SPEC-1.md
+?? agentes-ia/
+?? apps/
+?? docs/
+?? orquestador.py
+?? pipeline.json
+?? plan-agentes/
+?? qa/
+> general · flint-40b-free
+El lint se ejecuta correctamente con `python3` (sin hallazgos mecánicos) y he confirmado el contexto. Ahora déjame revisar la plantilla de preguntas y algunos puntos de apoyo antes de redactar el informe.
+[0m→ [0mRead qa/oraculos-pendientes.md 
+[0m→ [0mRead docs/preguntas/_plantilla.md 
+> general · flint-40b-free
+He completado la revisión estática. Ahora escribiré el informe en la ruta de salida designada por el agente (`qa/revision/informe-<spec>.md`) y la pregunta abierta en `docs/preguntas/`.
+[0m← [0mWrite qa/revision/informe-SPEC-001.md
+Created file successfully: qa/revision/informe-SPEC-001.md
+> general · flint-40b-free
+[0m← [0mWrite docs/preguntas/PREG-001.md
+Created file successfully: docs/preguntas/PREG-001.md
+> general · flint-40b-free
+Revisión completada. Resumen de lo ejecutado y los resultados:
+
+## Salidas
+
+1. **Contexto leído**: `PHARMA_EXPRESS_AGENTES.md`, `docs/mvp.md`, agente `qa-s1-revisor-spec.md`, skills `criterios-calidad-de-spec`, `formato-de-hallazgos` y `manejo-de-ambiguedades`.
+2. **Lint previo** (`python3 qa/scripts/lint_spec.py agentes-ia/salidas/specification-agent/borradores/SPEC-001/SPEC-001_v1.0.md`): **sin hallazgos mecánicos** (RF 9, BR 4, RNF 2, CL 2, AC 8).
+3. **SPEC revisada**: `SPEC-001. Consentimiento, identidad y derechos del titular - Versión 1.0` (módulo **identidad**, estado *Candidata*) → `agentes-ia/salidas/specification-agent/borradores/SPEC-001/SPEC-001_v1.0.md`. MVP: **dentro del Debe** (REQ-001).
+
+## Resultado
+
+- **Veredicto: NO_APTA**
+- **Hallazgos**: 5 en total — 1 **bloqueante** (H-001), 3 **media** (H-002, H-003, H-004), 1 **menor** (H-005).
+- **Hallazgo clave (bloqueante)**: H-001 — RF-004 y BR-002 se verifican solo vía AC-004, que describe el camino de falla (agotar 3 intentos / vencer 10 min). **No existe AC para el caso de éxito** de la verificación (código válido → identidad verificada → acceso habilitado). El requisito central del módulo quedó sin criterio verificable.
+- **Hallazgos complementarios**: H-002 (límites 10 min / 3 intentos sin casos debajo/en-límite/por encima), H-003 (sin caso de excepción por fallo de SMS/correo o EPS simulada), H-004 (colisión de numeración DEC-01…DEC-03 con las DEC del contexto), H-005 (no se modelan estados y transiciones).
+- **PREG creada**: `docs/preguntas/PREG-001.md` — criterio de validez en el límite de los 10 minutos del código — **bloquea: sí**.
+
+## Rutas
+
+- Informe: `qa/revision/informe-SPEC-001.md`
+- Pregunta: `docs/preguntas/PREG-001.md`
+
+**Devolución final según el agente**: veredicto **NO_APTA**; 1 bloqueante, 0 alta, 3 media, 1 menor (5 hallazgos); PREG creada: `PREG-001` (bloquea: sí); informe en `qa/revision/informe-SPEC-001.md`. Con este veredicto el módulo **identidad se detiene**: corresponde volver a Especificaciones para cerrar el AC faltante antes de que S2 diseñe casos.

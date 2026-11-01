@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "actualizado": "2026-10-31",
+  "spec_version_hash": null,
+  "mvp": {
+    "estado": "borrador",
+    "ronda": 0,
+    "aprobado_por": null,
+    "hash_specs": null,
+    "archivo": "docs/mvp.md",
+    "decision_alcance": "DEC-P01: prevalidación completa en web y Telegram; agendamiento en evaluación."
+  },
+  "modulos": {
+    "identidad": {
+      "spec_id": "SPEC-001",
+      "spec_hash": "6e3ea037860b",
+      "spec": "aprobada",
+      "revision": "APTA",
+      "oraculos": "aprobados",
+      "pruebas": "pendiente",
+      "implementacion": "pendiente",
+      "humo": "pendiente",
+      "nota": "Pruebas sin ejecutar y 3 sospechosas (PREG-003/004/005); código v0 a rehacer (qa/incidentes/INC-20261031-001-identidad-v0.md)."
+    },
+    "datos_simulados": {
+      "spec_id": "SPEC-008",
+      "spec_hash": null,
+      "spec": "pendiente",
+      "revision": "pendiente",
+      "oraculos": "pendiente",
+      "pruebas": "pendiente",
+      "implementacion": "pendiente",
+      "humo": "pendiente",
+      "nota": "Solo la parte de la EPS simulada y los catálogos que usa la prevalidación (provisional hasta el Corte técnico)."
+    },
+    "prevalidacion": {
+      "spec_id": "SPEC-003",
+      "spec_hash": null,
+      "spec": "pendiente",
+      "revision": "pendiente",
+      "oraculos": "pendiente",
+      "pruebas": "pendiente",
+      "implementacion": "pendiente",
+      "humo": "pendiente",
+      "nota": "Paso 5 (crónicas) depende de PREG-006."
+    },
+    "telegram": {
+      "spec_id": "SPEC-002",
+      "spec_hash": null,
+      "spec": "pendiente",
+      "revision": "pendiente",
+      "oraculos": "pendiente",
+      "pruebas": "pendiente",
+      "implementacion": "pendiente",
+      "humo": "pendiente",
+      "nota": "Depende de PREG-007 (chat, Mini App o enlace)."
+    }
+  },
+  "iteraciones": {
+    "identidad": 0
+  },
+  "escalados": [],
+  "presupuesto_diario_llamadas": {
+    "limite": 200,
+    "usadas": 0,
+    "fecha": null
+  },
+  "notas": "El orquestador no decide alcance. Los archivos mandan: docs/mvp.md (puerta MVP), SPEC aprobadas (spec), qa/revision/informe-<SPEC>.md (revisión). pipeline.json guarda oráculos, pruebas, implementación, humo, iteraciones y escalados. Los módulos y su SPEC se ajustan cuando una persona apruebe el corte del MVP.",
+  "historial": [
+    {
+      "fecha": "2026-10-31",
+      "cambio": "Reorganización: MVP vuelve a borrador (mvp.md no estaba aprobado); módulos sin SPEC aprobada a pendiente; identidad.pruebas a pendiente (nunca ejecutadas); se añaden spec_id y spec_hash."
+    },
+    {
+      "fecha": "2026-10-31",
+      "cambio": "DEC-P01: módulos provisionales identidad, datos_simulados, prevalidacion, telegram; reservas y notificaciones pasan a en_evaluacion. Se confirman con el Corte técnico."
+    }
+  ],
+  "en_evaluacion": {
+    "reservas": {
+      "spec_id": "SPEC-004",
+      "motivo": "La persona aún no decide si el agendamiento entra al MVP."
+    },
+    "notificaciones": {
+      "spec_id": "SPEC-005",
+      "motivo": "Fuera del alcance de prevalidación; solo aplica su regla de contenido sin datos de salud."
+    }
+  }
+}

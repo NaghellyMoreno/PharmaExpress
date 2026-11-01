@@ -1,4 +1,4 @@
-# PREG-005. <Pregunta concreta>
+# PREG-005. ¿Dónde registra la prueba de TC-005 la autorización de datos de salud antes de esperar `true`?
 
 Origen: B1 (backend-servicios-api) — detectado en `apps/api/src/modulos/identidad/pruebas/servicios.spec.ts` (TC-005 / AC-005 / RF-007 / BR-007)
 SPEC: SPEC-001 (módulo `identidad`)

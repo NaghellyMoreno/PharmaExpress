@@ -1,0 +1,18 @@
+{
+  "fecha": "20261031-151935",
+  "backend": "opencode",
+  "pasos": [
+    {
+      "paso": "S2",
+      "modulo": "identidad"
+    }
+  ],
+  "detenido_en": {
+    "motivo": "marcado manual",
+    "paso": "S2",
+    "modulo": "identidad",
+    "responsable": "S2 Diseñador de casos + persona",
+    "accion": "Diseñar TC y oráculos; una persona aprueba qa/oraculos-pendientes.md.",
+    "bloqueado_por": "oraculos = pendiente"
+  }
+}

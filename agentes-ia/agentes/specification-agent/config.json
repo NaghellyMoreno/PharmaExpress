@@ -1,0 +1,20 @@
+{
+  "nombre": "Specification Agent",
+  "descripcion": "Recibe la necesidad informal de una funcionalidad de Pharma Express y devuelve preguntas de aclaración y una SPEC versionada de 17 secciones con su épica, sin decisiones técnicas.",
+  "proveedor": "gemini",
+  "modelo": "gemini-3.5-flash",
+  "modelos_respaldo": [
+    "gemini-3.7-flash",
+    "gemini-3.6-flash",
+    "gemini-3.5-flash-lite"
+  ],
+  "parametros": {
+    "temperature": 0.2,
+    "top_p": 0.95,
+    "max_tokens": 32000
+  },
+  "organizacion_salida": "spec",
+  "carpeta_salida": "agentes-ia/salidas/specification-agent",
+  "prefijo_documento": "SPEC",
+  "interactivo": true
+}

@@ -1,4 +1,4 @@
-# PREG-004. <Pregunta concreta>
+# PREG-004. ¿Con qué firma se verifica AC-003 (solo el último código vigente) sin estado global?
 
 Origen: B1 (backend-servicios-api) — detectado en `apps/api/src/modulos/identidad/pruebas/dominio.spec.ts` (caso «Código anterior al solicitar uno nuevo», TC-013 / AC-003 / BR-003 / CL-001)
 SPEC: SPEC-001 (módulo `identidad`)
