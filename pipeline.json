@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "actualizado": "2026-10-31",
+  "actualizado": "2026-11-01",
   "spec_version_hash": null,
   "mvp": {
     "estado": "borrador",
@@ -24,9 +24,9 @@
     },
     "datos_simulados": {
       "spec_id": "SPEC-008",
-      "spec_hash": null,
-      "spec": "pendiente",
-      "revision": "pendiente",
+      "spec_hash": "c09555640c21",
+      "spec": "aprobada",
+      "revision": "APTA_CON_RESERVAS",
       "oraculos": "pendiente",
       "pruebas": "pendiente",
       "implementacion": "pendiente",
@@ -35,9 +35,9 @@
     },
     "prevalidacion": {
       "spec_id": "SPEC-003",
-      "spec_hash": null,
-      "spec": "pendiente",
-      "revision": "pendiente",
+      "spec_hash": "2c105202e1ac",
+      "spec": "aprobada",
+      "revision": "APTA_CON_RESERVAS",
       "oraculos": "pendiente",
       "pruebas": "pendiente",
       "implementacion": "pendiente",
@@ -46,9 +46,9 @@
     },
     "telegram": {
       "spec_id": "SPEC-002",
-      "spec_hash": null,
-      "spec": "pendiente",
-      "revision": "pendiente",
+      "spec_hash": "b663f0a467b6",
+      "spec": "aprobada",
+      "revision": "APTA_CON_RESERVAS",
       "oraculos": "pendiente",
       "pruebas": "pendiente",
       "implementacion": "pendiente",

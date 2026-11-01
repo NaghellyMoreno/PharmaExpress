@@ -2,7 +2,7 @@
 
 Origen: B1 (backend-servicios-api) — detectado en `apps/api/src/modulos/identidad/pruebas/dominio.spec.ts` (TC-006, caso «límite inferior»)
 SPEC: SPEC-001 (módulo `identidad`), CL-003 / SPEC-001/AC-009
-Estado: abierta
+Estado: respondida
 Bloquea: sí
 Fecha: 2026-10-31
 
@@ -31,4 +31,4 @@ Alinear la implementación a la SPEC-001 v1.1 aprobada y congelada (y a la respu
 
 ## Respuesta del equipo
 
-(Vacío hasta que una persona responda.)
+Respondida con DEC-P30 (docs/decisiones.md), 2026-11-01. Fuente: PHARMA_EXPRESS_SPEC-1.md: AC-05, AC-06, DEC-07.

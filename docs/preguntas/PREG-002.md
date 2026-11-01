@@ -2,7 +2,7 @@
 
 Origen: S2
 SPEC: docs/mvp.md (REQ-009)
-Estado: abierta
+Estado: respondida
 Bloquea: sí
 Fecha: 2026-10-31
 
@@ -26,4 +26,4 @@ Mantener la propuesta registrada en `docs/mvp.md` («se exige la verificación e
 
 ## Respuesta del equipo
 
-(Vacío hasta que una persona responda.)
+Respondida con DEC-P29 (docs/decisiones.md), 2026-11-01. Fuente: PHARMA_EXPRESS_SPEC-1.md: RNF-06, BR-04, AC-12.

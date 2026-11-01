@@ -1,6 +1,34 @@
 # Decisiones pendientes (puerta humana)
 
-> **Actualización 2026-10-31 (19:20):** las decisiones ya tomadas están en `docs/decisiones.md` (DEC-P01 a DEC-P12) y los pasos siguientes en `docs/ordenes-ronda-1.md`. Queda pendiente PREG-006 y la decisión sobre el agendamiento.
+> **Actualización 2026-11-01:** las decisiones ya tomadas están en `docs/decisiones.md` (DEC-P01 a DEC-P58) y los pasos siguientes en `docs/ordenes-ronda-1.md`. Quedan pendientes la aprobación de las SPEC y la decisión sobre el agendamiento. Lo que sigue en este archivo después de la sección 0 es anterior y se conserva como historial.
+
+## 0. Pendientes tras aprobar las SPEC (2026-11-01)
+
+SPEC-002 v1.11, SPEC-003 v1.12 y SPEC-008 v1.9 están aprobadas y congeladas (DEC-P58). Cada respuesta a una PREG que las afecte exige una versión nueva.
+
+PREG-015 debe responderse antes de la ARQ.
+
+| Prioridad | PREG | Pregunta | Qué sí dice el archivo |
+|---|---|---|---|
+| Antes de S2 | PREG-076 | Fórmulas con resultados que DEC-P41 no nombra, en una solicitud nueva | Nada. |
+| Negociación del MVP | PREG-074 | Prioridad de los REQ sin evento tras DEC-P45 y DEC-P35 | Nada. |
+
+**Sin respuesta en `PHARMA_EXPRESS_SPEC-1.md`:**
+
+| Prioridad | PREG | Pregunta | Qué sí dice el archivo |
+|---|---|---|---|
+| Antes de la ARQ | PREG-015 | ¿Se conservan los documentos tras prevalidar? | El plazo queda fuera de alcance (DEC-32) y se eliminan al revocar (RF-12). Falta decidir si se conservan hasta entonces. |
+| Antes de S2 | PREG-011 | ¿Cómo se comprueba que la historia clínica es del paciente? | DEC-42 dice «no coincide», pero no con qué dato. |
+| Antes de S2 | PREG-017 | ¿Qué entradas inválidas gastan intento? | Solo «foto o PDF». |
+| Antes de S2 | PREG-018 y PREG-026 | Instante y zona horaria de la fecha de prevalidación | Nada. |
+| Antes de S2 | PREG-025 | Extremos del rango de 8 a 9 meses | Cuenta desde la consulta médica; no aclara los extremos. |
+| Antes de S2 | PREG-034 | Dos pacientes con los mismos 4 dígitos | Nada: es anterior a DEC-P20. |
+| Antes de S2 | PREG-041 | Motivo si los intentos fallan por causas distintas | Nada. |
+| Técnica (S3) | PREG-004 y PREG-005 | Firma y forma de las pruebas de `identidad` | El archivo deja los mecanismos fuera (regla 11). |
+
+Respondidas el 2026-11-01 con el archivo: PREG-002, 003, 012, 016, 019, 020, 021, 022, 023, 028, 033 (salvo grupos), 036, 061 y 070 (DEC-P29 a DEC-P40). Con deducción aceptada por la persona: PREG-014, 024, 027, 035, 037, 038, 060 y 062 (DEC-P41 a DEC-P48). Respondidas por la persona: PREG-010, 013, 050 y 072 (DEC-P49 a DEC-P52), y PREG-040, 071, 073 y 075 (DEC-P54 a DEC-P57).
+
+---
 
 Fecha: 2026-10-31 · Origen: reorganización del pipeline tras la revisión del plan.
 Todo lo marcado **PROPUESTA** es una sugerencia; ningún agente lo toma como decisión.
