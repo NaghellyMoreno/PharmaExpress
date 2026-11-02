@@ -61,3 +61,7 @@
 - 2026-11-02 08:15 | SPEC-001 | versión 1.3 | Candidata | gemini-3.5-flash | borradores\SPEC-001\SPEC-001_v1.3.md | Corrige la SPEC-001 y publícala como versión 1.3 en estado Candidata. Haz solo estos cambios y nada más. Reglas estricta
 - 2026-11-02 08:20 | SPEC-001 | versión 1.4 | Candidata | gemini-3.5-flash | borradores\SPEC-001\SPEC-001_v1.4.md | Corrige la SPEC-001 y publícala como versión 1.4 en estado Candidata. Son correcciones de edición para aplicar DEC-P78 d
 - 2026-11-02 08:27 | SPEC-001 | versión 1.4 | Aprobada y congelada | gemini-3.5-flash | aprobadas\SPEC-001_v1.4.md | El equipo aprueba la SPEC-001
+- 2026-11-02 08:47 | SPEC-001 | versión 1.5 | Candidata | gemini-3.5-flash | borradores\SPEC-001\SPEC-001_v1.5.md | Corrige la SPEC-001 y publícala como versión 1.5 en estado Candidata. Haz solo estos cambios y nada más. Reglas estricta
+- 2026-11-02 08:50 | SPEC-003 | versión 1.14 | Candidata | gemini-3.5-flash | borradores\SPEC-003\SPEC-003_v1.14.md | Corrige la SPEC-003 y publícala como versión 1.14 en estado Candidata. Haz solo estos cambios y nada más. Reglas estrict
+- 2026-11-02 09:02 | SPEC-003 | versión 1.14 | Aprobada y congelada | gemini-3.5-flash-lite | aprobadas\SPEC-003_v1.14.md | El equipo aprueba la SPEC-003
+- 2026-11-02 09:04 | SPEC-001 | versión 1.5 | Aprobada y congelada | gemini-3.5-flash-lite | aprobadas\SPEC-001_v1.5.md | El equipo aprueba la SPEC-001

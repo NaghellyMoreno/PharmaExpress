@@ -116,6 +116,9 @@ def guardar_resultado(config, nombre_agente, peticion, respuesta):
 PATRON_ESTADO = re.compile(r"^Estado:\s*(.+?)\s*$", re.M)
 PATRON_EPICA = re.compile(r"^Épica:\s*(.+?)\s*$", re.M)
 MARCA_INCOMPLETA = "_INCOMPLETA"
+# «El equipo aprueba la SPEC-003» o «El equipo aprueba la ARQ-005»: se resuelve sin modelo.
+PATRON_APROBACION = re.compile(r"^\s*el\s+equipo\s+aprueba\s+(?:la|el)\s+([A-Z]+-\d{3})\b", re.I)
+MODELO_APROBACION = "ninguno (aprobación sin modelo)"
 
 
 def leer_encabezado_spec(texto, prefijo="SPEC"):
@@ -226,7 +229,8 @@ def guardar_spec(config, nombre_agente, peticion, respuesta, modelo, cortada):
         f"Petición: {peticion}\n"
         f"-->\n\n"
     )
-    archivo.write_text(encabezado + respuesta + "\n", encoding="utf-8")
+    # LF siempre: el pipeline valida las versiones aprobadas por hash de bytes.
+    archivo.write_text(encabezado + respuesta + "\n", encoding="utf-8", newline="\n")
 
     registro = base / "registro.md"
     if not registro.exists():
@@ -242,6 +246,52 @@ def guardar_spec(config, nombre_agente, peticion, respuesta, modelo, cortada):
             f"{archivo.relative_to(base)} | {resumen}\n"
         )
     return archivo
+
+
+def preparar_aprobacion(config, prefijo, id_doc):
+    """Congela la última Candidata sin pasar por el modelo.
+
+    Solo cambia el estado, el modo, una línea de historial y el «Siguiente paso»: el
+    contenido aprobado es exactamente el que se revisó. La decisión de aprobar la toma
+    la persona que ejecuta el comando.
+    """
+    anterior = ultima_version_spec(config, id_doc)
+    if "aprobadas" in anterior.parts:
+        sys.exit(f"{relativa(anterior)} ya está aprobada y congelada: no hay una Candidata nueva que aprobar.")
+    texto = anterior.read_text(encoding="utf-8").replace("\r\n", "\n")
+    if texto.startswith("<!--") and "-->" in texto:
+        texto = texto[texto.index("-->") + 3:].lstrip("\n")
+    datos = leer_encabezado_spec(texto, prefijo)
+    if datos is None:
+        sys.exit(f"{relativa(anterior)} no tiene encabezado de {prefijo}: no se puede aprobar.")
+    _, _, version, estado = datos
+    if "candidata" not in estado.lower():
+        sys.exit(f"{relativa(anterior)} está en estado «{estado}»: solo se aprueba una Candidata.")
+    pendientes = contar_pendientes(texto)
+    if pendientes:
+        sys.exit(f"{relativa(anterior)} tiene {pendientes} preguntas pendientes: respóndelas antes de aprobar.")
+
+    texto = PATRON_ESTADO.sub("Estado: Aprobada y congelada", texto, count=1)
+    texto = re.sub(r"^Modo:\s*.*$", "Modo: Aprobación", texto, count=1, flags=re.M)
+
+    lineas = texto.split("\n")
+    entradas = [i for i, linea in enumerate(lineas) if linea.startswith(f"- Versión {version}")]
+    if not entradas:
+        sys.exit(f"{relativa(anterior)} no tiene entrada de la versión {version} en el historial.")
+    nota = f"- Versión {version} (aprobación): aprobada y congelada por el equipo, sin cambios de contenido."
+    lineas.insert(entradas[-1] + 1, nota)
+    texto = "\n".join(lineas)
+
+    siguiente = re.search(r"^## Siguiente paso\s*$", texto, re.M)
+    if siguiente:
+        fin = re.search(r"^## ", texto[siguiente.end():], re.M)
+        cola = texto[siguiente.end() + fin.start():] if fin else ""
+        texto = (
+            texto[:siguiente.end()]
+            + f"\nLa {id_doc} versión {version} quedó aprobada y congelada.\n"
+            + (f"\n{cola}" if cola else "")
+        )
+    return anterior, texto.rstrip("\n")
 
 
 def organizar_existentes(nombre_agente):
@@ -644,13 +694,34 @@ def main():
 
     config, prompt_sistema = cargar_agente(args.agente)
     nombre_proveedor = config.get("proveedor", PROVEEDOR_POR_DEFECTO)
-    cliente = crear_cliente(nombre_proveedor)
     prefijo = config.get("prefijo_documento", "SPEC")
     por_spec = config.get("organizacion_salida") == "spec"
 
     peticion = args.peticion or input("¿Qué le pides al agente?\n> ").strip()
     if not peticion:
         sys.exit("La petición está vacía.")
+
+    # Aprobar no pasa por el modelo: un modelo puede reescribir el texto revisado o fallar.
+    aprobacion = PATRON_APROBACION.match(peticion) if por_spec else None
+    if aprobacion:
+        id_doc = normalizar_id(
+            aprobacion.group(1), rf"{re.escape(prefijo)}-\d{{3}}", f"{prefijo}-001", "la petición"
+        )
+        if args.continuar and args.continuar.upper() != id_doc:
+            sys.exit(f"--continuar {args.continuar} no coincide con {id_doc} de la petición.")
+        anterior, respuesta = preparar_aprobacion(config, prefijo, id_doc)
+        print(f"Aprobando sin modelo, a partir de: {relativa(anterior)}")
+        datos = imprimir_resumen(respuesta, prefijo)
+        if args.no_guardar:
+            print("\n--no-guardar: no se guardó nada.")
+            return
+        archivo = guardar_spec(config, args.agente, peticion, respuesta, MODELO_APROBACION, False)
+        print(f"Guardada: {relativa(archivo)}")
+        if datos:
+            print(f"Siguiente: {sugerencia_siguiente(datos[3], datos[0], args.agente)}")
+        return
+
+    cliente = crear_cliente(nombre_proveedor)
 
     # Adjuntos, en este orden: --continuar, versiones aprobadas, épicas, --adjuntar.
     adjuntos = []

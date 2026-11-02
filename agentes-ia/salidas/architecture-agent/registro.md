@@ -5,3 +5,5 @@
 - 2026-11-01 14:46 | ARQ-005 | versión 0.2 | Borrador | gemini-3.5-flash | borradores\ARQ-005\ARQ-005_v0.2.md | Corrige la ARQ-005 y publícala como versión 0.2 en estado Borrador. No la marques Candidata ni Aprobada: esto no respond
 - 2026-11-01 14:51 | ARQ-005 | versión 1.0 | Candidata | gemini-3.5-flash | borradores\ARQ-005\ARQ-005_v1.0.md | Corrige la ARQ-005 y publícala como versión 1.0 en estado Candidata, con las preguntas ya respondidas. No la marques Apr
 - 2026-11-01 14:54 | ARQ-005 | versión 1.0 | Aprobada y congelada | gemini-3.5-flash | aprobadas\ARQ-005_v1.0.md | El equipo aprueba la ARQ-005
+- 2026-11-02 09:06 | ARQ-005 | versión 1.1 | Candidata | gemini-3.5-flash-lite | borradores\ARQ-005\ARQ-005_v1.1.md | Modo cambio. Publica la ARQ-005 como versión 1.1 en estado Candidata, para alinearla con las decisiones posteriores a su
+- 2026-11-02 09:37 | ARQ-005 | versión 1.1 | Aprobada y congelada | ninguno (aprobación sin modelo) | aprobadas\ARQ-005_v1.1.md | El equipo aprueba la ARQ-005

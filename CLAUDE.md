@@ -37,6 +37,7 @@ Proyecto del curso Software III: plataforma de pre-dispensación de medicamentos
 - **Marcar estados:** `python3 qa/scripts/marcar.py …`. Aprobar el MVP lo hace **una persona**: `marcar.py mvp --estado aprobado --aprobado-por "Nombre"`.
 - **Ejecutar la cadena:** `python3 qa/scripts/runner.py --seguir --backend claude`.
 - **Agentes de Especificaciones y Arquitectura:** `python3 agentes-ia/agente.py <agente> "<petición>" [--continuar ID] [--aprobada …] [--adjuntar …]`. Necesitan `agentes-ia/.env` con `GEMINI_API_KEY`.
+- **Aprobar una SPEC o ARQ:** `agente.py <agente> "El equipo aprueba la X" --continuar X` ya no usa el modelo: congela la última Candidata tal cual (solo cambia estado, modo, historial y «Siguiente paso»). Se niega si no hay Candidata nueva o si quedan preguntas pendientes. La decisión sigue siendo de una persona.
 - **Comprobaciones:** `python3 qa/scripts/probar_todo.py` (debe dar 11/11) y `python3 qa/scripts/guardian.py revisar`.
 
 ## Reglas duras (no negociables)

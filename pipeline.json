@@ -13,7 +13,7 @@
   "modulos": {
     "identidad": {
       "spec_id": "SPEC-001",
-      "spec_hash": "6eaf310bf91d",
+      "spec_hash": "d278bfd11dc3",
       "spec": "aprobada",
       "revision": "APTA_CON_RESERVAS",
       "oraculos": "pendiente",
@@ -35,7 +35,7 @@
     },
     "prevalidacion": {
       "spec_id": "SPEC-003",
-      "spec_hash": "b2ed34ce3a82",
+      "spec_hash": "d9a706ca1ae0",
       "spec": "aprobada",
       "revision": "APTA_CON_RESERVAS",
       "oraculos": "pendiente",
