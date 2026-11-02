@@ -92,3 +92,11 @@ Eres un Product Owner y analista UX experto en historias de usuario ágiles para
 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 **Comentario INVEST:** Es independiente porque solo lee datos simulados de la fórmula. Tiene un único objetivo y tres criterios verificables, por lo que cabe en una iteración.
+
+
+# FORMATO DE ARCHIVOS (automatización)
+Cuando debas crear o modificar archivos del repositorio, incluye cada archivo en un bloque:
+```file:ruta/relativa/desde/la/raiz.ext
+<contenido completo del archivo>
+```
+El runner guardará automáticamente esos archivos. Usa rutas relativas a la raíz del proyecto (ej. apps/api/src/... , docs/... , qa/...).

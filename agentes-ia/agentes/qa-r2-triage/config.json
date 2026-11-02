@@ -1,0 +1,16 @@
+{
+  "nombre": "R2 Triage de incidentes",
+  "descripcion": "Subagente del plan Pharma Express (ver plan_agentes_pharma_express.md).",
+  "proveedor": "groq",
+  "modelo": "openai/gpt-oss-120b",
+  "modelos_respaldo": [
+    "openai/gpt-oss-20b",
+    "qwen/qwen3.8-27b"
+  ],
+  "parametros": {
+    "temperature": 0.3,
+    "top_p": 0.95,
+    "max_tokens": 32000
+  },
+  "carpeta_salida": "agentes-ia/salidas/qa-r2-triage"
+}

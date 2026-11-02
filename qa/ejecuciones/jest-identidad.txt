@@ -1,0 +1,245 @@
+● Validation Warning:
+
+  Unknown option "testTimeout" with value 120000 was found.
+  This is probably a typing mistake. Fixing it will remove this message.
+
+  Configuration Documentation:
+  https://jestjs.io/docs/configuration
+
+Running one project: unidad
+FAIL unidad src/modulos/identidad/pruebas/servicios.spec.ts
+  ● Módulo identidad — pruebas unitarias de servicios › Verificación de identidad — SPEC-001/AC-004, AC-005, AC-009, AC-010, AC-011, AC-012, AC-013 › AC-005 / TC-005: con autorización separada aceptada se continúa con la carga del documento
+
+    expect(received).resolves.toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+    [0m [90m 68 |[39m       [36mconst[39m autorizacion [33m=[39m [36mnew[39m [33mAutorizacionDatosSaludService[39m()[33m;[39m
+     [90m 69 |[39m       [90m// Con autorización separada aceptada: el flujo continúa con la carga.[39m
+    [31m[1m>[22m[39m[90m 70 |[39m       [36mawait[39m expect(autorizacion[33m.[39mpuedeCargar([32m'solicitud-1'[39m))[33m.[39mresolves[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m    |[39m                                                                      [31m[1m^[22m[39m
+     [90m 71 |[39m     })[33m;[39m
+     [90m 72 |[39m
+     [90m 73 |[39m     it([32m'AC-009 / TC-006: al ingresar el código a las 10:10:00 el sistema lo rechaza y ofrece la ruta alternativa'[39m[33m,[39m [36masync[39m () [33m=>[39m {[0m
+
+      at Object.toBe (../node_modules/expect/build/index.js:174:22)
+      at Object.<anonymous> (modulos/identidad/pruebas/servicios.spec.ts:70:70)
+
+  ● Módulo identidad — pruebas unitarias de servicios › Verificación de identidad — SPEC-001/AC-004, AC-005, AC-009, AC-010, AC-011, AC-012, AC-013 › AC-009 / TC-006: al ingresar el código a las 10:10:00 el sistema lo rechaza y ofrece la ruta alternativa
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: false
+    Received: true
+
+    [0m [90m 77 |[39m       [36mconst[39m verificacion [33m=[39m [36mnew[39m [33mVerificacionIdentidadService[39m(eps[33m,[39m sms[33m,[39m correo)[33m;[39m
+     [90m 78 |[39m       [36mconst[39m resultado [33m=[39m [36mawait[39m verificacion[33m.[39mvalidar([32m'8.765.432-1'[39m[33m,[39m [32m'548920'[39m[33m,[39m [33mDate[39m[33m.[39m[33mUTC[39m([35m2026[39m[33m,[39m [35m9[39m[33m,[39m [35m31[39m[33m,[39m [35m10[39m[33m,[39m [35m10[39m[33m,[39m [35m0[39m))[33m;[39m
+    [31m[1m>[22m[39m[90m 79 |[39m       expect(resultado[33m.[39mvalido)[33m.[39mtoBe([36mfalse[39m)[33m;[39m
+     [90m    |[39m                                [31m[1m^[22m[39m
+     [90m 80 |[39m       expect(resultado[33m.[39mrutaAlternativa)[33m.[39mtoBeDefined()[33m;[39m
+     [90m 81 |[39m     })[33m;[39m
+     [90m 82 |[39m[0m
+
+      at Object.<anonymous> (modulos/identidad/pruebas/servicios.spec.ts:79:32)
+
+  ● Módulo identidad — pruebas unitarias de servicios › Verificación de identidad — SPEC-001/AC-004, AC-005, AC-009, AC-010, AC-011, AC-012, AC-013 › AC-010 / TC-007: en el primer intento fallido informa el error y muestra dos intentos restantes; el reintento está permitido
+
+    expect(received).toBeDefined()
+
+    Received: undefined
+
+    [0m [90m 87 |[39m       [36mconst[39m verificacion [33m=[39m [36mnew[39m [33mVerificacionIdentidadService[39m(eps[33m,[39m sms[33m,[39m correo)[33m;[39m
+     [90m 88 |[39m       [36mconst[39m primerIntento [33m=[39m [36mawait[39m verificacion[33m.[39mvalidar([32m'8.765.432-1'[39m[33m,[39m [32m'339966'[39m[33m,[39m [33mDate[39m[33m.[39m[33mUTC[39m([35m2026[39m[33m,[39m [35m9[39m[33m,[39m [35m31[39m[33m,[39m [35m10[39m[33m,[39m [35m2[39m[33m,[39m [35m0[39m))[33m;[39m
+    [31m[1m>[22m[39m[90m 89 |[39m       expect(primerIntento[33m.[39merror)[33m.[39mtoBeDefined()[33m;[39m
+     [90m    |[39m                                   [31m[1m^[22m[39m
+     [90m 90 |[39m       expect(primerIntento[33m.[39mintentosRestantes)[33m.[39mtoBe([35m2[39m)[33m;[39m
+     [90m 91 |[39m       expect(primerIntento[33m.[39mreintentoPermitido)[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m 92 |[39m[0m
+
+      at Object.<anonymous> (modulos/identidad/pruebas/servicios.spec.ts:89:35)
+
+  ● Módulo identidad — pruebas unitarias de servicios › Verificación de identidad — SPEC-001/AC-004, AC-005, AC-009, AC-010, AC-011, AC-012, AC-013 › AC-011 / TC-008: el tercer intento fallido inactiva el código y deriva a la ruta alternativa
+
+    expect(received).toBeDefined()
+
+    Received: undefined
+
+    [0m [90m 103 |[39m       [36mconst[39m verificacion [33m=[39m [36mnew[39m [33mVerificacionIdentidadService[39m(eps[33m,[39m sms[33m,[39m correo)[33m;[39m
+     [90m 104 |[39m       [36mconst[39m tercerIntento [33m=[39m [36mawait[39m verificacion[33m.[39mvalidar([32m'8.765.432-1'[39m[33m,[39m [32m'339966'[39m[33m,[39m [33mDate[39m[33m.[39m[33mUTC[39m([35m2026[39m[33m,[39m [35m9[39m[33m,[39m [35m31[39m[33m,[39m [35m10[39m[33m,[39m [35m6[39m[33m,[39m [35m0[39m))[33m;[39m
+    [31m[1m>[22m[39m[90m 105 |[39m       expect(tercerIntento[33m.[39merror)[33m.[39mtoBeDefined()[33m;[39m
+     [90m     |[39m                                   [31m[1m^[22m[39m
+     [90m 106 |[39m       expect(tercerIntento[33m.[39minactivo)[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m 107 |[39m       expect(tercerIntento[33m.[39mrutaAlternativa)[33m.[39mtoBeDefined()[33m;[39m
+     [90m 108 |[39m[0m
+
+      at Object.<anonymous> (modulos/identidad/pruebas/servicios.spec.ts:105:35)
+
+  ● Módulo identidad — pruebas unitarias de servicios › Verificación de identidad — SPEC-001/AC-004, AC-005, AC-009, AC-010, AC-011, AC-012, AC-013 › AC-013 / TC-012: el fallo en el envío de SMS o correo informa y ofrece reintentar o atención presencial
+
+    expect(received).toBeDefined()
+
+    Received: undefined
+
+    [0m [90m 127 |[39m       [36mconst[39m verificacion [33m=[39m [36mnew[39m [33mVerificacionIdentidadService[39m(eps[33m,[39m sms[33m,[39m correo)[33m;[39m
+     [90m 128 |[39m       [36mconst[39m resultado [33m=[39m [36mawait[39m verificacion[33m.[39mvalidar([32m'8.765.432-1'[39m[33m,[39m [32m'548920'[39m[33m,[39m [33mDate[39m[33m.[39m[33mUTC[39m([35m2026[39m[33m,[39m [35m9[39m[33m,[39m [35m31[39m[33m,[39m [35m10[39m[33m,[39m [35m9[39m[33m,[39m [35m0[39m))[33m;[39m
+    [31m[1m>[22m[39m[90m 129 |[39m       expect(resultado[33m.[39merrorEnvio)[33m.[39mtoBeDefined()[33m;[39m
+     [90m     |[39m                                    [31m[1m^[22m[39m
+     [90m 130 |[39m       expect(resultado[33m.[39mofreceRutaAlternativa)[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m 131 |[39m     })[33m;[39m
+     [90m 132 |[39m   })[33m;[39m[0m
+
+      at Object.<anonymous> (modulos/identidad/pruebas/servicios.spec.ts:129:36)
+
+FAIL unidad src/modulos/identidad/pruebas/dominio.spec.ts
+  ● Módulo identidad — reglas de dominio › Código de un solo uso — DEC-07 / BR-03 / CL-003 / CL-004 › AC-009 / TC-006: el límite inferior se respeta: emitido a las 09:59:00, el ingreso a las 10:00:00 se rechaza
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: false
+    Received: true
+
+    [0m [90m 42 |[39m     it([32m'AC-009 / TC-006: el límite inferior se respeta: emitido a las 09:59:00, el ingreso a las 10:00:00 se rechaza'[39m[33m,[39m () [33m=>[39m {
+     [90m 43 |[39m       [36mconst[39m [33mEMISION_MS_PREVIA[39m [33m=[39m [33mDate[39m[33m.[39m[33mUTC[39m([35m2026[39m[33m,[39m [35m9[39m[33m,[39m [35m31[39m[33m,[39m [35m9[39m[33m,[39m [35m59[39m[33m,[39m [35m0[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 44 |[39m       expect(esCodigoValido([33mCODIGO[39m[33m,[39m [33mEMISION_MS_PREVIA[39m[33m,[39m [33mINGRESO_EN_LIMITE_MS[39m))[33m.[39mtoBe([36mfalse[39m)[33m;[39m
+     [90m    |[39m                                                                               [31m[1m^[22m[39m
+     [90m 45 |[39m     })[33m;[39m
+     [90m 46 |[39m   })[33m;[39m
+     [90m 47 |[39m[0m
+
+      at Object.<anonymous> (modulos/identidad/pruebas/dominio.spec.ts:44:79)
+
+  ● Módulo identidad — reglas de dominio › Código anterior al solicitar uno nuevo — BR-05 / CL-004 / SPEC-001/AC-003 › AC-003 / TC-013: solicitar un nuevo código anula el anterior y solo el último queda vigente
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+    [0m [90m 63 |[39m     it([32m'AC-003 / TC-013: solicitar un nuevo código anula el anterior y solo el último queda vigente'[39m[33m,[39m () [33m=>[39m {
+     [90m 64 |[39m       [90m// Código previo sintético: 548920. Nuevo código sintético: 741203.[39m
+    [31m[1m>[22m[39m[90m 65 |[39m       expect(esCodigoVigente([32m'741203'[39m))[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m    |[39m                                         [31m[1m^[22m[39m
+     [90m 66 |[39m       expect(esCodigoVigente([32m'548920'[39m))[33m.[39mtoBe([36mfalse[39m)[33m;[39m
+     [90m 67 |[39m     })[33m;[39m
+     [90m 68 |[39m   })[33m;[39m[0m
+
+      at Object.<anonymous> (modulos/identidad/pruebas/dominio.spec.ts:65:41)
+
+FAIL unidad src/modulos/pre-dispensacion/pruebas/reglas-negocio-especificas.spec.ts
+  ● Test suite failed to run
+
+    [96msrc/modulos/pre-dispensacion/pruebas/reglas-negocio-especificas.spec.ts[0m:[93m2[0m:[93m41[0m - [91merror[0m[90m TS2307: [0mCannot find module '../servicios/prevalidacional.servicio' or its corresponding type declarations.
+
+    [7m2[0m import { PrevalidacionalServicio } from '../servicios/prevalidacional.servicio';
+    [7m [0m [91m                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+FAIL unidad src/modulos/identidad/pruebas/consentimiento-identidad.spec.ts
+  ● Test suite failed to run
+
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m16[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'verificarAvisoPrevio' does not exist on type 'ConsentimientoService'.
+
+    [7m16[0m     await expect(servicio.verificarAvisoPrevio('12345678')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m20[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'registrarRechazoAviso' does not exist on type 'ConsentimientoService'.
+
+    [7m20[0m     await expect(servicio.registrarRechazoAviso('tercero@example.com')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m24[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'solicitarNuevoCodigo' does not exist on type 'ConsentimientoService'.
+
+    [7m24[0m     await expect(servicio.solicitarNuevoCodigo('3001234567')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m28[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'verificarIdentidad' does not exist on type 'ConsentimientoService'.
+
+    [7m28[0m     await expect(servicio.verificarIdentidad('12345678', '123456')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m32[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'verificarAutorizacionSalud' does not exist on type 'ConsentimientoService'.
+
+    [7m32[0m     await expect(servicio.verificarAutorizacionSalud('12345678')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m36[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'registrarAceptacionTercero' does not exist on type 'ConsentimientoService'.
+
+    [7m36[0m     await expect(servicio.registrarAceptacionTercero('WEB')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m40[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'revocarConsentimiento' does not exist on type 'ConsentimientoService'.
+
+    [7m40[0m     await expect(servicio.revocarConsentimiento('12345678')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m44[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'revocarConsentimientoConReservas' does not exist on type 'ConsentimientoService'.
+
+    [7m44[0m     await expect(servicio.revocarConsentimientoConReservas('12345678')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m49[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'validarVigenciaCodigo' does not exist on type 'ConsentimientoService'.
+
+    [7m49[0m     await expect(servicio.validarVigenciaCodigo('123456', fechaEmision)).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m53[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'intentarVerificacionCodigo' does not exist on type 'ConsentimientoService'.
+
+    [7m53[0m     await expect(servicio.intentarVerificacionCodigo('12345678', '999999')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m57[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'agotarIntentosCodigo' does not exist on type 'ConsentimientoService'.
+
+    [7m57[0m     await expect(servicio.agotarIntentosCodigo('12345678')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m61[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'consultarCedulaEPS' does not exist on type 'ConsentimientoService'.
+
+    [7m61[0m     await expect(servicio.consultarCedulaEPS('99999999')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m65[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'enviarCodigoConFalloSimulado' does not exist on type 'ConsentimientoService'.
+
+    [7m65[0m     await expect(servicio.enviarCodigoConFalloSimulado('3001234567')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m69[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'validarTopeEnvios' does not exist on type 'ConsentimientoService'.
+
+    [7m69[0m     await expect(servicio.validarTopeEnvios('3001234567')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m73[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'renovarCodigoBajoTope' does not exist on type 'ConsentimientoService'.
+
+    [7m73[0m     await expect(servicio.renovarCodigoBajoTope('3001234567')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m77[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'manejarTopeConCodigoVigente' does not exist on type 'ConsentimientoService'.
+
+    [7m77[0m     await expect(servicio.manejarTopeConCodigoVigente('3001234567')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m81[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'registrarEnvioFallidoTotal' does not exist on type 'ConsentimientoService'.
+
+    [7m81[0m     await expect(servicio.registrarEnvioFallidoTotal('3001234567')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m85[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'contarEnvioMultipleCanales' does not exist on type 'ConsentimientoService'.
+
+    [7m85[0m     await expect(servicio.contarEnvioMultipleCanales('3001234567')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+    [96msrc/modulos/identidad/pruebas/consentimiento-identidad.spec.ts[0m:[93m89[0m:[93m27[0m - [91merror[0m[90m TS2339: [0mProperty 'manejarEnvioParcialCanales' does not exist on type 'ConsentimientoService'.
+
+    [7m89[0m     await expect(servicio.manejarEnvioParcialCanales('3001234567')).rejects.toThrow('No implementado');
+    [7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+FAIL unidad src/modulos/simulacion/pruebas/spec-008.spec.ts
+  ● Test suite failed to run
+
+    [96msrc/modulos/simulacion/pruebas/spec-008.spec.ts[0m:[93m2[0m:[93m35[0m - [91merror[0m[90m TS2307: [0mCannot find module '../servicios/simulacion.service' or its corresponding type declarations.
+
+    [7m2[0m import { SimulacionService } from '../servicios/simulacion.service';
+    [7m [0m [91m                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+FAIL unidad src/modulos/canales/pruebas/canales.spec.ts
+  ● Test suite failed to run
+
+    [96msrc/modulos/canales/pruebas/canales.spec.ts[0m:[93m2[0m:[93m33[0m - [91merror[0m[90m TS2307: [0mCannot find module '../servicios/canales.servicio' or its corresponding type declarations.
+
+    [7m2[0m import { CanalesServicio } from '../servicios/canales.servicio';
+    [7m [0m [91m                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+FAIL unidad src/modulos/pre-dispensacion/pruebas/prevalidacin-documentos.spec.ts
+  ● Test suite failed to run
+
+    [96msrc/modulos/pre-dispensacion/pruebas/prevalidacin-documentos.spec.ts[0m:[93m3[0m:[93m41[0m - [91merror[0m[90m TS2307: [0mCannot find module '../servicios/prevalidacional.servicio' or its corresponding type declarations.
+
+    [7m3[0m import { PrevalidacionalServicio } from '../servicios/prevalidacional.servicio';
+    [7m [0m [91m                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+Test Suites: 7 failed, 7 total
+Tests:       7 failed, 12 passed, 19 total
+Snapshots:   0 total
+Time:        4.029 s
+Ran all test suites.

@@ -180,9 +180,21 @@ def rojas(modulo: str) -> int:
     if not npx:
         print("No se encontró npx.")
         return 1
+    # Carpeta real del módulo (campo `carpeta` de pipeline.json) y rutas explícitas:
+    # con `projects`, Jest ignora el patrón posicional y correría todas las suites.
+    try:
+        modulos = json.loads((RAIZ / "pipeline.json").read_text(encoding="utf-8")).get("modulos", {})
+    except (OSError, json.JSONDecodeError):
+        modulos = {}
+    carpeta = modulos.get(modulo, {}).get("carpeta") or modulo
+    pruebas = sorted(p.relative_to(API).as_posix()
+                     for p in (API / "src" / "modulos" / carpeta / "pruebas").glob("*.spec.ts"))
+    if not pruebas:
+        print(f"No hay pruebas en apps/api/src/modulos/{carpeta}/pruebas/.")
+        return 1
     salida = INFORMES / f"jest-{modulo}-{datetime.now().strftime('%Y%m%d-%H%M%S')}.json"
-    subprocess.run([npx, "jest", f"src/modulos/{modulo}", "--json", f"--outputFile={salida}"],
-                   cwd=API, capture_output=True, text=True)
+    subprocess.run([npx, "jest", "--runTestsByPath", *pruebas, "--json", f"--outputFile={salida}"],
+                   cwd=API, capture_output=True, text=True, encoding="utf-8", errors="replace")
     if not salida.is_file():
         print("Jest no produjo resultado.")
         return 1

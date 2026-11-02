@@ -25,5 +25,5 @@ export class IdentidadApi {
   get autorizacionService(): AutorizacionDatosSaludService { return this.autorizacion; }
   get revocacionService(): RevocacionService { return this.revocacion; }
   get solicitudCodigoService(): SolicitudCodigoService { return this.solicitudes; }
-  get repositorio(): IdentidadRepository { return this.repositorio; }
+  // getter eliminado para evitar duplicado de 'repositorio'
 }

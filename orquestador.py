@@ -52,6 +52,12 @@ ORDEN_MODULOS = [
     "telegram",
     "web",
 ]
+# Agente que construye cada módulo (campo `construye` de pipeline.json; por defecto B1).
+CONSTRUCTORES = {
+    "B1": "B1 Servicios y API",
+    "B2": "B2 Bot de Telegram",
+    "B3": "B3 Interfaz web",
+}
 CARPETAS_SPEC = [
     Path("agentes-ia/salidas/specification-agent/aprobadas"),
     Path("docs/specs"),
@@ -302,11 +308,13 @@ def siguiente(pipeline: dict) -> list[dict]:
             continue
 
         if estado.get("implementacion") != "verde":
+            # Quién construye: B1 (servicios y API) por defecto; B2 el bot y B3 la web (campo `construye`).
+            construye = estado.get("construye", "B1")
             acciones.append(
                 {
-                    "paso": "B1/B4",
+                    "paso": f"{construye}/B4",
                     "modulo": nombre,
-                    "responsable": "B1 Servicios y API + B4 Ejecutor",
+                    "responsable": f"{CONSTRUCTORES.get(construye, construye)} + B4 Ejecutor",
                     "accion": "Implementar el módulo y corregir hasta verde (máx. 3 iteraciones).",
                     "bloqueado_por": f"implementacion = {estado.get('implementacion') or 'pendiente'}",
                 }

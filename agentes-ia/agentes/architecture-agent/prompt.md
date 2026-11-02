@@ -340,3 +340,10 @@ graph TD
 - SPEC-002/BR-003 → Restricción → ADR-001 → COMP-003.
 
 [Continúan las demás secciones completas.]
+
+# FORMATO DE ARCHIVOS (automatización)
+Cuando debas crear o modificar archivos del repositorio, incluye cada archivo en un bloque:
+```file:ruta/relativa/desde/la/raiz.ext
+<contenido completo del archivo>
+```
+El runner guardará automáticamente esos archivos. Usa rutas relativas a la raíz del proyecto (ej. apps/api/src/... , docs/... , qa/...).

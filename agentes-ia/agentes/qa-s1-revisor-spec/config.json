@@ -1,0 +1,15 @@
+{
+  "nombre": "QA S1 Revisor de SPEC",
+  "descripcion": "Subagente del plan Pharma Express (ver plan_agentes_pharma_express.md).",
+  "proveedor": "openrouter",
+  "modelo": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+  "modelos_respaldo": [
+    "openrouter/free"
+  ],
+  "parametros": {
+    "temperature": 0.4,
+    "top_p": 0.95,
+    "max_tokens": 32000
+  },
+  "carpeta_salida": "agentes-ia/salidas/qa-s1-revisor-spec"
+}

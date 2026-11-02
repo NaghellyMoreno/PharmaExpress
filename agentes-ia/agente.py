@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import importlib.util
 import json
 import os
 import re
@@ -80,13 +81,32 @@ def construir_mensaje_usuario(peticion, adjuntos):
     return "\n\n".join(partes)
 
 
+CODIGOS_AGENTE = {
+    "qa-s1-revisor-spec": "S1",
+    "qa-s2-disenador-casos": "S2",
+    "qa-s3-generador-pruebas": "S3",
+    "backend-servicios-api": "B1",
+    "backend-bot-telegram": "B2",
+    "frontend-interfaz-web": "B3",
+    "ejecutor-corrector": "B4",
+    "qa-r1-humo": "R1",
+    "qa-r2-triage": "R2",
+    "architecture-agent": "ARQ",
+    "specification-agent": "SPEC",
+    "generador-hu-invest": "HU",
+}
+
+
 def guardar_resultado(config, nombre_agente, peticion, respuesta):
     carpeta = RAIZ_PROYECTO / config.get("carpeta_salida", f"agentes-ia/salidas/{nombre_agente}")
     carpeta.mkdir(parents=True, exist_ok=True)
 
     fecha = datetime.now()
     resumen = re.sub(r"[^a-z0-9]+", "-", peticion.lower())[:40].strip("-") or "resultado"
-    archivo = carpeta / f"{fecha:%Y%m%d-%H%M}_{resumen}.md"
+    codigo = config.get("codigo_salida") or CODIGOS_AGENTE.get(nombre_agente, nombre_agente.upper()[:3])
+    existentes = [a for a in carpeta.glob(f"{codigo}-*.md")]
+    contador = len(existentes) + 1
+    archivo = carpeta / f"{codigo}-{contador:03d}_{fecha:%Y%m%d-%H%M}_{resumen}.md"
 
     encabezado = (
         f"<!--\n"
@@ -246,6 +266,14 @@ def guardar_spec(config, nombre_agente, peticion, respuesta, modelo, cortada):
             f"{archivo.relative_to(base)} | {resumen}\n"
         )
     return archivo
+
+
+def cargar_herramientas():
+    """Carga herramientas.py (bucle de herramientas de los agentes de QA y construcción)."""
+    spec = importlib.util.spec_from_file_location("herramientas", RAIZ_AGENTES / "herramientas.py")
+    modulo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modulo)
+    return modulo
 
 
 def preparar_aprobacion(config, prefijo, id_doc):
@@ -674,6 +702,10 @@ def main():
         "--epica", nargs="+", metavar="EPIC-00X",
         help="Adjunta la última versión aprobada de cada documento de esa épica",
     )
+    parser.add_argument(
+        "--modulo", default="general",
+        help="Módulo sobre el que trabaja un agente de QA o construcción (nombre del registro de ejecución)",
+    )
     args = parser.parse_args()
 
     cargar_variables_entorno()
@@ -700,6 +732,15 @@ def main():
     peticion = args.peticion or input("¿Qué le pides al agente?\n> ").strip()
     if not peticion:
         sys.exit("La petición está vacía.")
+
+    # Los agentes de QA y construcción trabajan con herramientas (leer, escribir código, ejecutar
+    # pruebas) en vez de una sola llamada: así su resultado es código en disco y no un Markdown.
+    herramientas = cargar_herramientas()
+    if args.agente in herramientas.AGENTE_A_PASO:
+        paso = herramientas.AGENTE_A_PASO[args.agente]
+        if args.adjuntar:
+            peticion += "\n\nArchivos de referencia (léelos con leer_archivo): " + ", ".join(args.adjuntar)
+        sys.exit(herramientas.ejecutar_paso(paso, args.modulo, peticion))
 
     # Aprobar no pasa por el modelo: un modelo puede reescribir el texto revisado o fallar.
     aprobacion = PATRON_APROBACION.match(peticion) if por_spec else None

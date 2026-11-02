@@ -59,6 +59,8 @@ def compilar_python() -> None:
         RAIZ / "qa" / "scripts" / "marcar.py",
         RAIZ / "qa" / "scripts" / "runner.py",
         RAIZ / "qa" / "scripts" / "guardian.py",
+        RAIZ / "agentes-ia" / "herramientas.py",
+        RAIZ / "ciclo.py",
     ]
     fallos = []
     for path in archivos:
@@ -178,6 +180,9 @@ def revisar_maquina_de_estados() -> None:
         ("B1/B4 pendiente", pipeline_base(modulo={"spec": "aprobada", "revision": "APTA",
                                                    "oraculos": "aprobados",
                                                    "pruebas": "rojas"}), "B1/B4"),
+        ("B3/B4 pendiente (web)", pipeline_base(modulo={"spec": "aprobada", "revision": "APTA",
+                                                         "oraculos": "aprobados", "pruebas": "rojas",
+                                                         "construye": "B3"}), "B3/B4"),
         ("R1 pendiente", pipeline_base(modulo={"spec": "aprobada", "revision": "APTA",
                                                 "oraculos": "aprobados", "pruebas": "rojas",
                                                 "implementacion": "verde"}), "R1"),
@@ -291,6 +296,84 @@ def revisar_runner() -> None:
     anotar(True, "Runner", "detecta backend y muestra el siguiente paso")
 
 
+def revisar_bucle_api() -> None:
+    """Backend `api`: el bucle respeta permisos, rutas, comandos y tope, con un modelo simulado."""
+    import json as _json
+    import tempfile
+    from types import SimpleNamespace as NS
+
+    spec = importlib.util.spec_from_file_location("herramientas", RAIZ / "agentes-ia" / "herramientas.py")
+    herramientas = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(herramientas)
+
+    def respuesta(*llamadas):
+        calls = [NS(id=f"c{n}", function=NS(name=nombre, arguments=_json.dumps(args)))
+                 for n, (nombre, args) in enumerate(llamadas)]
+        return NS(choices=[NS(message=NS(content="", tool_calls=calls), finish_reason="tool_calls")])
+
+    def correr(paso, guion, raiz):
+        cola = list(guion)
+        ejecutor = herramientas.Ejecutor(
+            paso, raiz=raiz, config={"modelo": "simulado"},
+            llamar=lambda c, cfg, m: cola.pop(0) if cola else respuesta(("listar", {"patron": "*"})))
+        codigo, _ = ejecutor.correr([{"role": "user", "content": "prueba"}])
+        return codigo, ejecutor
+
+    fallos = []
+    with tempfile.TemporaryDirectory() as tmp:
+        raiz = Path(tmp)
+        (raiz / ".env").write_text("SECRETO=1", encoding="utf-8")
+        (raiz / "apps" / "api").mkdir(parents=True)
+        casos = [
+            ("S1 escribe su informe", "S1", ("escribir_archivo", {"ruta": "qa/revision/x.md", "contenido": "ok"}),
+             lambda: (raiz / "qa" / "revision" / "x.md").is_file()),
+            ("S1 no escribe código", "S1", ("escribir_archivo", {"ruta": "apps/api/a.ts", "contenido": "x"}),
+             lambda: not (raiz / "apps" / "api" / "a.ts").exists()),
+            ("Ruta fuera del repositorio", "B1", ("escribir_archivo", {"ruta": "../fuera.ts", "contenido": "x"}),
+             lambda: not (raiz.parent / "fuera.ts").exists()),
+            ("B1 no toca pruebas", "B1", ("escribir_archivo", {"ruta": "apps/api/a.spec.ts", "contenido": "x"}),
+             lambda: not (raiz / "apps" / "api" / "a.spec.ts").exists()),
+            ("B1 escribe código", "B1", ("escribir_archivo", {"ruta": "apps/api/src/a.ts", "contenido": "x"}),
+             lambda: (raiz / "apps" / "api" / "src" / "a.ts").is_file()),
+            ("Nadie escribe pipeline.json", "B4", ("escribir_archivo", {"ruta": "pipeline.json", "contenido": "{}"}),
+             lambda: not (raiz / "pipeline.json").exists()),
+        ]
+        for nombre, paso, llamada, comprobar in casos:
+            codigo, _ = correr(paso, [respuesta(llamada), respuesta(("terminar", {"resumen": "fin"}))], raiz)
+            if codigo != 0 or not comprobar():
+                fallos.append(nombre)
+
+        # Lecturas y comandos prohibidos devuelven ERROR al modelo, sin ejecutarse.
+        prohibidos = [
+            ("No lee .env", "B1", ("leer_archivo", {"ruta": ".env"})),
+            ("Comando fuera de la lista", "B1", ("ejecutar", {"comando": "rm -rf apps"})),
+            ("Operadores de shell", "B1", ("ejecutar", {"comando": "npm test && rm -rf apps"})),
+            ("S2 no ejecuta comandos", "S2", ("ejecutar", {"comando": "npm test"})),
+        ]
+        for nombre, paso, llamada in prohibidos:
+            registro = []
+            ejecutor = herramientas.Ejecutor(paso, raiz=raiz, config={"modelo": "simulado"})
+            cola = [respuesta(llamada), respuesta(("terminar", {"resumen": "fin"}))]
+            ejecutor._llamar = lambda c, cfg, m, cola=cola: cola.pop(0)
+            mensajes = [{"role": "user", "content": "prueba"}]
+            ejecutor.correr(mensajes)
+            herramienta = [m for m in mensajes if m.get("role") == "tool"]
+            if not herramienta or not herramienta[0]["content"].startswith("ERROR"):
+                fallos.append(nombre)
+        if not (raiz / "apps").is_dir():
+            fallos.append("Un comando prohibido llegó a ejecutarse")
+
+        # Tope de pasos: R2 tiene 8 y un modelo que nunca termina debe cortarse.
+        codigo, _ = correr("R2", [], raiz)
+        if codigo != 4:
+            fallos.append(f"Tope de R2 (código {codigo}, esperaba 4)")
+
+    if fallos:
+        anotar(False, "Backend api", "; ".join(fallos))
+    else:
+        anotar(True, "Backend api", "permisos, rutas, comandos y tope con modelo simulado")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Prueba mecánica del andamiaje.")
     parser.add_argument("--verbose", action="store_true", help="Muestra el detalle de cada prueba.")
@@ -307,6 +390,7 @@ def main() -> int:
     revisar_reconciliacion()
     revisar_guardian()
     revisar_runner()
+    revisar_bucle_api()
 
     print("Pharma Express — prueba mecánica del andamiaje\n")
     for ok, nombre, detalle in resultados:

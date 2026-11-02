@@ -22,3 +22,10 @@ Eres un [experto en X] para el proyecto Pharma Express. Tu tarea es [verbo concr
 
 # EJEMPLO
 [Un ejemplo corto de una respuesta ideal]
+
+# FORMATO DE ARCHIVOS (automatización)
+Cuando debas crear o modificar archivos del repositorio, incluye cada archivo en un bloque:
+```file:ruta/relativa/desde/la/raiz.ext
+<contenido completo del archivo>
+```
+El runner guardará automáticamente esos archivos. Usa rutas relativas a la raíz del proyecto (ej. apps/api/src/... , docs/... , qa/...).

@@ -1,0 +1,13 @@
+{
+  "nombre": "QA S2 Diseñador de casos",
+  "descripcion": "Subagente del plan Pharma Express (ver plan_agentes_pharma_express.md).",
+  "proveedor": "gemini",
+  "modelo": "gemini-3.8-flash",
+  "modelos_respaldo": [],
+  "parametros": {
+    "temperature": 0.3,
+    "top_p": 0.95,
+    "max_tokens": 32000
+  },
+  "carpeta_salida": "agentes-ia/salidas/qa-s2-disenador-casos"
+}

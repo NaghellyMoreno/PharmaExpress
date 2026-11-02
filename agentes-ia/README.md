@@ -451,6 +451,20 @@ Devuelve solo la sección **Corte técnico**: módulo, esfuerzo S/M/L, riesgo, t
 
 Los subagentes nuevos (S1–S3, B1–B4, R1–R2) están en `.claude/agents/` y los skills en `.claude/skills/`. Claude Code los lee directamente. El mapa completo está en `.claude/LEEME-agentes.md`.
 
+## Parte 8 — Subagentes de QA y construcción por API key
+
+`herramientas.py` ejecuta los subagentes de `.claude/agents/` (S1 a S3, B1 a B4, R1 y R2) con los mismos proveedores de `agente.py`, sin Claude Code ni OpenCode. El modelo trabaja con herramientas: leer, listar, buscar, escribir, editar, ejecutar comandos y terminar.
+
+- **Un paso:** `python3 agentes-ia/herramientas.py --paso S2 --modulo datos_simulados`.
+- **La cadena:** `python3 qa/scripts/runner.py --seguir --backend api` (el guardián sigue envolviendo los pasos B).
+- **Modelos:** `PROVEEDOR_API`, `MODELO_API` y `MODELOS_RESPALDO_API`, y uno por paso (`MODELO_S1`, `MODELO_B1`…) en el `.env` de la raíz. La clave del proveedor va en `agentes-ia/.env`. Para los pasos B usa un modelo fuerte: los modelos `lite` reescriben lo que no se les pide.
+- **Permisos por paso** (`POLITICAS` en `herramientas.py`): S1 escribe solo `qa/revision/` y `docs/preguntas/`; S2, casos y trazabilidad; S3, solo pruebas; B1 a B4, `apps/` sin pruebas; R1, `qa/humo/`; R2, `qa/incidentes/` y solo git de lectura. Nadie escribe `pipeline.json`, `docs/mvp.md`, `docs/decisiones.md`, `.env`, `.claude/` ni las salidas aprobadas, y nadie lee `.env`.
+- **Comandos:** solo una lista blanca (npm/npx de pruebas, `qa/scripts` de comprobación, git de lectura), sin operadores de shell y con 900 s de límite.
+- **Topes y registro:** cada paso tiene un máximo de pasos (R2: 8). Cada llamada y herramienta queda en `qa/ejecuciones/api-*.jsonl`. Un error de cuota termina el paso con código 3 y un tope agotado con código 4: nunca cuentan como éxito.
+- **Prueba sin API:** `python3 qa/scripts/probar_todo.py` incluye «Backend api», que comprueba permisos, rutas, comandos y tope con un modelo simulado.
+
+Ningún paso aprueba nada: oráculos, MVP y entrega siguen siendo puertas de una persona.
+
 ## Cuidados importantes
 - **Datos personales:** no envíes datos reales de pacientes a ninguna API (Ley 1581 de 2012). Usa solo datos ficticios. Los planes gratuitos pueden usar lo que envías para entrenar o mejorar sus modelos.
 - **Llaves de API:** si una se filtra, bórrala en la consola del proveedor y crea otra.

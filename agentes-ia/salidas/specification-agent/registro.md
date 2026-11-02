@@ -65,3 +65,5 @@
 - 2026-11-02 08:50 | SPEC-003 | versión 1.14 | Candidata | gemini-3.5-flash | borradores\SPEC-003\SPEC-003_v1.14.md | Corrige la SPEC-003 y publícala como versión 1.14 en estado Candidata. Haz solo estos cambios y nada más. Reglas estrict
 - 2026-11-02 09:02 | SPEC-003 | versión 1.14 | Aprobada y congelada | gemini-3.5-flash-lite | aprobadas\SPEC-003_v1.14.md | El equipo aprueba la SPEC-003
 - 2026-11-02 09:04 | SPEC-001 | versión 1.5 | Aprobada y congelada | gemini-3.5-flash-lite | aprobadas\SPEC-001_v1.5.md | El equipo aprueba la SPEC-001
+- 2026-11-02 14:04 | SPEC-001 | versión 1.6 | Candidata | gemini-3.5-flash-lite | borradores\SPEC-001\SPEC-001_v1.6.md | Actualiza SPEC-001: corrige AC-003 y AC-005 según PREG-004 y PREG-005
+- 2026-11-02 14:04 | SPEC-001 | versión 1.6 | Aprobada y congelada | ninguno (aprobación sin modelo) | aprobadas\SPEC-001_v1.6.md | El equipo aprueba la SPEC-001

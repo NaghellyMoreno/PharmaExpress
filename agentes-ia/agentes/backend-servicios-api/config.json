@@ -1,0 +1,16 @@
+{
+  "nombre": "B1 Servicios y API",
+  "descripcion": "Subagente del plan Pharma Express (ver plan_agentes_pharma_express.md).",
+  "proveedor": "gemini",
+  "modelo": "gemini-3.5-flash",
+  "modelos_respaldo": [
+    "gemini-3.7-flash",
+    "gemini-3.6-flash"
+  ],
+  "parametros": {
+    "temperature": 0.3,
+    "top_p": 0.95,
+    "max_tokens": 32000
+  },
+  "carpeta_salida": "agentes-ia/salidas/backend-servicios-api"
+}

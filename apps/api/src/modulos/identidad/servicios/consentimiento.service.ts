@@ -45,4 +45,86 @@ export class ConsentimientoService {
   puedeSolicitarDato(consentimientoAceptado: boolean): boolean {
     return puedeSolicitarDato(consentimientoAceptado);
   }
+
+  // Los métodos siguientes cubren TC-001, TC-003, TC-004, TC-005, TC-006, TC-009…TC-020
+  // de `apps/api/src/modulos/identidad/pruebas/consentimiento-identidad.spec.ts` contra una
+  // fachada única del módulo `identidad`. Están pendientes de implementación (B1): los
+  // servicios reales ya existen por separado (VerificacionIdentidadService,
+  // AutorizacionDatosSaludService, RevocacionService) mientras el equipo decide si esta
+  // fachada los reemplaza o los delega.
+  async verificarAvisoPrevio(cedula: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async registrarRechazoAviso(canal: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async solicitarNuevoCodigo(celular: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async verificarIdentidad(cedula: string, codigo: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async verificarAutorizacionSalud(cedula: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async registrarAceptacionTercero(canal: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async revocarConsentimiento(cedula: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async revocarConsentimientoConReservas(cedula: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async validarVigenciaCodigo(codigo: string, fechaEmision: Date): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async intentarVerificacionCodigo(cedula: string, codigo: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async agotarIntentosCodigo(cedula: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async consultarCedulaEPS(cedula: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async enviarCodigoConFalloSimulado(celular: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async validarTopeEnvios(celular: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async renovarCodigoBajoTope(celular: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async manejarTopeConCodigoVigente(celular: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async registrarEnvioFallidoTotal(celular: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async contarEnvioMultipleCanales(celular: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
+
+  async manejarEnvioParcialCanales(celular: string): Promise<unknown> {
+    throw new Error('No implementado');
+  }
 }

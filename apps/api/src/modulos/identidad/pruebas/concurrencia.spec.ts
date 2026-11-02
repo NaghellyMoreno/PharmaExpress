@@ -13,7 +13,7 @@
  */
 
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql';
-import { SolicitudCodigoService } from '../../servicios';
+import { SolicitudCodigoService } from '../servicios';
 
 describe('Concurrencia — módulo identidad', () => {
   let container: StartedPostgreSqlContainer;

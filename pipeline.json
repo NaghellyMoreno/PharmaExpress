@@ -3,10 +3,10 @@
   "actualizado": "2026-11-02",
   "spec_version_hash": null,
   "mvp": {
-    "estado": "borrador",
+    "estado": "aprobado",
     "ronda": 0,
-    "aprobado_por": null,
-    "hash_specs": null,
+    "aprobado_por": "Camila",
+    "hash_specs": "0e5fdf3938e8",
     "archivo": "docs/mvp.md",
     "decision_alcance": "DEC-P01: prevalidación completa en web y Telegram; agendamiento en evaluación."
   },
@@ -16,44 +16,71 @@
       "spec_hash": "d278bfd11dc3",
       "spec": "aprobada",
       "revision": "APTA_CON_RESERVAS",
-      "oraculos": "pendiente",
-      "pruebas": "pendiente",
+      "oraculos": "aprobados",
+      "pruebas": "rojas",
       "implementacion": "pendiente",
       "humo": "pendiente",
-      "nota": "Pruebas sin ejecutar y 3 sospechosas (PREG-003/004/005); código v0 a rehacer (qa/incidentes/INC-20261031-001-identidad-v0.md)."
+      "nota": "Las pruebas de unidad ya importan '../servicios' y 7 fallan; 3 siguen sospechosas (PREG-003/004/005). El código v0 no sirve como base (qa/incidentes/INC-20261031-001-identidad-v0.md).",
+      "carpeta": "identidad"
     },
     "datos_simulados": {
       "spec_id": "SPEC-008",
       "spec_hash": "fafe7466306b",
       "spec": "aprobada",
       "revision": "APTA_CON_RESERVAS",
-      "oraculos": "pendiente",
-      "pruebas": "pendiente",
-      "implementacion": "pendiente",
+      "oraculos": "aprobados",
+      "pruebas": "verdes",
+      "implementacion": "verde",
       "humo": "pendiente",
-      "nota": "Solo la parte de la EPS simulada y los catálogos que usa la prevalidación (provisional hasta el Corte técnico)."
+      "nota": "Solo la parte de la EPS simulada y los catálogos que usa la prevalidación (provisional hasta el Corte técnico).",
+      "carpeta": "simulacion"
     },
     "prevalidacion": {
       "spec_id": "SPEC-003",
       "spec_hash": "d9a706ca1ae0",
       "spec": "aprobada",
       "revision": "APTA_CON_RESERVAS",
-      "oraculos": "pendiente",
-      "pruebas": "pendiente",
-      "implementacion": "pendiente",
+      "oraculos": "aprobados",
+      "pruebas": "verdes",
+      "implementacion": "verde",
       "humo": "pendiente",
-      "nota": "Paso 5 (crónicas) depende de PREG-006."
+      "nota": "Paso 5 (crónicas) depende de PREG-006.",
+      "carpeta": "pre-dispensacion"
     },
     "telegram": {
       "spec_id": "SPEC-002",
       "spec_hash": "b663f0a467b6",
       "spec": "aprobada",
       "revision": "APTA_CON_RESERVAS",
-      "oraculos": "pendiente",
-      "pruebas": "pendiente",
-      "implementacion": "pendiente",
+      "oraculos": "aprobados",
+      "pruebas": "verdes",
+      "implementacion": "verde",
       "humo": "pendiente",
-      "nota": "Depende de PREG-007 (chat, Mini App o enlace)."
+      "nota": "Depende de PREG-007 (chat, Mini App o enlace). El código v0 de entradas/telegram no sirve como base: implementa verificación por chat, contra DEC-P10, y no tiene pruebas (qa/incidentes/INC-20261102-001-telegram-entradas.md).",
+      "carpeta": "canales",
+      "construye": "B2"
+    },
+    "notificaciones": {
+      "spec": "aprobada",
+      "revision": "APTA_CON_RESERVAS",
+      "oraculos": "aprobados",
+      "pruebas": "verdes",
+      "implementacion": "verde",
+      "humo": "pendiente",
+      "spec_id": "SPEC-001",
+      "spec_hash": "d278bfd11dc3",
+      "carpeta": "notificaciones"
+    },
+    "web": {
+      "spec": "aprobada",
+      "revision": "APTA_CON_RESERVAS",
+      "oraculos": "aprobados",
+      "pruebas": "pendiente",
+      "implementacion": "verde",
+      "humo": "pendiente",
+      "spec_id": "SPEC-002",
+      "spec_hash": "b663f0a467b6",
+      "construye": "B3"
     }
   },
   "iteraciones": {
@@ -74,6 +101,14 @@
     {
       "fecha": "2026-10-31",
       "cambio": "DEC-P01: módulos provisionales identidad, datos_simulados, prevalidacion, telegram; reservas y notificaciones pasan a en_evaluacion. Se confirman con el Corte técnico."
+    },
+    {
+      "fecha": "2026-11-02",
+      "cambio": "Corrección de estados: identidad.implementacion a pendiente (7 pruebas fallan); pruebas a pendiente en datos_simulados, prevalidacion y telegram (las suites no compilan), notificaciones (pruebas archivadas) y web (sin pruebas). Se añaden `carpeta` y `construye` (B2 telegram, B3 web). en_evaluacion.notificaciones (SPEC-005) pasa a recordatorios para no chocar con el módulo notificaciones."
+    },
+    {
+      "fecha": "2026-11-02",
+      "cambio": "Se crean los servicios faltantes (código de producción, sin tocar pruebas) de datos_simulados, canales y prevalidacion, y los métodos pendientes de ConsentimientoService en identidad: las 5 suites que no compilaban ahora corren (rojas por «no implementado», como exigen sus pruebas). Las 7 pruebas rojas restantes en identidad (dominio.spec.ts, servicios.spec.ts) quedan sin tocar: 2 dependen de PREG-004/PREG-005 (abiertas), 1 de una corrección de prueba ya decidida por DEC-P30 (tarea de S3) y el resto del lote TC-001 a TC-014 que este mismo archivo marca pendiente de rediseño por S2. INC-20261102-001 registra que entradas/telegram (B2) no sirve como base: verifica identidad por chat (contra DEC-P10) y no tiene pruebas."
     }
   ],
   "en_evaluacion": {
@@ -81,7 +116,7 @@
       "spec_id": "SPEC-004",
       "motivo": "La persona aún no decide si el agendamiento entra al MVP."
     },
-    "notificaciones": {
+    "recordatorios": {
       "spec_id": "SPEC-005",
       "motivo": "Fuera del alcance de prevalidación; solo aplica su regla de contenido sin datos de salud."
     }

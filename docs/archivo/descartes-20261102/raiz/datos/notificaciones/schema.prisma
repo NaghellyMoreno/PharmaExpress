@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Channel {
+  SMS
+  EMAIL
+  PUSH
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+enum Kind {
+  REMINDER_1H
+  REMINDER_DAY_BEFORE
+  CANCELLATION
+  REVOCATION
+  EXPIRATION
+  CHANGE_STATUS
+}
+
+model Notification {
+  id            Int            @id @default(autoincrement())
+  patientId     String
+  channel       Channel
+  message       String
+  kind          Kind
+  payload       Json
+  status        NotificationStatus @default(PENDING)
+  createdAt     DateTime       @default(now())
+  sentAt        DateTime?
+  attempts      Int              @default(0)
+  lastAttemptAt DateTime?
+}
+
+model Task {
+  id           Int            @id @default(autoincrement())
+  name         String
+  scheduledAt  DateTime
+  payload      Json
+  executedAt   DateTime?
+  status       TaskStatus     @default(PENDING)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([scheduledAt], unique: true)
+}
+
+enum TaskStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}

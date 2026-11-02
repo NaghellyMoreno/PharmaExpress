@@ -23,3 +23,13 @@ La tabla anterior se mantiene para los oráculos que S2 marque `supuesto` en fut
 - Si se corrige, actualiza el TC antes de generar la prueba.
 - Si se rechaza, crea o actualiza la `PREG` correspondiente.
 - No calcules el valor esperado a partir del código bajo prueba.
+
+
+## Oráculos @supuesto extraídos de salidas S2
+
+| TC | AC | Resultado esperado | Origen | Descripción | Decisión humana | Estado |
+|---|---|---|---|---|---|---|
+| TC-? | AC-001 | (ver salida) | @supuesto | Agente: QA S2 Diseñador de casos | pendiente | pendiente |
+| TC-? | AC-001 | (ver salida) | @supuesto | Agente: QA S2 Diseñador de casos | pendiente | pendiente |
+| TC-? | AC-034 | (ver salida) | @supuesto | Agente: QA S2 Diseñador de casos | pendiente | pendiente |
+| TC-? | AC-009 | (ver salida) | @supuesto | Agente: QA S2 Diseñador de casos | pendiente | pendiente |

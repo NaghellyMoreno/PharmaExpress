@@ -11,6 +11,10 @@ __pycache__/
 node_modules/
 dist/
 apps/api/.env
+*.tsbuildinfo
+
+# Datos de idioma de Tesseract.js (se descargan al usar OCR; no se versionan)
+apps/api/*.traineddata
 
 # Ruido de Windows / OneDrive
 desktop.ini

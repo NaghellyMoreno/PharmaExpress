@@ -6,6 +6,8 @@ hasta la próxima puerta humana. No aprueba nada por su cuenta: las puertas de
 MVP, oráculos, SPEC y entrega siempre se detienen.
 
 Backends:
+  - api       : usa agentes-ia/herramientas.py con un LLM por API key (Gemini, Mistral,
+                Groq u OpenRouter) y los mismos .claude/agents/*.md, sin CLI externo.
   - claude    : usa `claude -p` y los subagentes de .claude/agents/.
   - opencode  : usa `opencode run --agent general` y le pasa el archivo del
                 subagente como instrucción (respaldo cuando no hay Claude Code).
@@ -136,7 +138,7 @@ def preflight(backend: str | None) -> list[str]:
     problemas = []
     if backend is None:
         problemas.append("No hay `claude` ni `opencode` en el PATH.")
-    if backend == "python":
+    if backend in ("python", "api"):
         for modulo in ("openai", "dotenv"):
             if importlib.util.find_spec(modulo) is None:
                 problemas.append(f"Falta el paquete Python `{modulo}` (pip install -r agentes-ia/requirements.txt).")
@@ -145,7 +147,7 @@ def preflight(backend: str | None) -> list[str]:
     return problemas
 
 
-def prompt_para(paso: str, modulo: str, archivo: str) -> str:
+def prompt_para(paso: str, modulo: str, archivo: str, extra: str = "") -> str:
     contexto = (
         f"Trabaja en el repositorio {RAIZ}. Módulo: {modulo}. "
         f"Sigue al pie de la letra el archivo {archivo}. "
@@ -161,10 +163,22 @@ def prompt_para(paso: str, modulo: str, archivo: str) -> str:
         "B1/B4": "Implementa el módulo y ejecuta la suite hasta dejarla verde, sin tocar pruebas.",
         "R1": "Ejecuta el humo del módulo contra el entorno de prueba y deja el informe en qa/humo/.",
     }
-    return f"{contexto}\n\nTAREA: {tareas.get(paso, 'Ejecuta tu tarea.')}"
+    tareas["B1"] = tareas["B1/B4"]
+    tareas["B2"] = ("Implementa el bot de Telegram del módulo con grammY dentro del backend, usando solo la api/ "
+                    "de los módulos y plantillas fijas, hasta dejar verdes sus pruebas, sin tocar pruebas.")
+    tareas["B3"] = ("Implementa las pantallas web del módulo en apps/web (React + Vite + Tailwind + shadcn/ui) "
+                    "con el cliente tipado de la API, sin tocar pruebas.")
+    tareas["B4"] = ("Ejecuta las pruebas del módulo, clasifica cada fallo y corrige solo código de producción "
+                    "hasta dejarlas verdes, sin tocar pruebas.")
+    carpeta = leer_pipeline().get("modulos", {}).get(modulo, {}).get("carpeta")
+    if carpeta:
+        contexto += (f" El código y las pruebas de este módulo están en apps/api/src/modulos/{carpeta}/: "
+                     "trabaja ahí y no crees otra carpeta para el módulo.")
+    texto = f"{contexto}\n\nTAREA: {tareas.get(paso, 'Ejecuta tu tarea.')}"
+    return f"{texto}\n\n{extra}" if extra else texto
 
 
-def comando(backend: str, paso: str, modulo: str) -> list[str]:
+def comando(backend: str, paso: str, modulo: str, extra: str = "") -> list[str]:
     especiales = {
         "B1": ("backend-servicios-api", "backend-servicios-api.md"),
         "B2": ("backend-bot-telegram", "backend-bot-telegram.md"),
@@ -176,7 +190,7 @@ def comando(backend: str, paso: str, modulo: str) -> list[str]:
     else:
         agente, archivo = AGENTES[paso][0], AGENTES[paso][1]
 
-    prompt = prompt_para(paso, modulo, f".claude/agents/{archivo}")
+    prompt = prompt_para(paso, modulo, f".claude/agents/{archivo}", extra)
     modelo = modelo_para(paso)
     if backend == "claude":
         extra = ["--model", modelo] if modelo else []
@@ -187,12 +201,103 @@ def comando(backend: str, paso: str, modulo: str) -> list[str]:
     raise ValueError(f"Backend no soportado para ejecutar: {backend}")
 
 
-def ejecutar_backend(backend: str, paso: str, modulo: str, timeout: int, log) -> int:
+def ejecutar_api(paso: str, modulo: str, log, extra: str = "") -> int:
+    """Backend `api`: el agente del repositorio corre con un LLM por API key (agentes-ia/herramientas.py)."""
+    spec = importlib.util.spec_from_file_location("herramientas", RAIZ / "agentes-ia" / "herramientas.py")
+    herramientas = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(herramientas)
+    archivo = f"agentes-ia/agentes/{herramientas.POLITICAS[paso]['agente']}/prompt.md"
+
+    def salida(texto: str) -> None:
+        print(texto)
+        log.write(texto + "\n")
+
+    return herramientas.ejecutar_paso(paso, modulo, prompt_para(paso, modulo, archivo, extra), modelo_para(paso), salida)
+
+
+def carpeta_modulo(modulo: str) -> str:
+    """Carpeta en apps/api/src/modulos/ (campo `carpeta` de pipeline.json; por defecto, el nombre del módulo)."""
+    return leer_pipeline().get("modulos", {}).get(modulo, {}).get("carpeta") or modulo
+
+
+def correr_pruebas(modulo: str) -> tuple[str, str]:
+    """Pruebas de unidad del módulo, ejecutadas por el runner (no por el modelo).
+
+    Devuelve ("verde" | "rojo" | "sin_pruebas", salida). Verde exige código 0 de Jest.
+    """
+    carpeta = carpeta_modulo(modulo)
+    # Rutas explícitas: con `projects`, Jest ignora el patrón posicional y correría todas las suites.
+    pruebas = sorted(
+        p.relative_to(RAIZ / "apps" / "api").as_posix()
+        for p in (RAIZ / "apps" / "api" / "src" / "modulos" / carpeta / "pruebas").glob("*.spec.ts")
+        if not p.name.startswith(("integracion.", "concurrencia."))
+    )
+    if not pruebas:
+        return "sin_pruebas", f"No hay pruebas de unidad en apps/api/src/modulos/{carpeta}/pruebas/: S3 debe crearlas primero."
+    npx = "npx.cmd" if os.name == "nt" else "npx"
+    cmd = [npx, "jest", "--selectProjects", "unidad", "--runTestsByPath", *pruebas]
+    try:
+        proc = subprocess.run(cmd, cwd=RAIZ / "apps" / "api", capture_output=True, text=True,
+                              encoding="utf-8", errors="replace", timeout=900)
+    except FileNotFoundError:
+        return "rojo", "No se encontró npx: instala Node.js y ejecuta npm install en apps/api."
+    except subprocess.TimeoutExpired:
+        return "rojo", "Las pruebas superaron 900 s."
+    return ("verde" if proc.returncode == 0 else "rojo"), (proc.stdout + proc.stderr)[-8000:]
+
+
+def ciclo_construccion(backend: str, paso: str, modulo: str, timeout: int, log) -> str:
+    """El constructor del módulo (B1, B2 o B3) implementa; el runner corre las pruebas; si fallan,
+    B4 corrige con la salida real.
+
+    Repite hasta verde o hasta completar 3 iteraciones en el módulo (contando las anteriores), y
+    entonces escala a una persona. Sin pruebas de unidad no gasta iteraciones: pide S3, salvo la web
+    (B3), cuyas pruebas son de Playwright: construye una vez y queda para revisión manual.
+    Devuelve "verde", "escalado", "sin_pruebas", "revision" o un error "Bx=código".
+    """
+    constructor = paso.split("/")[0]
+    if constructor != "B3" and correr_pruebas(modulo)[0] == "sin_pruebas":
+        print(f"[ciclo] {modulo}: no hay pruebas de unidad; S3 debe generarlas antes de construir.")
+        return "sin_pruebas"
+    previas = leer_pipeline().get("iteraciones", {}).get(modulo, 0)
+    extra = ""
+    for numero in range(previas + 1, 4):
+        sub = constructor if numero == previas + 1 else "B4"
+        print(f"\n[ciclo] {modulo}: iteración {numero} de 3 con {sub}")
+        log.write(f"\n[ciclo] {modulo}: iteración {numero} de 3 con {sub}\n")
+        guardian("foto")
+        codigo = ejecutar_backend(backend, sub, modulo, timeout, log, extra)
+        if guardian("verificar") != 0:
+            marcar("iteracion", modulo)
+            marcar("escalar", modulo, f"guardián: {sub} violó reglas duras (ver qa/ejecuciones/guardian-*.md)")
+            return "escalado"
+        if codigo != 0:
+            return f"{sub}={codigo}"
+        estado, salida = correr_pruebas(modulo)
+        log.write(f"\n[pruebas {modulo}] {estado}\n{salida}\n")
+        if estado == "sin_pruebas":
+            print(f"[ciclo] {modulo}: {sub} terminó; no hay pruebas de unidad, queda para revisión manual.")
+            return "revision"
+        if estado == "verde":
+            print(f"[ciclo] {modulo}: pruebas en verde.")
+            marcar("modulo", modulo, "--implementacion", "verde")
+            return "verde"
+        print(f"[ciclo] {modulo}: pruebas en rojo tras la iteración {numero}.")
+        marcar("iteracion", modulo)
+        extra = ("RESULTADO DE LAS PRUEBAS (ejecutadas por el runner; corrige el código de producción, "
+                 f"no las pruebas):\n{salida[-6000:]}")
+    marcar("escalar", modulo, f"3 iteraciones de {paso} sin dejar las pruebas en verde")
+    return "escalado"
+
+
+def ejecutar_backend(backend: str, paso: str, modulo: str, timeout: int, log, extra: str = "") -> int:
+    if backend == "api":
+        return ejecutar_api(paso, modulo, log, extra)
     if backend == "opencode" and paso in PASOS_B and not modelo_para(paso):
         print(f"{paso} con OpenCode requiere {VARIABLE_MODELO[paso]} en .env (categoría del plan §11). "
               "No se usa el modelo gratuito por defecto.", file=sys.stderr)
         return 2
-    cmd = comando(backend, paso, modulo)
+    cmd = comando(backend, paso, modulo, extra)
     salida_total: list[str] = []
     print(f"\n$ {' '.join(cmd[:5])} ...\n")
     try:
@@ -307,9 +412,9 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true", help="Muestra la secuencia sin ejecutar agentes.")
     parser.add_argument("--todo", action="store_true", help="Prueba mecánica + preflight + secuencia hasta una puerta.")
     parser.add_argument("--seguir", action="store_true", help="Ejecuta pasos hasta una puerta humana.")
-    parser.add_argument("--paso", help="Fuerza un paso: S1, S2, S3, B1/B4, B2, B3, R1.")
+    parser.add_argument("--paso", help="Fuerza un paso: S1, S2, S3, B1/B4, B2/B4, B3/B4, B1-B4 sueltos, R1 (R2 con --backend api).")
     parser.add_argument("--modulo", default=None, help="Módulo sobre el que trabaja el paso forzado.")
-    parser.add_argument("--backend", default="auto", choices=["auto", "claude", "opencode", "python"])
+    parser.add_argument("--backend", default="auto", choices=["auto", "claude", "opencode", "python", "api"])
     parser.add_argument("--timeout", type=int, default=1200, help="Segundos por agente (por defecto 1200).")
     parser.add_argument("--auto-marcar", action="store_true", help="Marca S1/S3/R1 cuando el resultado es inequívoco.")
     parser.add_argument("--max-pasos", type=int, default=20, help="Tope de pasos en --seguir/--todo.")
@@ -361,18 +466,20 @@ def main() -> int:
                 simulado.setdefault("modulos", {}).setdefault(act["modulo"], {})["oraculos"] = "aprobados"
             elif act["paso"] == "S3":
                 simulado.setdefault("modulos", {}).setdefault(act["modulo"], {})["pruebas"] = "rojas"
-            elif act["paso"] == "B1/B4":
+            elif act["paso"].endswith("/B4"):
                 simulado.setdefault("modulos", {}).setdefault(act["modulo"], {})["implementacion"] = "verde"
             elif act["paso"] == "R1":
                 simulado.setdefault("modulos", {}).setdefault(act["modulo"], {})["humo"] = "verde"
         return 0
 
     if args.paso:
-        if args.paso not in AGENTES and args.paso not in ("B2", "B3"):
+        ejecutables = set(AGENTES) | {"B1", "B2", "B3", "B4", "B2/B4", "B3/B4"} | ({"R2"} if backend == "api" else set())
+        if args.paso not in ejecutables:
             sys.exit(f"Paso no ejecutable: {args.paso}")
         if not args.modulo:
             sys.exit("--paso requiere --modulo.")
-        accion = {"paso": args.paso, "modulo": args.modulo, "responsable": "runner"}
+        accion = {"paso": args.paso, "modulo": args.modulo, "responsable": "runner",
+                  "accion": "Paso forzado con --paso."}
 
     if puerta(accion) and not args.paso:
         print(f"\n{plan_humano(accion)}")
@@ -380,7 +487,7 @@ def main() -> int:
 
     if backend in (None, "python"):
         print(
-            "\nNo hay backend de subagentes disponible (claude/opencode). "
+            "\nNo hay backend de agentes disponible (api, claude u opencode). "
             "Instala Claude Code o ejecuta los agentes a mano; ver docs/COMO-PROBAR.md.",
             file=sys.stderr,
         )
@@ -394,8 +501,11 @@ def main() -> int:
     with ruta_log.open("w", encoding="utf-8") as log:
         log.write(f"Runner {sello} | backend={backend}\n")
         pasos = 0
+        forzado = accion if args.paso else None
         while pasos < args.max_pasos:
-            accion = siguiente()
+            if forzado and pasos > 0:
+                break  # un paso forzado con --paso se ejecuta una sola vez
+            accion = forzado or siguiente()
             print(f"\n== Paso {pasos + 1}: {describir(accion)} ==")
             log.write(f"\n== Paso {pasos + 1}: {describir(accion)} ==\n")
 
@@ -406,21 +516,25 @@ def main() -> int:
 
             paso = accion["paso"]
             modulo = accion["modulo"]
-            if paso == "B1/B4":
-                for sub in ("B1", "B4"):
-                    guardian("foto")
-                    codigo = ejecutar_backend(backend, sub, modulo, args.timeout, log)
-                    if guardian("verificar") != 0:
-                        marcar("iteracion", modulo)
-                        marcar("escalar", modulo, f"guardián: {sub} violó reglas duras (ver qa/ejecuciones/guardian-*.md)")
-                        print(f"{sub}: el guardián detectó violaciones. Se detiene y escala.", file=sys.stderr)
-                        resumen["error"] = f"{sub}=guardian"
-                        return 1
-                    if codigo != 0:
-                        print(f"{sub} falló con código {codigo}. Se detiene.", file=sys.stderr)
-                        resumen["error"] = f"{sub}={codigo}"
-                        return 1
-                marcar("iteracion", modulo)
+            if paso.endswith("/B4"):
+                resultado = ciclo_construccion(backend, paso, modulo, args.timeout, log)
+                resumen["pasos"].append({"paso": paso, "modulo": modulo, "resultado": resultado})
+                pasos += 1
+                if resultado == "verde":
+                    continue  # el orquestador decide el siguiente paso
+                if resultado == "escalado":
+                    print(f"\n{modulo}: se escaló a una persona (ver pipeline.json, escalados).")
+                    resumen["detenido_en"] = {"motivo": "escalado", **accion}
+                    break
+                if resultado in ("sin_pruebas", "revision"):
+                    motivo = ("faltan pruebas: ejecuta S3 del módulo" if resultado == "sin_pruebas"
+                              else "revisión manual: marca --implementacion verde cuando esté listo")
+                    print(f"\n{modulo}: {motivo}.")
+                    resumen["detenido_en"] = {"motivo": motivo, **accion}
+                    break
+                print(f"{resultado}: el agente falló (cupo, API o error). Se detiene.", file=sys.stderr)
+                resumen["error"] = resultado
+                return 1
             else:
                 codigo = ejecutar_backend(backend, paso, modulo, args.timeout, log)
                 if codigo != 0:

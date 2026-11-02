@@ -1,12 +1,12 @@
 # Pharma Express — contexto para Claude Code
 
-Proyecto del curso Software III: plataforma de pre-dispensación de medicamentos (web + bot de Telegram) construida por una cadena de agentes de IA con puertas humanas. Este archivo resume el estado al **2026-11-01** y cómo trabajar aquí. El detalle vive en los archivos enlazados: léelos antes de actuar, no confíes solo en este resumen.
+Proyecto del curso Software III: plataforma de pre-dispensación de medicamentos (web + bot de Telegram) construida por una cadena de agentes de IA con puertas humanas. Este archivo resume el estado al **2026-11-02** y cómo trabajar aquí. El detalle vive en los archivos enlazados: léelos antes de actuar, no confíes solo en este resumen.
 
 ## Documentos que mandan (leer en este orden)
 
 1. `plan-agentes/plan_agentes_pharma_express.md`: plan de agentes S1–S3, B1–B4, R1–R2, principios y puertas humanas.
 2. `PHARMA_EXPRESS_AGENTES.md`: contexto del producto (fuente de verdad del negocio). Ojo: DEC-P13 modifica su sección 3.5.
-3. `docs/decisiones.md`: **registro único de decisiones del equipo (DEC-P01 a DEC-P82)**. Si contradice una SPEC o el contexto, manda la decisión más reciente; señálalo.
+3. `docs/decisiones.md`: **registro único de decisiones del equipo (DEC-P01 a DEC-P83)**. Si contradice una SPEC o el contexto, manda la decisión más reciente; señálalo.
 4. `docs/ordenes-ronda-1.md`: **los siguientes pasos, con los comandos exactos.**
 5. `qa/revision/revision-transversal-20261031.md`: 45 hallazgos (T-001 a T-045) sobre SPEC-001 a SPEC-008 y la arquitectura.
 6. `docs/mvp.md` (alcance, con dueño por sección), `docs/DECISIONES-PENDIENTES.md`, `docs/preguntas/PREG-*.md`.
@@ -16,10 +16,12 @@ Proyecto del curso Software III: plataforma de pre-dispensación de medicamentos
 ## Estado actual
 
 - **Alcance (DEC-P01):** el MVP es la **prevalidación completa en web y Telegram**. El agendamiento (SPEC-004) está **en evaluación**: decidirlo cuando la prevalidación web esté en verde.
-- **MVP sin aprobar:** `docs/mvp.md` tiene Requisitos y Corte técnico de la ronda 1 (16 `Debe`, con ajustes), pero sigue en `borrador`; `python3 orquestador.py` se detiene ahí, y es lo correcto.
-- **SPEC:** están aprobadas SPEC-001 v1.4, SPEC-002 v1.11, SPEC-003 v1.13 y SPEC-008 v1.10 (`agentes-ia/salidas/specification-agent/aprobadas/`, la única ubicación válida). SPEC-004 a SPEC-007 siguen Candidatas sin revisar en `borradores/`.
-- **Arquitectura:** ARQ-005 v1.0 está aprobada y congelada (DEC-P62) en `agentes-ia/salidas/architecture-agent/aprobadas/`. ARQ-003 y ARQ-004 son obsoletas (solo están en el historial de git).
-- **Módulo `identidad`:** el código v0 **no sirve como base** (aceptaba cualquier código; ver `qa/incidentes/INC-20261031-001-identidad-v0.md`). Las pruebas de S3 importan `'../../servicios'` en vez de `'../servicios'` y nunca se ejecutaron; PREG-003, PREG-004 y PREG-005 marcan 3 pruebas sospechosas. Lo corrige S3, no B1. Con SPEC-001 v1.4 (DEC-P79), los oráculos TC-001 a TC-014 están pendientes: S2 los rehace antes que S3.
+- **MVP aprobado:** `docs/mvp.md` (16 `Debe`), aprobado por Camila. Si cambia una SPEC después, hay que volver a aprobarlo: el orquestador no comprueba `hash_specs`. El siguiente paso es S2 en `datos_simulados`.
+- **SPEC:** están aprobadas SPEC-001 v1.5, SPEC-002 v1.11, SPEC-003 v1.14 y SPEC-008 v1.10 (`agentes-ia/salidas/specification-agent/aprobadas/`, la única ubicación válida). SPEC-004 a SPEC-007 siguen Candidatas sin revisar en `borradores/`.
+- **Arquitectura:** ARQ-005 v1.1 está aprobada y congelada (DEC-P83; límites de 10 MB, 3 páginas y 5 fórmulas) en `agentes-ia/salidas/architecture-agent/aprobadas/`. ARQ-003 y ARQ-004 son obsoletas (solo están en el historial de git).
+- **Módulo `identidad`:** el código v0 **no sirve como base** (aceptaba cualquier código; ver `qa/incidentes/INC-20261031-001-identidad-v0.md`). Las pruebas ya importan `'../servicios'` y 7 fallan; PREG-003, PREG-004 y PREG-005 marcan 3 pruebas sospechosas. `implementacion` está en `pendiente`. Con SPEC-001 v1.5, los oráculos TC-001 a TC-014 están pendientes: S2 los rehace antes que S3.
+- **Pruebas de los demás módulos:** en `pendiente` (las suites de `simulacion`, `pre-dispensacion` y `canales` no compilan; `notificaciones` y `web` no tienen). Las genera S3.
+- **Archivo:** el código suelto de la raíz (`api/`, `comunes/`, `datos/`, `dominio/`, `servicios/`), las pruebas `.test.ts` de notificaciones, los `testimport*` y `b1_pasos.py`/`bucle_modulo.py` se movieron a `docs/archivo/descartes-20261102/` (ver su README).
 - **`apps/api`:** ya tiene `package.json`, `tsconfig.json` y `jest.config.js` (proyectos `unidad` e `integracion`), pero **falta `npm install`**. `docker-compose.yml` está en la raíz; las pruebas de integración necesitan Docker.
 
 ## Decisiones clave (resumen; texto completo en `docs/decisiones.md`)
@@ -35,10 +37,11 @@ Proyecto del curso Software III: plataforma de pre-dispensación de medicamentos
 
 - **Estado:** `python3 orquestador.py`. Los **archivos mandan** sobre `pipeline.json`: la puerta del MVP la decide la cabecera de `docs/mvp.md`, la SPEC aprobada la decide `aprobadas/` y el veredicto de S1 la línea «Veredicto:» del informe. Un cambio de hash en una SPEC invalida la revisión y las pruebas del módulo.
 - **Marcar estados:** `python3 qa/scripts/marcar.py …`. Aprobar el MVP lo hace **una persona**: `marcar.py mvp --estado aprobado --aprobado-por "Nombre"`.
-- **Ejecutar la cadena:** `python3 qa/scripts/runner.py --seguir --backend claude`.
+- **Ejecutar la cadena:** `python3 ciclo.py` (atajo de `python3 qa/scripts/runner.py --seguir --backend api --auto-marcar`) corre los agentes de `agentes-ia/agentes/<agente>/` (prompt.md y config.json) con tu API key (`agentes-ia/herramientas.py`): cada paso tiene rutas de escritura, comandos permitidos y tope de pasos fijos, y registra todo en `qa/ejecuciones/api-*.jsonl`. Los agentes escriben código con herramientas (`escribir_archivo`/`editar_archivo`), no con bloques Markdown. También sirven `--backend claude` u `opencode`. Un paso suelto: `python3 agentes-ia/herramientas.py --paso S2 --modulo datos_simulados`.
+- **Ciclo de construcción:** el paso `Bx/B4` lo hace el constructor del módulo (campo `construye` de `pipeline.json`: B1 por defecto, B2 telegram, B3 web); el runner corre Jest sobre `apps/api/src/modulos/<carpeta>/pruebas/` (campo `carpeta`) y, si falla, B4 corrige con la salida real. Máximo 3 iteraciones por módulo; luego escala a una persona. Sin pruebas de unidad no construye: pide S3.
 - **Agentes de Especificaciones y Arquitectura:** `python3 agentes-ia/agente.py <agente> "<petición>" [--continuar ID] [--aprobada …] [--adjuntar …]`. Necesitan `agentes-ia/.env` con `GEMINI_API_KEY`.
 - **Aprobar una SPEC o ARQ:** `agente.py <agente> "El equipo aprueba la X" --continuar X` ya no usa el modelo: congela la última Candidata tal cual (solo cambia estado, modo, historial y «Siguiente paso»). Se niega si no hay Candidata nueva o si quedan preguntas pendientes. La decisión sigue siendo de una persona.
-- **Comprobaciones:** `python3 qa/scripts/probar_todo.py` (debe dar 11/11) y `python3 qa/scripts/guardian.py revisar`.
+- **Comprobaciones:** `python3 qa/scripts/probar_todo.py` (debe dar 12/12) y `python3 qa/scripts/guardian.py revisar`.
 
 ## Reglas duras (no negociables)
 
@@ -58,7 +61,7 @@ Ejecutar `docs/ordenes-ronda-1.md` en orden:
 3. Hecho: SPEC-002 (v1.11).
 4. Hecho: revisión S1 y aprobación (DEC-P58).
 5. Hecho: ARQ-005 v1.0 aprobada (DEC-P62).
-6. Negociación del MVP: ronda 1 hecha; falta que una persona responda las observaciones y apruebe.
+6. Hecho: MVP aprobado (Camila). Sigue la cadena desde S2, módulo por módulo.
 
 En paralelo, en `apps/api`: `npm install` y `npm run test:unidad`. Se espera que las suites fallen por la ruta de importación (H-009 del incidente) hasta que S3 la corrija.
 

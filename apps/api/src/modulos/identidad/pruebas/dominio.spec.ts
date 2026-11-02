@@ -18,7 +18,8 @@ import {
   calcularIntentosRestantes,
   debeInactivarCodigo,
   esCodigoVigente,
-} from '../../dominio';
+  ContextoCodigoVigente,
+} from '../dominio/reglas';
 
 describe('Módulo identidad — reglas de dominio', () => {
   describe('Consentimiento — BR-01 / DEC-09 / SPEC-001/AC-001', () => {
@@ -39,9 +40,9 @@ describe('Módulo identidad — reglas de dominio', () => {
       expect(esCodigoValido(CODIGO, EMISION_MS, Date.UTC(2026, 9, 31, 10, 10, 0))).toBe(false);
     });
 
-    it('AC-009 / TC-006: el límite inferior se respeta: emitido a las 09:59:00, el ingreso a las 10:00:00 se rechaza', () => {
+    it('AC-009 / TC-006: emitido a las 09:59:00, el ingreso a las 10:00:00 está dentro de los 10 minutos y se acepta (DEC-P30)', () => {
       const EMISION_MS_PREVIA = Date.UTC(2026, 9, 31, 9, 59, 0);
-      expect(esCodigoValido(CODIGO, EMISION_MS_PREVIA, INGRESO_EN_LIMITE_MS)).toBe(false);
+      expect(esCodigoValido(CODIGO, EMISION_MS_PREVIA, INGRESO_EN_LIMITE_MS)).toBe(true);
     });
   });
 
@@ -61,9 +62,15 @@ describe('Módulo identidad — reglas de dominio', () => {
 
   describe('Código anterior al solicitar uno nuevo — BR-05 / CL-004 / SPEC-001/AC-003', () => {
     it('AC-003 / TC-013: solicitar un nuevo código anula el anterior y solo el último queda vigente', () => {
-      // Código previo sintético: 548920. Nuevo código sintético: 741203.
-      expect(esCodigoVigente('741203')).toBe(true);
-      expect(esCodigoVigente('548920')).toBe(false);
+      // Código previo sintético: 548920 (anulado). Nuevo código sintético: 741203 (contexto vigente, PREG-004).
+      const contextoVigente: ContextoCodigoVigente = {
+        codigo: '741203',
+        emisionMs: Date.UTC(2026, 9, 31, 10, 5, 0),
+        intentosFallidos: 0,
+        inactivo: false,
+      };
+      expect(esCodigoVigente('741203', contextoVigente)).toBe(true);
+      expect(esCodigoVigente('548920', contextoVigente)).toBe(false);
     });
   });
 });

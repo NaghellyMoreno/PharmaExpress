@@ -17,10 +17,10 @@
  *   ni cédula; usa plantillas fijas.
  */
 
-import { ConsentimientoService } from '../../servicios';
-import { VerificacionIdentidadService } from '../../servicios';
-import { AutorizacionDatosSaludService } from '../../servicios';
-import { RevocacionService } from '../../servicios';
+import { ConsentimientoService } from '../servicios';
+import { VerificacionIdentidadService } from '../servicios';
+import { AutorizacionDatosSaludService } from '../servicios';
+import { RevocacionService } from '../servicios';
 
 describe('Módulo identidad — pruebas unitarias de servicios', () => {
   describe('Consentimiento y aviso de privacidad — SPEC-001/AC-002, AC-006', () => {
@@ -66,7 +66,8 @@ describe('Módulo identidad — pruebas unitarias de servicios', () => {
 
     it('AC-005 / TC-005: con autorización separada aceptada se continúa con la carga del documento', async () => {
       const autorizacion = new AutorizacionDatosSaludService();
-      // Con autorización separada aceptada: el flujo continúa con la carga.
+      // Con autorización separada registrada y aceptada (PREG-005): el flujo continúa con la carga.
+      await autorizacion.registrarAutorizacion('solicitud-1', true);
       await expect(autorizacion.puedeCargar('solicitud-1')).resolves.toBe(true);
     });
 
@@ -75,7 +76,13 @@ describe('Módulo identidad — pruebas unitarias de servicios', () => {
       const sms = { enviar: async () => ({ ok: true }) };
       const correo = { enviar: async () => ({ ok: true }) };
       const verificacion = new VerificacionIdentidadService(eps, sms, correo);
-      const resultado = await verificacion.validar('8.765.432-1', '548920', Date.UTC(2026, 9, 31, 10, 10, 0));
+      // Emitido a las 10:00:00 (falta el dato de emisión era el defecto de la prueba): a los 10 min exactos ya venció.
+      const resultado = await verificacion.validar(
+        '8.765.432-1',
+        '548920',
+        Date.UTC(2026, 9, 31, 10, 10, 0),
+        Date.UTC(2026, 9, 31, 10, 0, 0),
+      );
       expect(resultado.valido).toBe(false);
       expect(resultado.rutaAlternativa).toBeDefined();
     });

@@ -311,3 +311,10 @@ No aplica.
 ## Verificación
 - Consistencia interna: cumple. Comparé RF-002 con AC-001; ambos tratan el chat con varios pacientes de la misma forma.
 - Consistencia con el contexto: cumple. RF-002 coincide con el contexto 3.3.
+
+# FORMATO DE ARCHIVOS (automatización)
+Cuando debas crear o modificar archivos del repositorio, incluye cada archivo en un bloque:
+```file:ruta/relativa/desde/la/raiz.ext
+<contenido completo del archivo>
+```
+El runner guardará automáticamente esos archivos. Usa rutas relativas a la raíz del proyecto (ej. apps/api/src/... , docs/... , qa/...).
