@@ -2,7 +2,7 @@
 
 Origen: S1
 SPEC: SPEC-003 v1.7 — RF-029, BR-009, BR-014, E1, E3
-Estado: abierta
+Estado: respondida
 Bloquea: no
 Fecha: 2026-10-31
 
@@ -29,3 +29,4 @@ Ninguna.
 
 ## Respuesta del equipo
 
+Respondida con DEC-P75 (docs/decisiones.md), 2026-11-02.

@@ -2,7 +2,7 @@
 
 Fecha: 2026-10-31 · Se ejecutan desde la raíz del repositorio, en este orden.
 
-**Estado al 2026-11-01:** pasos 1 a 4 hechos: SPEC-003 v1.12, SPEC-008 v1.9 y SPEC-002 v1.11 aprobadas y congeladas (DEC-P58). No vuelvas a ejecutarlos. Paso 5 hecho: ARQ-005 v1.0 aprobada y congelada (DEC-P62). Paso 6: ronda 1 escrita en `docs/mvp.md`; falta que una persona responda las observaciones y apruebe. Usa los subagentes de Claude Code para los modos MVP: con `agente.py`, el modelo de respaldo `flash-lite` ignoró el modo. En consolas Windows, define `PYTHONUTF8=1` antes de usar los scripts de Python. Revisa con un diff el texto que deja el comando de aprobación: el agente puede alterarlo.
+**Estado al 2026-11-01:** pasos 1 a 4 hechos: SPEC-003 v1.12, SPEC-008 v1.9 y SPEC-002 v1.11 aprobadas y congeladas (DEC-P58). No vuelvas a ejecutarlos. Paso 5 hecho: ARQ-005 v1.0 aprobada y congelada (DEC-P62). Paso 6: ronda 1 escrita y ajustada en `docs/mvp.md` (16 `Debe` en Requisitos y Corte técnico); falta que una persona revise las observaciones y apruebe. Usa los subagentes de Claude Code para los modos MVP: con `agente.py`, el modelo de respaldo `flash-lite` ignoró el modo. En consolas Windows, define `PYTHONUTF8=1` antes de usar los scripts de Python. Revisa con un diff el texto que deja el comando de aprobación: el agente puede alterarlo.
 
 Cada SPEC nueva pasa por S1 y la aprueba una persona antes de que Arquitectura la use.
 Insumos comunes: `docs/decisiones.md` (DEC-P01 a DEC-P12), `qa/revision/revision-transversal-20261031.md` (hallazgos T-xxx) y `docs/investigacion/formulacion-medicamentos-colombia.md`.

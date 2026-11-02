@@ -2,7 +2,7 @@
 
 Origen: S1
 SPEC: SPEC-003 v1.3 — RF-024 pasos 2 y 5, BR-015; SPEC-008/BR-025
-Estado: abierta
+Estado: respondida
 Bloquea: no
 Fecha: 2026-10-31
 
@@ -28,3 +28,4 @@ Ninguna.
 
 ## Respuesta del equipo
 
+Respondida con DEC-P70 (docs/decisiones.md), 2026-11-02.

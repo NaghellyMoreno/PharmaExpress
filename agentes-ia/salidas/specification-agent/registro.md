@@ -53,3 +53,11 @@
 - 2026-11-01 14:21 | SPEC-003 | versión 1.12 | Aprobada y congelada | gemini-3.5-flash | aprobadas\SPEC-003_v1.12.md | El equipo aprueba la SPEC-003
 - 2026-11-01 14:22 | SPEC-008 | versión 1.9 | Aprobada y congelada | gemini-3.5-flash | aprobadas\SPEC-008_v1.9.md | El equipo aprueba la SPEC-008
 - 2026-11-01 14:23 | SPEC-002 | versión 1.11 | Aprobada y congelada | gemini-3.5-flash | aprobadas\SPEC-002_v1.11.md | El equipo aprueba la SPEC-002
+- 2026-11-02 07:40 | SPEC-008 | versión 1.10 | Candidata | gemini-3.5-flash | borradores\SPEC-008\SPEC-008_v1.10.md | Corrige la SPEC-008 y publícala como versión 1.10 en estado Candidata. Haz solo estos cambios y nada más. Reglas estrict
+- 2026-11-02 07:45 | SPEC-003 | versión 1.13 | Candidata | gemini-3.5-flash | borradores\SPEC-003\SPEC-003_v1.13.md | Corrige la SPEC-003 y publícala como versión 1.13 en estado Candidata. Haz solo estos cambios y nada más. Reglas estrict
+- 2026-11-02 07:53 | SPEC-001 | versión 1.2 | Candidata | gemini-3.7-flash | borradores\SPEC-001\SPEC-001_v1.2.md | Corrige la SPEC-001 y publícala como versión 1.2 en estado Candidata. Haz solo estos cambios y nada más. Reglas estricta
+- 2026-11-02 08:09 | SPEC-008 | versión 1.10 | Aprobada y congelada | gemini-3.5-flash | aprobadas\SPEC-008_v1.10.md | El equipo aprueba la SPEC-008
+- 2026-11-02 08:11 | SPEC-003 | versión 1.13 | Aprobada y congelada | gemini-3.5-flash | aprobadas\SPEC-003_v1.13.md | El equipo aprueba la SPEC-003
+- 2026-11-02 08:15 | SPEC-001 | versión 1.3 | Candidata | gemini-3.5-flash | borradores\SPEC-001\SPEC-001_v1.3.md | Corrige la SPEC-001 y publícala como versión 1.3 en estado Candidata. Haz solo estos cambios y nada más. Reglas estricta
+- 2026-11-02 08:20 | SPEC-001 | versión 1.4 | Candidata | gemini-3.5-flash | borradores\SPEC-001\SPEC-001_v1.4.md | Corrige la SPEC-001 y publícala como versión 1.4 en estado Candidata. Son correcciones de edición para aplicar DEC-P78 d
+- 2026-11-02 08:27 | SPEC-001 | versión 1.4 | Aprobada y congelada | gemini-3.5-flash | aprobadas\SPEC-001_v1.4.md | El equipo aprueba la SPEC-001

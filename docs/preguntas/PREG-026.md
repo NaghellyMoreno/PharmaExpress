@@ -2,7 +2,7 @@
 
 Origen: S1
 SPEC: SPEC-008/BR-025, SPEC-008/RF-084, SPEC-008/AC-046, SPEC-008/AC-052 · SPEC-003/RF-024, SPEC-003/BR-015
-Estado: abierta
+Estado: respondida
 Bloquea: no
 Fecha: 2026-10-31
 
@@ -25,3 +25,4 @@ Opción 1: el producto opera en Manizales. Es una inferencia; nunca se trata com
 
 ## Respuesta del equipo
 
+Respondida con DEC-P71 (docs/decisiones.md), 2026-11-02.

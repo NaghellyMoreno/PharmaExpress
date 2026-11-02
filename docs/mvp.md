@@ -118,7 +118,7 @@ Ninguno: la lista queda vacía. REQ-021 y REQ-025 pasaron a En evaluación por D
 
 ## Corte técnico         (dueño: Arquitectura)
 
-Ronda 1, propuesta para revisión. Base: ARQ-005 v1.0 (DEC-P62), propuesta tecnológica con sus enmiendas y `docs/decisiones.md` (DEC-P01 a DEC-P62). Reemplaza el corte anterior.
+Ronda 1 (ajuste del 2026-11-02), propuesta para revisión. Base: ARQ-005 v1.0 (DEC-P62), propuesta tecnológica con sus enmiendas, las SPEC vigentes (SPEC-001 v1.4, SPEC-002 v1.11, SPEC-003 v1.13, SPEC-008 v1.10) y `docs/decisiones.md` (DEC-P01 a DEC-P82). Actualiza el corte de la ronda 1 sin rehacerlo: lo que este texto no menciona no cambió. El orden de construcción ya está aceptado (DEC-P67) y quedan las 8 semanas completas (DEC-P63).
 
 **Tarea técnica previa (orden 0; no es un REQ): medición del OCR**
 
@@ -129,33 +129,35 @@ El OCR es el mayor riesgo del corte (ARQ-005, riesgo principal), así que se mid
 - Qué entrega: la evidencia con la que el equipo aprueba el umbral (DEC-P60). Este corte no fija ningún valor. Mientras no se apruebe, SPEC-003/AC-025 no tiene oráculo para los casos intermedios (DEC-P56).
 - Solo datos sintéticos: ningún nombre real de medicamento, diagnóstico ni cédula.
 
-**Corte por requisito** (los 14 `Debe` de Requisitos, con los mismos id)
+**Corte por requisito** (los 16 `Debe` de Requisitos, con los mismos id)
 
 | REQ | Módulo | Esfuerzo (S/M/L) | Riesgo | Tratamiento | Orden |
 |-----|--------|------------------|--------|-------------|-------|
 | REQ-007 | eps_simulada | M | 12 AC; lo de prueba debe quedar ausente del build de producción (ADR-005); falta definir el mecanismo de SPEC-008/AC-049 | real (la fuente es simulada por el contexto 3.8) | 1 |
 | REQ-023a | eps_simulada | S | Contenido por EPS que cambia sin tocar el comportamiento (DEC-P36); SPEC-003/AC-016 solo cierra en el orden 3 | real | 1 |
-| REQ-008a | tareas_notificaciones | M | Integración con dos proveedores; el envío por cola debe devolver la falla al usuario (SPEC-001/AC-013); límites de los planes de prueba | contenido: real · proveedor: simulado (plan de prueba, destinos del equipo) | 2 |
-| REQ-001 | identidad | M | El código v0 no sirve de base; fronteras de 10 minutos y 3 intentos; tope de DEC-P61 sin valor; cifrado de datos personales (ADR-007) | real | 2 |
+| REQ-008a | tareas_notificaciones | M | Integración con dos proveedores; el envío por cola debe devolver la falla al usuario (SPEC-001/AC-013) y, por canal, si el código llegó, porque el tope cuenta un envío solo si llegó por al menos un canal y SMS + correo cuentan como uno (SPEC-001/AC-018, SPEC-001/AC-019, DEC-P78, DEC-P82); límites de los planes de prueba | contenido: real · proveedor: simulado (plan de prueba, destinos del equipo) | 2 |
+| REQ-001 | identidad | L | El código v0 no sirve de base; fronteras de 10 minutos y 3 intentos; **tope de códigos** (SPEC-001/RF-012, AC-015 a AC-019; DEC-P61, DEC-P68, DEC-P78, DEC-P82): con el tope alcanzado no se anula el código vigente y la ruta alterna no ofrece pedir otro (SPEC-001/RF-006); el conteo depende del resultado de entrega de `tareas_notificaciones` y debe resistir peticiones simultáneas; tope y ventana sin valor; cifrado de datos personales (ADR-007). Sube de M a L por cruzar con REQ-008a y por los 5 AC nuevos | real | 2 |
 | REQ-010 | identidad | S | Ligar una aceptación previa a conocer al paciente; si la verificación falla no queda ligada (SPEC-002/AC-037) | real | 2 (RF-086 cierra en 4) |
 | REQ-014 | identidad | S | Compuerta antes de cargar, por paciente y desde cualquier canal (DEC-P46) | real | 2 |
-| REQ-016 | prevalidacion | L | **OCR**: lectura útil, conversión local de PDF, CPU en workers, intentos, confirmación por documento y purga física (DEC-P59); umbral sin aprobar | real (Tesseract.js local con confirmación humana) | 3 |
+| REQ-016 | prevalidacion | L | **OCR**: lectura útil, conversión local de PDF, CPU en workers, intentos, confirmación por documento; umbral sin aprobar. **Borrado** de fotos y PDF al terminar (SPEC-003/RF-032, SPEC-003/AC-054, DEC-P59) junto con los medicamentos y el diagnóstico leídos, conservando solo apta/no apta, motivo, siguiente paso y número de fórmula (DEC-P81). **Rechazo previo** de archivos de otro formato o fuera de límite, sin leerlos y sin gastar intento (SPEC-003/AC-056, DEC-P74, DEC-P80); el número mal formado sí gasta intento (DEC-P42). Límites de tamaño, páginas y fórmulas sin valor | real (Tesseract.js local con confirmación humana) | 3 |
 | REQ-017 | prevalidacion | S | Elegir el diagnóstico correcto con uno o varios en la historia clínica (DEC-P09) | real | 3 |
 | REQ-002 | prevalidacion | L | Volumen de AC; orden estricto y detención (DEC-P33); días hábiles con festivos y año faltante (DEC-P19, DEC-P50) | real | 3 |
-| REQ-018 | prevalidacion | S | Textos exactos de SPEC-003/BR-014; resultado cifrado (ADR-007) | real | 3 |
+| REQ-018 | prevalidacion | S | Textos exactos de SPEC-003/BR-014, incluido el motivo del segundo intento (SPEC-003/AC-057, DEC-P75); resultado cifrado (ADR-007), limitado a lo que conserva DEC-P81 | real | 3 |
+| REQ-027a | prevalidacion | S | Un registro por prevalidación terminada con resultado y novedades (SPEC-008/AC-042), sin guardar lo que DEC-P81 borra (medicamentos y diagnóstico leídos); debe quedar listo para disociarse al revocar (SPEC-008/AC-054, DEC-P51), que se prueba con REQ-015 en el orden 5. ARQ-005 lo ubica en COMP-003 («registra el evento de auditoría») pero no define su almacenamiento | real | 3 |
 | REQ-009 | canales | M | Validación de `initData`, asociación `user.id` y destino sin tratarla como identidad (ADR-004) | real | 4 |
 | REQ-013 | canales | L | 14 AC; vencimiento por mes calendario en hora de Colombia; varios pacientes por canal; estados nueva, vigente y vencida | real | 4 |
-| REQ-015 | identidad | L | Borrado que cruza `identidad`, `canales`, `prevalidacion`, MinIO y eventos, sin quedar a medias; disociación (DEC-P51) | real | 5 |
+| REQ-004a | canales | S | Plantillas fijas del chat sin medicamentos, diagnósticos ni cédula (SPEC-002/RF-085, SPEC-002/BR-008, SPEC-002/AC-018, SPEC-002/AC-039 y la parte de SPEC-002/AC-021 que no es notificación, DEC-P45, DEC-P64). Riesgo: que una plantilla o un registro interpole datos del paciente; la regla también alcanza el mensaje del código (orden 2) y los registros. La regla de contenido **nunca se simula** | real | 4 |
+| REQ-015 | identidad | L | Borrado que cruza `identidad`, `canales`, `prevalidacion`, MinIO y eventos, sin quedar a medias; disociación de los eventos de REQ-027a (SPEC-008/AC-054, DEC-P51) | real | 5 |
 | REQ-026 | web | L | Recorrido completo con paridad en navegador y Mini App; cámara y carga dentro de Telegram; SPEC-002/AC-017, AC-029 y AC-030 sin oráculo suficiente | real | 6 |
 
-**Por qué cada tamaño.** S: una regla o un dato de configuración, sin integración. M: un módulo con varias reglas o una integración conocida. L: cruza módulos, trae incertidumbre técnica o tiene un volumen alto de AC. Es una escala relativa: no representa horas ni semanas.
+**Por qué cada tamaño.** S: una regla o un dato de configuración, sin integración. M: un módulo con varias reglas o una integración conocida. L: cruza módulos, trae incertidumbre técnica o tiene un volumen alto de AC. Es una escala relativa: no representa horas ni semanas. Reparto tras el ajuste: 6 L, 3 M y 7 S (antes 5 L, 4 M y 5 S; cambia REQ-001 de M a L y entran REQ-004a y REQ-027a como S).
 
 **Tratamiento**: `real` | `simulado` (SMS/correo en plan de prueba) | `aplazado`. Ninguna fila queda `aplazado`; las partes que Requisitos ya dejó fuera siguen fuera.
 
 **Reglas del corte**
 
 - SMS y correo: `simulado` significa proveedor real (Twilio, Resend) en **plan de prueba**, solo con destinos del equipo. Lo que se simula es el proveedor, nunca la regla de contenido (REV-005).
-- La regla de contenido es **real** aunque `REQ-004` siga bloqueado: en este corte se cumple en el mensaje del código, en la respuesta del bot a un archivo (SPEC-002/AC-039, SPEC-002/BR-008) y en los registros.
+- La regla de contenido es **real** y tiene fila propia, `REQ-004a` (DEC-P64): se cumple en las plantillas del chat, en el mensaje del código y en los registros. La parte de notificaciones (`REQ-004b`) está en evaluación, pero cuando entre tampoco se simula.
 - OCR: **Tesseract.js local**, con confirmación humana por documento y sin edición (DEC-P04, DEC-P55).
 - Fórmulas manuscritas: **no se distinguen**. Se tratan como documento ilegible, con el mensaje común y los 2 intentos (DEC-P28, SPEC-003/RF-031). Esto corrige la línea anterior «fuera de alcance».
 - Datos de salud: **nunca** se simulan ni se aplazan. Usar datos sintéticos en las pruebas no es simular su tratamiento.
@@ -165,31 +167,39 @@ El OCR es el mayor riesgo del corte (ARQ-005, riesgo principal), así que se mid
 **Módulos** (fronteras de ARQ-005 v1.0)
 
 - Equivalencias con `orquestador.py`: `eps_simulada` es `datos_simulados` y `canales` es `telegram`. `web` no es un COMP de ARQ-005: es el cliente que consume la API.
-- `tareas_notificaciones` en este MVP solo envía códigos y ejecuta la purga. No hay notificaciones (DEC-P45).
+- `tareas_notificaciones` en este MVP solo envía códigos y ejecuta el borrado de archivos (SPEC-003/RF-032). No hay notificaciones (DEC-P45).
 - `documentos` (COMP-005) no tiene fila propia: entra con REQ-016 y REQ-015.
-- Cada fila lleva el módulo dueño. Aportes de otros módulos: REQ-010 y REQ-015 en `canales` (SPEC-002/RF-086, SPEC-002/RF-087); REQ-014 en `prevalidacion` (SPEC-003/RF-021); REQ-016 en `canales` (SPEC-002/RF-085); REQ-017 y REQ-002 usan catálogos de `eps_simulada` (SPEC-008/RF-078, SPEC-008/RF-084), que se construyen en el orden 1.
+- Cada fila lleva el módulo dueño. Aportes de otros módulos: REQ-010 y REQ-015 en `canales` (SPEC-002/RF-086, SPEC-002/RF-087); REQ-014 en `prevalidacion` (SPEC-003/RF-021); REQ-016 en `canales` (SPEC-002/RF-085); REQ-001 en `tareas_notificaciones` (resultado de entrega para el tope de SPEC-001/RF-012); REQ-004a en `tareas_notificaciones` (texto del código) y en los registros de todos los módulos; REQ-027a en `identidad` (disociación al revocar, orden 5); REQ-017 y REQ-002 usan catálogos de `eps_simulada` (SPEC-008/RF-078, SPEC-008/RF-084), que se construyen en el orden 1.
+- SPEC-008 es de `eps_simulada`, pero REQ-027a se asigna a `prevalidacion` porque el evento nace al terminar la prevalidación y ARQ-005 pone su registro en COMP-003. Es la única fila cuyo módulo no coincide con la SPEC.
 
 **Orden de construcción por dependencias** (un módulo completo, con dominio, datos, API y prueba verde, antes del siguiente)
 
 0. Medición del OCR con documentos sintéticos impresos.
 1. `eps_simulada`: REQ-007 y REQ-023a, con los catálogos de cobertura, crónicos y festivos.
 2. `tareas_notificaciones` e `identidad`: REQ-008a, REQ-001, REQ-010 y REQ-014.
-3. `prevalidacion` con `documentos`: REQ-016, REQ-017, REQ-002 y REQ-018.
-4. `canales`: REQ-009 y REQ-013, con el bot y la validación de la Mini App.
+3. `prevalidacion` con `documentos`: REQ-016, REQ-017, REQ-002, REQ-018 y REQ-027a.
+4. `canales`: REQ-009, REQ-013 y REQ-004a, con el bot y la validación de la Mini App.
 5. `identidad` (segundo incremento): REQ-015.
 6. `web`: REQ-026, primero en el navegador y luego la misma interfaz como Mini App.
 
-Diferencias con el orden de DEC-P01 (detalle en OBS-005): `eps_simulada` pasa antes de `identidad`, y la revocación se construye después de `canales`. El resto se conserva.
+El orden está **aceptado** por DEC-P67 (medición del OCR, `eps_simulada`, notificaciones e `identidad`, `prevalidacion`, `canales`, REQ-015 y `web`). Las dos filas nuevas entran en módulos que ya estaban en ese orden y no lo alteran: REQ-027a va con `prevalidacion` (depende de REQ-002) y REQ-004a con `canales` (depende de REQ-016). REQ-015 sigue después de ambas, como necesita SPEC-008/AC-054.
 
-**Qué no cabe y propuesta de recorte**: el análisis por REQ, con sus opciones, está en Observaciones (OBS-001 a OBS-004), como pide REV-007.
+Condición del orden 2: con SPEC-001 v1.4 los oráculos TC-001 a TC-014 y las pruebas de `identidad` volvieron a pendiente (DEC-P79). `identidad` no puede quedar en verde hasta que QA los rehaga y una persona los apruebe.
+
+**Capacidad** (INFERIDO, requiere confirmación): con las 8 semanas de DEC-P63, los 16 `Debe` probablemente caben. Razones cualitativas: las dos filas nuevas son S y viven en módulos que ya se iban a construir; el aumento real está en REQ-001 (tope de códigos) y en REQ-016 (borrado de textos y rechazo previo), sin módulos nuevos. En contra: REQ-001 pasa a L, los oráculos de `identidad` hay que rehacerlos (DEC-P79) y siguen abiertos los condicionantes de OBS-003 (OCR) y OBS-004 (cámara en la Mini App). No hay conversión aprobada de S/M/L a semanas, así que no se afirma más que esto. Ningún `Debe` se declara «no cabe».
+
+**Qué no cabe y propuesta de recorte**: el análisis por REQ, con sus opciones, está en Observaciones (OBS-001 a OBS-004), como pide REV-007. En este ajuste no se añade ningún «no cabe».
 
 **Riesgos que requieren prueba específica**
 
 - OCR: la medición del orden 0, antes de cualquier oráculo de tolerancia.
 - Código de verificación en paralelo: intentos simultáneos no superan 3 y un código anulado no valida (SPEC-001/BR-003, SPEC-001/BR-005).
+- Tope de códigos (SPEC-001/RF-012): con el tope alcanzado no se envía ni se anula el vigente (SPEC-001/AC-015, SPEC-001/AC-017); un envío fallido en todos los canales no cuenta y uno que llegó por al menos un canal cuenta una vez (SPEC-001/AC-018, SPEC-001/AC-019, DEC-P82); y, como riesgo inferido, dos peticiones simultáneas a un envío del tope no deben dejar pasar dos envíos.
 - Intentos de carga en paralelo: no hay tercer intento (SPEC-003/AC-040).
-- Fronteras de tiempo con reloj controlable: SPEC-001/AC-009, SPEC-002/AC-020, SPEC-002/AC-026, SPEC-003/AC-038, SPEC-003/AC-044.
-- Purga física (DEC-P59): al terminar la prevalidación no quedan archivos en MinIO. Hoy solo tiene AC en `PROPUESTA` (Reservas de REQ-016).
+- Rechazo previo: un archivo de otro formato se rechaza sin leerlo y sin gastar intento (SPEC-003/AC-056); lo mismo para los que superan el límite de tamaño, páginas o fórmulas (DEC-P74, DEC-P80), que no tienen AC propio porque los valores no están fijados.
+- Fronteras de tiempo con reloj controlable: SPEC-001/AC-009, SPEC-002/AC-020, SPEC-002/AC-026, SPEC-003/AC-038, SPEC-003/AC-044, SPEC-003/AC-055, SPEC-008/AC-055 (hora de Colombia al ejecutar las reglas, DEC-P70, DEC-P71).
+- Borrado (SPEC-003/RF-032, DEC-P59, DEC-P81): al terminar la prevalidación no quedan archivos en MinIO (SPEC-003/AC-054) ni medicamentos ni diagnóstico leídos en PostgreSQL; solo apta/no apta, motivo, siguiente paso y número de fórmula. La segunda parte no tiene AC en SPEC-003 v1.13.
+- Eventos de prevalidación: SPEC-008/AC-042 al terminar y SPEC-008/AC-054 tras revocar.
 - Revocación: SPEC-001/AC-007 y SPEC-008/AC-054, incluida una falla a mitad del borrado.
 - Datos de salud: búsqueda sin resultados en mensajes y registros (SPEC-002/AC-035, SPEC-002/AC-039); volcado de PostgreSQL sin texto legible en columnas cifradas (ADR-007).
 - Build de producción sin lo de prueba (ADR-005).
@@ -197,13 +207,14 @@ Diferencias con el orden de DEC-P01 (detalle en OBS-005): `eps_simulada` pasa an
 
 **Costo de sumar el agendamiento después** (no se corta como construcción)
 
-- Puertas previas: SPEC-004, SPEC-005 y SPEC-006 siguen Candidatas y deben pasar por S1 y aprobación; PREG-074 debe responderse; hace falta una ARQ nueva, porque ARQ-005 no incluye reservas ni dispensación.
+- Puertas previas: SPEC-004, SPEC-005 y SPEC-006 siguen Candidatas y deben pasar por S1 y aprobación; hace falta una ARQ nueva, porque ARQ-005 no incluye reservas ni dispensación. PREG-074 ya no es puerta: la respondió DEC-P64.
 - Bloque reservas (REQ-003, REQ-005, REQ-020, REQ-023b): L. Trae la transacción real, la prueba de concurrencia, la expiración y DEC-P13.
-- Bloque notificaciones (REQ-006a, REQ-006b, REQ-011 y los bloqueados REQ-004, REQ-008b, REQ-024): L. Trae tareas programadas, re-verificación y cancelación automática.
+- Bloque notificaciones (REQ-006a, REQ-006b, REQ-011, REQ-004b, REQ-008b y REQ-024, todos en evaluación por DEC-P64): L. Trae tareas programadas, re-verificación y cancelación automática. REQ-004b reutiliza la regla de contenido de REQ-004a.
 - Bloque punto de dispensación (REQ-012, REQ-019, REQ-022): L. Trae un rol nuevo, el código QR de un solo uso y su validación presencial.
 - Retoques sobre lo construido: SPEC-001/AC-008 en REQ-015, las notificaciones aplazadas de REQ-013 y las pantallas de REQ-026.
 - La prevalidación no se rehace: va antes del agendamiento y la cita posible ya usa DEC-P13.
-- Estimación (inferida, requiere confirmación): los tres bloques suman otros tres L, con módulos nuevos. Los 13 REQ no caben junto con los 14 `Debe` en el mismo plazo. El candidato menor es el bloque reservas.
+- Resto en evaluación: REQ-027b (métricas de citas y punto) se suma al registro de REQ-027a; REQ-021 y REQ-025 dependen de reservas y entregas (DEC-P69).
+- Estimación (inferida, requiere confirmación): los tres bloques suman otros tres L, con módulos nuevos. Los 16 REQ en evaluación no caben junto con los 16 `Debe` en el mismo plazo. El candidato menor es el bloque reservas.
 
 ## Observaciones         (ambos, solo comentarios)
 
@@ -241,6 +252,7 @@ Observaciones de la ronda 1 (Arquitectura, 2026-11-01; comentarios, no decisione
 - OBS-001 (ronda 1, Arquitectura, responde REV-007 y REV-010): el corte se evalúa contra 4 personas y unas 8 semanas (contexto 3.9), no contra «5 días». El plazo de 5 días viene del plan de agentes (§8), del modo «Cortar MVP» y del skill `negociacion-de-mvp`; las 8 semanas son la restricción del proyecto que citan las SPEC y ARQ-005. Dato de referencia: en 5 días este conjunto no cabe, solo con rehacer `identidad` y medir el OCR ya se consume buena parte.
   Impacto: el plan §8 y el skill siguen diciendo 5 días.
   No decido: una persona confirma el plazo y **cuántas de las 8 semanas quedan**; ese dato no está en los documentos.
+  - Comentario del ajuste (2026-11-02, Arquitectura): respondida por DEC-P63, quedan las 8 semanas completas. Siguen diciendo 5 días el plan §8 y el skill; no se tocaron.
 - OBS-002 (ronda 1, Arquitectura): con las 8 semanas completas, los 14 `Debe` caben y ninguno se declara «no cabe». Es un juicio cualitativo: 5 L, 4 M y 5 S, con 4 personas y un paralelo limitado por las dependencias. No hay una conversión aprobada de S/M/L a semanas. REQ-016 y REQ-026 quedan condicionados (OBS-003 y OBS-004). REQ-015 es L, pero no admite recorte: es un derecho del titular y trata datos de salud.
   Impacto: la ronda 2 no se abre por capacidad. Se abriría si quedan menos semanas de las previstas o si la medición del OCR sale mal.
   No decido: requiere confirmación de una persona.
@@ -257,14 +269,30 @@ Observaciones de la ronda 1 (Arquitectura, 2026-11-01; comentarios, no decisione
   (2) REQ-015 después de `canales`: depende de REQ-013 y debe borrar lo que crean `prevalidacion` y `canales`.
   Impacto: `ORDEN_MODULOS` de `orquestador.py` conserva `identidad` primero, y `web` como último paso hace que el punto de decisión del agendamiento («prevalidación web en verde») llegue tarde. Por eso el orden 6 empieza por el navegador.
   No decido: una persona acepta o no el cambio; si lo acepta, ajusta el orquestador.
+  - Comentario del ajuste (2026-11-02, Arquitectura): aceptado por DEC-P67. Este corte no comprobó si `ORDEN_MODULOS` de `orquestador.py` ya se ajustó; DEC-P67 lo cita como afectado.
 - OBS-006 (ronda 1, Arquitectura, tensión registrada, sin decidir): DEC-P61 fija un tope configurable de envío de códigos; SPEC-001/DEC-01 dice «No se impone un límite global adicional de generación de códigos de verificación». DEC-P61 afirma que SPEC-001 no cambia, y RES-007 señala que manda la más reciente. Además, al alcanzar el tope se muestra la ruta alterna, y SPEC-001/RF-006 incluye en ella «pedir un código nuevo», que en ese momento no se enviaría. El corte construye el tope como parámetro, sin valor, según ADR-006. No se propone cambiar la SPEC.
   No decido: lo resuelve una persona o el equipo.
+  - Comentario del ajuste (2026-11-02, Arquitectura): **resuelta** por DEC-P68 (prevalece el tope; con el tope alcanzado la ruta alterna ofrece solo la EPS y la atención presencial) y DEC-P78 (no se anula el código vigente; un envío fallido no cuenta; SMS + correo cuentan como uno), precisada por DEC-P82. SPEC-001 v1.4 lo recoge en SPEC-001/RF-006, SPEC-001/RF-012 y SPEC-001/AC-015 a SPEC-001/AC-019. Queda abierto solo el valor del tope y de la ventana (OBS-009).
 - OBS-007 (ronda 1, para Especificaciones): SPEC-003/AC-034, AC-035, AC-036, AC-037, AC-038, AC-042, AC-043, AC-044, AC-047, AC-049 y AC-052 no aparecen en la columna de AC de ningún REQ. Conté su esfuerzo en REQ-002 y REQ-016 porque SPEC-003 está congelada; falta asignarlos en Requisitos.
 - OBS-008 (ronda 1, para la persona y Especificaciones): REQ-015 usa SPEC-008/AC-054, que exige eventos almacenados, pero SPEC-008/RF-083 no tiene prioridad (pregunta abierta en Requisitos). El corte supone el registro mínimo de eventos que esa AC necesita, sin las métricas.
+  - Comentario del ajuste (2026-11-02, Arquitectura): **resuelta** con REQ-027a (`Debe` por DEC-P66), que ya tiene fila propia en el corte (orden 3). Queda una tarea para Especificaciones: en Requisitos, REQ-015 depende de REQ-001 y REQ-013, pero de hecho depende también de REQ-027a, porque SPEC-008/AC-054 necesita un evento almacenado. El orden aceptado ya lo respeta; falta añadirlo en la columna «Depende de».
 - OBS-009 (ronda 1, Arquitectura): quedan por fijar, y este corte no les da valor: el umbral de tolerancia (DEC-P60), el tope de códigos y su ventana (DEC-P61), la purga de solicitudes abandonadas (ADR-003) y `auth_date_max_age` (ADR-004). ARQ-005 tampoco define el mecanismo que rechaza destinos fuera de la lista del equipo (DEC-P18, SPEC-008/AC-049) ni los límites de tamaño y páginas (SPEC-003 sección 14; relacionado con PREG-017). Ambos deben estar resueltos antes de los órdenes 1 y 3.
 - OBS-010 (ronda 1, Arquitectura): la propuesta tecnológica §5 dice «token de 90 días»; SPEC-002/RF-014 exige 3 meses calendario, en hora de Colombia (DEC-P21, DEC-P25). El corte sigue la SPEC: el vencimiento no se implementa como 90 días fijos.
 - OBS-011 (ronda 1, Arquitectura, responde REV-004 a REV-006 y RES-006): el corte usa los mismos REQ, con 14 filas para los 14 `Debe`; separa regla de contenido y proveedor; retira «AC-36» y ajusta las fórmulas manuscritas a DEC-P28. Siguen citando «AC-36» o «48 horas» como obligación la propuesta tecnológica §4 y §6, el plan §8 y §9, y el skill (T-015, RES-007). No se tocaron.
 - OBS-012 (ronda 1, Arquitectura): no cambié la cabecera, porque el modo «Cortar MVP» no lo pide. `estado` y `rondas_de_negociacion` siguen en `borrador` y 0 aunque esta sea la ronda 1. El `aprobado_por` lo escribe una persona.
+
+Observaciones del ajuste de la ronda 1 (Arquitectura, 2026-11-02; comentarios, no decisiones):
+
+- OBS-013 (ajuste, Arquitectura, para la persona): **DEC-P81 cambia ARQ-005 v1.0**, que está congelada. ARQ-005 conserva cifrados los textos leídos por OCR (COMP-003: «aplica cifrado … a los textos extraídos antes de persistir»; Flujo 2, paso 11; ADR-007, contexto «textos leídos por OCR»). Con DEC-P81 los medicamentos y el diagnóstico leídos ya no se conservan: se borran con los archivos, y por fórmula solo quedan apta/no apta, motivo, siguiente paso y número de fórmula. También afecta a COMP-005, que hoy solo borra archivos en MinIO.
+  Impacto: el corte ya construye según DEC-P81 (REQ-016, REQ-018, REQ-027a), pero la arquitectura congelada dice otra cosa, así que ARQ-005 necesita una versión nueva que ajuste COMP-003, COMP-005, el Flujo 2 y ADR-007. No edité ARQ-005.
+  No decido: una persona ordena la nueva versión de la ARQ y la aprueba. Mientras tanto manda DEC-P81, por ser más reciente.
+- OBS-014 (ajuste, Arquitectura, para la persona): la misma versión nueva de ARQ-005 debe fijar los límites técnicos que DEC-P74 y DEC-P80 asignan a Arquitectura: tamaño de archivo, páginas por PDF y fórmulas por solicitud. Este corte no les da valor. Deben estar fijados, y aprobados por el equipo, antes del orden 3.
+- OBS-015 (ajuste, Arquitectura, para Especificaciones): DEC-P80 y DEC-P81 son posteriores a SPEC-003 v1.13 (DEC-P77 aplicó DEC-P59 y DEC-P70 a DEC-P76). SPEC-003/RF-032 dice «conservar solo el resultado» sin detallar qué contiene, y no hay AC que pruebe que se borran los medicamentos y el diagnóstico leídos ni que el exceso de fórmulas se rechaza sin gastar intento. Se recogen en la próxima versión de SPEC-003; mientras tanto mandan las decisiones.
+- OBS-016 (ajuste, Arquitectura, para Especificaciones): la sección Requisitos cita elementos que ya cambiaron en las SPEC vigentes. (1) REQ-001 no incluye SPEC-001/RF-012 ni SPEC-001/AC-015 a SPEC-001/AC-019, y su reserva dice que el tope «no tiene AC en SPEC-001»; SPEC-001 v1.4 ya los tiene. (2) La reserva de REQ-016 dice que el borrado no tiene AC; SPEC-003 v1.13 trae SPEC-003/RF-032 y SPEC-003/AC-054. (3) No aparecen en ningún REQ SPEC-003/AC-054 a SPEC-003/AC-057 ni SPEC-008/AC-055 y SPEC-008/AC-056; el corte los cuenta en REQ-001, REQ-016, REQ-002, REQ-018 y REQ-007. Es una tarea de Requisitos, no la cambié.
+- OBS-017 (ajuste, Arquitectura, para QA y la persona): con SPEC-001 v1.4 los oráculos TC-001 a TC-014 y las pruebas de `identidad` volvieron a pendiente (DEC-P79). El orden 2 no puede cerrarse en verde hasta que S3 los rehaga contra la v1.4 (incluido el tope de RF-012) y una persona los apruebe.
+- OBS-018 (ajuste, Arquitectura): la capacidad de los 16 `Debe` queda como INFERIDA (ver «Capacidad» en el corte). DEC-P63 se escribió sobre 14 `Debe`; las dos filas nuevas son S, pero REQ-001 sube a L. Si una persona considera que el margen ya no alcanza, la ronda 2 se abriría por capacidad, con las opciones de OBS-003 y OBS-004.
+  No decido: requiere confirmación de una persona.
+- OBS-019 (ajuste, Arquitectura): siguen sin valor y este corte no los fija: umbral de tolerancia (DEC-P60), tope y ventana de códigos (DEC-P61), purga de solicitudes abandonadas (ADR-003), `auth_date_max_age` (ADR-004), límites de tamaño, páginas y fórmulas (DEC-P74, DEC-P80) y el mecanismo que rechaza destinos fuera de la lista del equipo (SPEC-008/AC-049). Actualiza OBS-009, que se conserva.
 
 ## Registro de decisiones (ronda, qué se cambió, quién lo pidió, quién aprobó)
 
@@ -277,3 +305,4 @@ Observaciones de la ronda 1 (Arquitectura, 2026-11-01; comentarios, no decisione
 | 1 | 2026-11-01 | Requisitos | Sección reescrita con REQ-xxx y SPEC aprobadas: 14 Debe, 3 Bloqueados por PREG-074, 10 En evaluación, 2 Fuera del MVP. REQ-006, REQ-008 y REQ-023 divididos. Responde REV-001 a REV-003 | Persona (REV-001 a REV-003, DEC-P01, DEC-P35) | Pendiente (persona) |
 | 1 | 2026-11-01 | Corte técnico, Observaciones | Corte reescrito con los 14 Debe y módulos de ARQ-005 v1.0; medición del OCR como orden 0; orden propuesto `eps_simulada` antes de `identidad`; plazo evaluado contra 8 semanas; costo del agendamiento; OBS-001 a OBS-012. Responde REV-004 a REV-008 y RES-006 | Persona (orden «cortar MVP», ronda 1) | Pendiente (persona) |
 | 1 (ajuste) | 2026-11-01 | Requisitos | Aplicadas DEC-P64, DEC-P65, DEC-P66 y DEC-P69. REQ-004 se divide en REQ-004a (Debe) y REQ-004b (En evaluación); REQ-024 y REQ-008b pasan a En evaluación; REQ-015 y REQ-023a quedan confirmados; se crean REQ-027a (Debe) y REQ-027b (En evaluación) desde SPEC-008/RF-083; REQ-021 y REQ-025 pasan a En evaluación. Resultado: 16 Debe, 0 Bloqueados, 16 En evaluación, 0 Fuera del MVP. Corte técnico sin cambios | Persona (DEC-P64, DEC-P65, DEC-P66, DEC-P69) | Decisiones: persona. Aplicación en Requisitos: pendiente (persona) |
+| 1 (ajuste) | 2026-11-02 | Corte técnico, Observaciones | Corte ajustado a 16 Debe: filas nuevas REQ-004a (`canales`, S, orden 4) y REQ-027a (`prevalidacion`, S, orden 3); REQ-001 sube a L por el tope de SPEC-001/RF-012; REQ-016 recoge el borrado (SPEC-003/RF-032, DEC-P81) y el rechazo previo (DEC-P74, DEC-P80); citas a SPEC-001 v1.4, SPEC-003 v1.13 y SPEC-008 v1.10; orden aceptado (DEC-P67) y 8 semanas (DEC-P63); capacidad INFERIDA; quitado REQ-004 bloqueado y PREG-074 pendiente (DEC-P64). OBS-006 y OBS-008 resueltas; OBS-013 a OBS-019 nuevas (DEC-P81 exige nueva versión de ARQ-005) | Persona (orden «cortar MVP», ajuste de la ronda 1) | Pendiente (persona) |

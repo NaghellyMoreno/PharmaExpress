@@ -2,7 +2,7 @@
 
 Origen: S1
 SPEC: SPEC-008/BR-025, modelo de dominio de SPEC-008
-Estado: abierta
+Estado: respondida
 Bloquea: no
 Fecha: 2026-10-31
 
@@ -26,3 +26,4 @@ Sin propuesta.
 
 ## Respuesta del equipo
 
+Respondida con DEC-P72 (docs/decisiones.md), 2026-11-02.

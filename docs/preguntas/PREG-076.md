@@ -2,7 +2,7 @@
 
 Origen: S1
 SPEC: SPEC-003/BR-009, AC-049, AC-040, E2 · SPEC-008/A1, AC-041 · DEC-P41
-Estado: abierta
+Estado: respondida
 Bloquea: no
 Fecha: 2026-11-01
 
@@ -34,3 +34,4 @@ Ninguna: es una regla de negocio.
 
 ## Respuesta del equipo
 
+Respondida con DEC-P76 (docs/decisiones.md), 2026-11-02.

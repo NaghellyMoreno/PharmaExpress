@@ -6,7 +6,7 @@ Proyecto del curso Software III: plataforma de pre-dispensación de medicamentos
 
 1. `plan-agentes/plan_agentes_pharma_express.md`: plan de agentes S1–S3, B1–B4, R1–R2, principios y puertas humanas.
 2. `PHARMA_EXPRESS_AGENTES.md`: contexto del producto (fuente de verdad del negocio). Ojo: DEC-P13 modifica su sección 3.5.
-3. `docs/decisiones.md`: **registro único de decisiones del equipo (DEC-P01 a DEC-P69)**. Si contradice una SPEC o el contexto, manda la decisión más reciente; señálalo.
+3. `docs/decisiones.md`: **registro único de decisiones del equipo (DEC-P01 a DEC-P82)**. Si contradice una SPEC o el contexto, manda la decisión más reciente; señálalo.
 4. `docs/ordenes-ronda-1.md`: **los siguientes pasos, con los comandos exactos.**
 5. `qa/revision/revision-transversal-20261031.md`: 45 hallazgos (T-001 a T-045) sobre SPEC-001 a SPEC-008 y la arquitectura.
 6. `docs/mvp.md` (alcance, con dueño por sección), `docs/DECISIONES-PENDIENTES.md`, `docs/preguntas/PREG-*.md`.
@@ -16,10 +16,10 @@ Proyecto del curso Software III: plataforma de pre-dispensación de medicamentos
 ## Estado actual
 
 - **Alcance (DEC-P01):** el MVP es la **prevalidación completa en web y Telegram**. El agendamiento (SPEC-004) está **en evaluación**: decidirlo cuando la prevalidación web esté en verde.
-- **MVP sin aprobar:** `docs/mvp.md` tiene Requisitos y Corte técnico de la ronda 1 (14 `Debe`), pero sigue en `borrador`; `python3 orquestador.py` se detiene ahí, y es lo correcto.
-- **SPEC:** están aprobadas SPEC-001 v1.1, SPEC-002 v1.11, SPEC-003 v1.12 y SPEC-008 v1.9 (`agentes-ia/salidas/specification-agent/aprobadas/`, la única ubicación válida). SPEC-004 a SPEC-007 siguen Candidatas sin revisar en `borradores/`.
+- **MVP sin aprobar:** `docs/mvp.md` tiene Requisitos y Corte técnico de la ronda 1 (16 `Debe`, con ajustes), pero sigue en `borrador`; `python3 orquestador.py` se detiene ahí, y es lo correcto.
+- **SPEC:** están aprobadas SPEC-001 v1.4, SPEC-002 v1.11, SPEC-003 v1.13 y SPEC-008 v1.10 (`agentes-ia/salidas/specification-agent/aprobadas/`, la única ubicación válida). SPEC-004 a SPEC-007 siguen Candidatas sin revisar en `borradores/`.
 - **Arquitectura:** ARQ-005 v1.0 está aprobada y congelada (DEC-P62) en `agentes-ia/salidas/architecture-agent/aprobadas/`. ARQ-003 y ARQ-004 son obsoletas (solo están en el historial de git).
-- **Módulo `identidad`:** el código v0 **no sirve como base** (aceptaba cualquier código; ver `qa/incidentes/INC-20261031-001-identidad-v0.md`). Las pruebas de S3 importan `'../../servicios'` en vez de `'../servicios'` y nunca se ejecutaron; PREG-003, PREG-004 y PREG-005 marcan 3 pruebas sospechosas. Lo corrige S3, no B1.
+- **Módulo `identidad`:** el código v0 **no sirve como base** (aceptaba cualquier código; ver `qa/incidentes/INC-20261031-001-identidad-v0.md`). Las pruebas de S3 importan `'../../servicios'` en vez de `'../servicios'` y nunca se ejecutaron; PREG-003, PREG-004 y PREG-005 marcan 3 pruebas sospechosas. Lo corrige S3, no B1. Con SPEC-001 v1.4 (DEC-P79), los oráculos TC-001 a TC-014 están pendientes: S2 los rehace antes que S3.
 - **`apps/api`:** ya tiene `package.json`, `tsconfig.json` y `jest.config.js` (proyectos `unidad` e `integracion`), pero **falta `npm install`**. `docker-compose.yml` está en la raíz; las pruebas de integración necesitan Docker.
 
 ## Decisiones clave (resumen; texto completo en `docs/decisiones.md`)
