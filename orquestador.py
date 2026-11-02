@@ -44,8 +44,8 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent
 PIPELINE = RAIZ / "pipeline.json"
 ORDEN_MODULOS = [
-    "identidad",
     "datos_simulados",
+    "identidad",
     "prevalidacion",
     "reservas",
     "notificaciones",

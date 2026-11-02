@@ -2,7 +2,7 @@
 
 Origen: S1
 SPEC: docs/mvp.md (REQ-024, REQ-004, REQ-008, REQ-023) · SPEC-002/AC-012, AC-021, AC-023 · SPEC-005 · SPEC-008/RF-079
-Estado: abierta
+Estado: respondida
 Bloquea: no
 Fecha: 2026-11-01
 
@@ -29,3 +29,4 @@ Ninguna: es una decisión de alcance y la toma una persona en la negociación de
 
 ## Respuesta del equipo
 
+Respondida con DEC-P64 (docs/decisiones.md), 2026-11-01.

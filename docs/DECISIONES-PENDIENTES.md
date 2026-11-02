@@ -1,12 +1,12 @@
 # Decisiones pendientes (puerta humana)
 
-> **Actualización 2026-11-01:** las decisiones ya tomadas están en `docs/decisiones.md` (DEC-P01 a DEC-P58) y los pasos siguientes en `docs/ordenes-ronda-1.md`. Quedan pendientes la aprobación de las SPEC y la decisión sobre el agendamiento. Lo que sigue en este archivo después de la sección 0 es anterior y se conserva como historial.
+> **Actualización 2026-11-01:** las decisiones ya tomadas están en `docs/decisiones.md` (DEC-P01 a DEC-P69) y los pasos siguientes en `docs/ordenes-ronda-1.md`. Quedan pendientes la aprobación de las SPEC y la decisión sobre el agendamiento. Lo que sigue en este archivo después de la sección 0 es anterior y se conserva como historial.
 
 ## 0. Pendientes tras aprobar las SPEC (2026-11-01)
 
 SPEC-002 v1.11, SPEC-003 v1.12 y SPEC-008 v1.9 están aprobadas y congeladas (DEC-P58). Cada respuesta a una PREG que las afecte exige una versión nueva.
 
-PREG-015 debe responderse antes de la ARQ.
+SPEC-003 debe recoger DEC-P59 en su próxima versión (OPEN-Q-011).
 
 | Prioridad | PREG | Pregunta | Qué sí dice el archivo |
 |---|---|---|---|
@@ -17,7 +17,6 @@ PREG-015 debe responderse antes de la ARQ.
 
 | Prioridad | PREG | Pregunta | Qué sí dice el archivo |
 |---|---|---|---|
-| Antes de la ARQ | PREG-015 | ¿Se conservan los documentos tras prevalidar? | El plazo queda fuera de alcance (DEC-32) y se eliminan al revocar (RF-12). Falta decidir si se conservan hasta entonces. |
 | Antes de S2 | PREG-011 | ¿Cómo se comprueba que la historia clínica es del paciente? | DEC-42 dice «no coincide», pero no con qué dato. |
 | Antes de S2 | PREG-017 | ¿Qué entradas inválidas gastan intento? | Solo «foto o PDF». |
 | Antes de S2 | PREG-018 y PREG-026 | Instante y zona horaria de la fecha de prevalidación | Nada. |

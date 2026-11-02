@@ -6,7 +6,7 @@ Proyecto del curso Software III: plataforma de pre-dispensación de medicamentos
 
 1. `plan-agentes/plan_agentes_pharma_express.md`: plan de agentes S1–S3, B1–B4, R1–R2, principios y puertas humanas.
 2. `PHARMA_EXPRESS_AGENTES.md`: contexto del producto (fuente de verdad del negocio). Ojo: DEC-P13 modifica su sección 3.5.
-3. `docs/decisiones.md`: **registro único de decisiones del equipo (DEC-P01 a DEC-P58)**. Si contradice una SPEC o el contexto, manda la decisión más reciente; señálalo.
+3. `docs/decisiones.md`: **registro único de decisiones del equipo (DEC-P01 a DEC-P69)**. Si contradice una SPEC o el contexto, manda la decisión más reciente; señálalo.
 4. `docs/ordenes-ronda-1.md`: **los siguientes pasos, con los comandos exactos.**
 5. `qa/revision/revision-transversal-20261031.md`: 45 hallazgos (T-001 a T-045) sobre SPEC-001 a SPEC-008 y la arquitectura.
 6. `docs/mvp.md` (alcance, con dueño por sección), `docs/DECISIONES-PENDIENTES.md`, `docs/preguntas/PREG-*.md`.
@@ -16,9 +16,9 @@ Proyecto del curso Software III: plataforma de pre-dispensación de medicamentos
 ## Estado actual
 
 - **Alcance (DEC-P01):** el MVP es la **prevalidación completa en web y Telegram**. El agendamiento (SPEC-004) está **en evaluación**: decidirlo cuando la prevalidación web esté en verde.
-- **MVP sin aprobar:** `docs/mvp.md` está en `borrador`; `python3 orquestador.py` se detiene ahí, y es lo correcto.
+- **MVP sin aprobar:** `docs/mvp.md` tiene Requisitos y Corte técnico de la ronda 1 (14 `Debe`), pero sigue en `borrador`; `python3 orquestador.py` se detiene ahí, y es lo correcto.
 - **SPEC:** están aprobadas SPEC-001 v1.1, SPEC-002 v1.11, SPEC-003 v1.12 y SPEC-008 v1.9 (`agentes-ia/salidas/specification-agent/aprobadas/`, la única ubicación válida). SPEC-004 a SPEC-007 siguen Candidatas sin revisar en `borradores/`.
-- **Arquitectura:** no hay ARQ vigente. ARQ-003 y ARQ-004 son obsoletas (solo están en el historial de git). La próxima ARQ es la de prevalidación + Mini App (paso 5 de las órdenes).
+- **Arquitectura:** ARQ-005 v1.0 está aprobada y congelada (DEC-P62) en `agentes-ia/salidas/architecture-agent/aprobadas/`. ARQ-003 y ARQ-004 son obsoletas (solo están en el historial de git).
 - **Módulo `identidad`:** el código v0 **no sirve como base** (aceptaba cualquier código; ver `qa/incidentes/INC-20261031-001-identidad-v0.md`). Las pruebas de S3 importan `'../../servicios'` en vez de `'../servicios'` y nunca se ejecutaron; PREG-003, PREG-004 y PREG-005 marcan 3 pruebas sospechosas. Lo corrige S3, no B1.
 - **`apps/api`:** ya tiene `package.json`, `tsconfig.json` y `jest.config.js` (proyectos `unidad` e `integracion`), pero **falta `npm install`**. `docker-compose.yml` está en la raíz; las pruebas de integración necesitan Docker.
 
@@ -56,8 +56,8 @@ Ejecutar `docs/ordenes-ronda-1.md` en orden:
 2. Hecho: SPEC-008 (v1.9).
 3. Hecho: SPEC-002 (v1.11).
 4. Hecho: revisión S1 y aprobación (DEC-P58).
-5. ARQ de prevalidación + Mini App (antes, responder PREG-015).
-6. Negociación del MVP.
+5. Hecho: ARQ-005 v1.0 aprobada (DEC-P62).
+6. Negociación del MVP: ronda 1 hecha; falta que una persona responda las observaciones y apruebe.
 
 En paralelo, en `apps/api`: `npm install` y `npm run test:unidad`. Se espera que las suites fallen por la ruta de importación (H-009 del incidente) hasta que S3 la corrija.
 

@@ -2,7 +2,7 @@
 
 Origen: S1
 SPEC: SPEC-003 v1.3 — sección 14; SPEC-002/RF-018, AC-016; T-010
-Estado: abierta
+Estado: respondida
 Bloquea: no
 Fecha: 2026-10-31
 
@@ -28,3 +28,4 @@ Ninguna.
 
 ## Respuesta del equipo
 
+Respondida con DEC-P59 (docs/decisiones.md), 2026-11-01.
