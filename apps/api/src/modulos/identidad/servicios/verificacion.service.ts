@@ -2,11 +2,13 @@
  * Servicio de verificación de identidad — módulo identidad (SPEC-001 / RF-004…RF-006, RF-010, RF-011, BR-002…BR-005, AC-004…AC-013, TC-004…TC-013).
  */
 
+import { Optional } from '@nestjs/common';
 import {
   calcularIntentosRestantes,
   esCodigoValido,
   ContextoCodigoVigente,
 } from '../dominio';
+import { RepositorioCodigos, RepositorioCodigosEnMemoria } from '../datos/repositorios';
 
 export interface ResultadoVerificacion {
   valido: boolean;
@@ -40,12 +42,11 @@ const RUTA_ALTERNATIVA = {
 interface EstadoCodigo extends ContextoCodigoVigente {}
 
 export class VerificacionIdentidadService {
-  private readonly estados = new Map<string, EstadoCodigo>();
-
   constructor(
     private readonly eps: DependenciaEps,
     private readonly sms: CanalNotificacion,
     private readonly correo: CanalNotificacion,
+    @Optional() private readonly repositorio: RepositorioCodigos = new RepositorioCodigosEnMemoria(),
   ) {}
 
   private clave(cedula: string, codigo: string): string {
@@ -77,7 +78,7 @@ export class VerificacionIdentidadService {
 
     const emision = emisionMs ?? fechaMs;
     const clave = this.clave(cedula, codigo);
-    const contexto: EstadoCodigo = this.estados.get(clave) ?? {
+    const contexto: EstadoCodigo = (await this.repositorio.obtener(clave)) ?? {
       codigo,
       emisionMs: emision,
       intentosFallidos: 0,
@@ -88,7 +89,7 @@ export class VerificacionIdentidadService {
 
     if (esValido) {
       const estadoExito: EstadoCodigo = { codigo, emisionMs: fechaMs, intentosFallidos: 0, inactivo: false };
-      this.estados.set(clave, estadoExito);
+      await this.repositorio.guardar(clave, estadoExito);
       return { valido: true, verificado: true };
     }
 
@@ -96,7 +97,7 @@ export class VerificacionIdentidadService {
     const inactivo = intentoFallido >= 3; // BR-005 / CL-004 / AC-011 / TC-008
 
     const nuevoEstado: EstadoCodigo = { ...contexto, intentosFallidos: intentoFallido, inactivo };
-    this.estados.set(clave, nuevoEstado);
+    await this.repositorio.guardar(clave, nuevoEstado);
 
     if (inactivo) {
       // Tercer intento fallido (BR-005 / CL-004 / AC-011 / TC-008) → inactivar y derivar a la ruta alternativa.
@@ -106,7 +107,7 @@ export class VerificacionIdentidadService {
     if (!esCodigoValido(codigo, contexto.emisionMs, fechaMs)) {
       // Vigencia vencida (BR-005 / CL-003 / AC-009 / TC-006) → inactivar y derivar a la ruta alternativa.
       const estadoInactivo: EstadoCodigo = { ...contexto, inactivo: true };
-      this.estados.set(clave, estadoInactivo);
+      await this.repositorio.guardar(clave, estadoInactivo);
       return { valido: false, error: 'codigo_expirado', inactivo: true, rutaAlternativa: RUTA_ALTERNATIVA };
     }
 

@@ -2,7 +2,9 @@
  * Servicio de solicitud de código de un solo uso — módulo identidad (SPEC-001 / RF-005, RF-006, BR-003, BR-005, CL-001, AC-003 / TC-013).
  */
 
+import { Optional } from '@nestjs/common';
 import { ContextoCodigoVigente } from '../dominio';
+import { RepositorioCodigos, RepositorioCodigosEnMemoria } from '../datos/repositorios';
 
 export interface ResultadoSolicitudCodigo {
   codigo: string;
@@ -10,8 +12,14 @@ export interface ResultadoSolicitudCodigo {
 }
 
 export class SolicitudCodigoService {
-  private readonly estados = new Map<string, ContextoCodigoVigente>();
+  // La exclusión de solicitudes simultáneas (AC-003/TC-013) es un mutex de este proceso: en un
+  // despliegue de una sola instancia (MVP) es suficiente; un bloqueo distribuido queda para
+  // cuando haya más de una instancia del backend.
   private readonly enCurso = new Map<string, Promise<unknown>>();
+
+  constructor(
+    @Optional() private readonly repositorio: RepositorioCodigos = new RepositorioCodigosEnMemoria(),
+  ) {}
 
   private clave(usuarioId: string): string {
     return `usuario:${usuarioId}`;
@@ -51,7 +59,7 @@ export class SolicitudCodigoService {
       intentosFallidos: 0,
       inactivo: false,
     };
-    this.estados.set(clave, estado);
+    await this.repositorio.guardar(clave, estado);
     return { codigo, vigenciaMs: 10 * 60 * 1000 };
   }
 

@@ -8,7 +8,6 @@ import { ConsentimientoService } from '../servicios/consentimiento.service';
 import { RevocacionService } from '../servicios/revocacion.service';
 import { SolicitudCodigoService } from '../servicios/solicitud-codigo.service';
 import { VerificacionIdentidadService } from '../servicios/verificacion.service';
-import { IdentidadRepository } from '../datos/identidad.repository';
 
 export class IdentidadApi {
   constructor(
@@ -17,7 +16,6 @@ export class IdentidadApi {
     private readonly autorizacion: AutorizacionDatosSaludService,
     private readonly revocacion: RevocacionService,
     private readonly solicitudes: SolicitudCodigoService,
-    private readonly repositorio: IdentidadRepository,
   ) {}
 
   get consentimientoService(): ConsentimientoService { return this.consentimiento; }
@@ -25,5 +23,4 @@ export class IdentidadApi {
   get autorizacionService(): AutorizacionDatosSaludService { return this.autorizacion; }
   get revocacionService(): RevocacionService { return this.revocacion; }
   get solicitudCodigoService(): SolicitudCodigoService { return this.solicitudes; }
-  // getter eliminado para evitar duplicado de 'repositorio'
 }

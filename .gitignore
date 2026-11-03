@@ -16,6 +16,10 @@ apps/api/.env
 # Datos de idioma de Tesseract.js (se descargan al usar OCR; no se versionan)
 apps/api/*.traineddata
 
+# Reportes de Playwright (se regeneran en cada corrida)
+apps/web/playwright-report/
+apps/web/test-results/
+
 # Ruido de Windows / OneDrive
 desktop.ini
 Thumbs.db

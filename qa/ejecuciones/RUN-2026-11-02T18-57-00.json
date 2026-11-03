@@ -1,0 +1,33 @@
+{
+  "run": "RUN-2026-11-02T18-57-00",
+  "fecha": "2026-11-02T18:57:00-05:00",
+  "modulo": "identidad,simulacion,pre-dispensacion,canales,notificaciones,entradas-telegram",
+  "entorno": "docker-compose",
+  "commit": "2fe28a3",
+  "comando": "npx jest",
+  "duracion_ms": 36507,
+  "resumen": {
+    "total": 100,
+    "verdes": 97,
+    "rojas": 3,
+    "omitidas": 0
+  },
+  "pruebas": [
+    { "id": "AC-010 / TC-007: en el primer intento fallido informa el error y muestra dos intentos restantes; el reintento está permitido", "estado": "rojo", "duracion_ms": 0, "mensaje": "expect(received).toBeDefined() — Received: undefined" },
+    { "id": "AC-011 / TC-008: el tercer intento fallido inactiva el código y deriva a la ruta alternativa", "estado": "rojo", "duracion_ms": 0, "mensaje": "expect(received).toBeDefined() — Received: undefined" },
+    { "id": "AC-013 / TC-012: el fallo en el envío de SMS o correo informa y ofrece reintentar o atención presencial", "estado": "rojo", "duracion_ms": 0, "mensaje": "expect(received).toBeDefined() — Received: undefined" },
+    { "id": "AC-003 / TC-013: dos solicitudes simultáneas de nuevo código dejan solo el último vigente (integración, Postgres real)", "estado": "verde", "duracion_ms": 30718, "mensaje": "" },
+    { "id": "AC-009/BR-005: la vinculación creada por una instancia la ve una instancia nueva del servicio (integración, Postgres real)", "estado": "verde", "duracion_ms": 34506, "mensaje": "" },
+    { "id": "AC-005/TC-005 y AC-006/TC-003: autorización y consentimiento sobreviven a una nueva instancia (integración, Postgres real)", "estado": "verde", "duracion_ms": 34573, "mensaje": "" }
+  ],
+  "clasificacion": {
+    "DEFECTO_CODIGO": 3,
+    "PRUEBA_SOSPECHOSA": 0,
+    "ENTORNO": 0
+  },
+  "escalados": [
+    "AC-010 / TC-007 → PREG-082",
+    "AC-011 / TC-008 → PREG-082",
+    "AC-013 / TC-012 → PREG-082"
+  ]
+}

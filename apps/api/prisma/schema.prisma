@@ -1,0 +1,139 @@
+// Esquema PostgreSQL de Pharma Express: un esquema (namespace) de Postgres por módulo
+// (identidad, eps_simulada, canales, prevalidacion — ARQ-005/COMP-004, propuesta-tecnologica.md §3).
+// Las catálogos configurables (PBS, diagnósticos crónicos, festivos de Colombia) siguen en
+// código/config (DEC-P36: se cambian como datos de prueba, no son transaccionales por solicitud).
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["identidad", "eps_simulada", "canales", "prevalidacion"]
+}
+
+// ───────────────────────── identidad (SPEC-001) ─────────────────────────
+
+model Consentimiento {
+  id         String   @id @default(uuid())
+  solicitudId String
+  condicion  String
+  fecha      String
+  canal      String
+  createdAt  DateTime @default(now())
+
+  @@schema("identidad")
+}
+
+model CodigoVerificacion {
+  id               String   @id @default(uuid())
+  clave            String   @unique // `${cedula}:${codigo}`
+  codigo           String
+  emisionMs        BigInt
+  intentosFallidos Int      @default(0)
+  inactivo         Boolean  @default(false)
+  updatedAt        DateTime @updatedAt
+
+  @@schema("identidad")
+}
+
+model AutorizacionDatosSalud {
+  solicitudId String  @id
+  autorizada  Boolean
+  updatedAt   DateTime @updatedAt
+
+  @@schema("identidad")
+}
+
+// ───────────────────────── eps_simulada (SPEC-008) ─────────────────────────
+
+model PacienteSimulado {
+  cedula          String   @id
+  eps             String
+  afiliacionActiva Boolean
+  celular         String
+  correo          String?
+
+  @@schema("eps_simulada")
+}
+
+model FormulaSimulada {
+  numero             String   @id
+  cedulaPaciente      String
+  fechaPrescripcion  String
+  diagnosticoCie10   String
+  vigenciaHasta      String
+  fechaHabilitada    String?
+  medicamentos       MedicamentoFormula[]
+
+  @@schema("eps_simulada")
+}
+
+model MedicamentoFormula {
+  id                  String          @id @default(uuid())
+  formula             FormulaSimulada @relation(fields: [formulaNumero], references: [numero])
+  formulaNumero       String
+  codigo              String
+  autorizado          Boolean
+  pbsIndicadoFormula  Boolean
+
+  @@schema("eps_simulada")
+}
+
+model EventoPrevalidacionSimulado {
+  id             String  @id
+  tipo           String
+  fecha          String
+  pacienteCedula String?
+  resultado      Json?
+  novedades      Json?
+
+  @@schema("eps_simulada")
+}
+
+// ───────────────────────── canales (SPEC-002) ─────────────────────────
+
+model Vinculacion {
+  id                      String   @id @default(uuid())
+  canalId                 String
+  pacienteCC              String
+  fechaVinculacionISO     String
+  avisoPrivacidadAceptado Boolean  @default(false)
+  autorizacionDatosSalud  Boolean  @default(false)
+  revocada                Boolean  @default(false)
+  createdAt               DateTime @default(now())
+
+  @@index([canalId, pacienteCC])
+  @@schema("canales")
+}
+
+model AvisoPrivacidadCanal {
+  clave     String   @id // `${canalId}:${pacienteCC}`
+  aceptado  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+
+  @@schema("canales")
+}
+
+model IntentoArchivoChat {
+  id      String @id @default(uuid())
+  canalId String
+  fecha   String
+
+  @@schema("canales")
+}
+
+// ───────────────────────── prevalidacion (SPEC-003) ─────────────────────────
+
+model ResultadoAlmacenado {
+  id               String @id @default(uuid())
+  solicitudId      String
+  numeroPrescripcion String
+  apta             Boolean
+  motivo           String
+  siguientePaso    String
+
+  @@schema("prevalidacion")
+}

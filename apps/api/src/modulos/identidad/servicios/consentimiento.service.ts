@@ -2,7 +2,13 @@
  * Servicio de consentimiento — módulo identidad (SPEC-001 / RF-001…RF-003, BR-001, AC-001…AC-006, TC-001…TC-003).
  */
 
+import { Inject, Injectable, Optional } from '@nestjs/common';
 import { puedeSolicitarDato } from '../dominio';
+import {
+  REPO_CONSENTIMIENTOS,
+  RepositorioConsentimientos,
+  RepositorioConsentimientosEnMemoria,
+} from '../datos/repositorios';
 
 /** Plantilla fija: no incluye datos de salud, medicamentos ni diagnósticos. (skill: plantillas-sin-datos-de-salud) */
 const PLANTILLA_ATENCION_PRESENCIAL =
@@ -16,7 +22,14 @@ export interface RegistroConsentimiento {
   nombre?: string;
 }
 
+@Injectable()
 export class ConsentimientoService {
+  constructor(
+    @Optional()
+    @Inject(REPO_CONSENTIMIENTOS)
+    private readonly repositorio: RepositorioConsentimientos = new RepositorioConsentimientosEnMemoria(),
+  ) {}
+
   /** BR-001 / RF-003 / AC-002 / TC-002 — sin aceptación no se registra nada; se informa la atención presencial. */
   async rechazar(solicitudId: string): Promise<{ registrado: boolean; atencionPresencial: string }> {
     return { registrado: false, atencionPresencial: PLANTILLA_ATENCION_PRESENCIAL };
@@ -30,7 +43,9 @@ export class ConsentimientoService {
     canal: string,
   ): Promise<RegistroConsentimiento> {
     // El tercero no aporta cédula ni nombre (RF-002 / DEC-03).
-    return { condicion, fecha, canal, cedula: undefined, nombre: undefined };
+    const registro: RegistroConsentimiento = { condicion, fecha, canal, cedula: undefined, nombre: undefined };
+    await this.repositorio.guardar(solicitudId, registro);
+    return registro;
   }
 
   async aceptarTercero(

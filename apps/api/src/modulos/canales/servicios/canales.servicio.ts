@@ -1,23 +1,25 @@
 /**
  * Servicio del módulo `canales` — vinculación y Mini App de Telegram (SPEC-002 v1.11).
  *
- * Persistencia: almacén en memoria para el MVP (el mecanismo técnico de persistencia de
- * sesiones de vinculación por canal queda para arquitectura, SPEC-002 sección 14).
+ * Persistencia: Postgres vía Prisma en producción (esquema `canales`); en memoria por defecto
+ * para pruebas unitarias sin Docker (ver `datos/repositorios.ts`).
  * Depende de `simulacion` únicamente por su `api/` (skill `nestjs-modulo-estandar`).
  */
 
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Optional } from '@nestjs/common';
 import { SimulacionApi } from '../../simulacion/api/simulacion.api';
+import {
+  REPO_AVISOS_CANAL,
+  REPO_INTENTOS_ARCHIVO_CHAT,
+  REPO_VINCULACIONES,
+  RepositorioAvisosCanal,
+  RepositorioAvisosCanalEnMemoria,
+  RepositorioIntentosArchivoChat,
+  RepositorioIntentosArchivoChatEnMemoria,
+  RepositorioVinculaciones,
+  RepositorioVinculacionesEnMemoria,
+} from '../datos/repositorios';
 import { calcularFechaVencimiento, enmascararCedula, estaVigente, fechaColombiaISO } from '../dominio/reglas';
-
-interface Vinculacion {
-  canalId: string;
-  pacienteCC: string;
-  fechaVinculacionISO: string;
-  avisoPrivacidadAceptado: boolean;
-  autorizacionDatosSalud: boolean;
-  revocada: boolean;
-}
 
 export interface PacienteVinculado {
   pacienteCC: string;
@@ -33,24 +35,30 @@ const PLANTILLA_ARCHIVO_EN_CHAT = {
 
 @Injectable()
 export class CanalesServicio {
-  private readonly vinculaciones: Vinculacion[] = [];
-  private readonly avisoAceptadoPorCanal = new Set<string>(); // RF-012/DEC-P27: una aceptación por paciente y canal.
-  private readonly codigosRevalidacion = new Map<string, string>(); // clave: canalId:pacienteCC
-  private readonly intentosArchivoChat: { canalId: string; fecha: string }[] = []; // RF-085/DEC-P44: sin contenido.
+  // Código de revalidación/vinculación: vigente ~10 min, se mantiene en memoria del proceso
+  // a propósito (RF-015: si se pierde, el usuario simplemente pide uno nuevo).
+  private readonly codigosRevalidacion = new Map<string, string>();
+
+  constructor(
+    private readonly simulacion: SimulacionApi,
+    @Optional()
+    @Inject(REPO_VINCULACIONES)
+    private readonly vinculaciones: RepositorioVinculaciones = new RepositorioVinculacionesEnMemoria(),
+    @Optional()
+    @Inject(REPO_AVISOS_CANAL)
+    private readonly avisos: RepositorioAvisosCanal = new RepositorioAvisosCanalEnMemoria(),
+    @Optional()
+    @Inject(REPO_INTENTOS_ARCHIVO_CHAT)
+    private readonly intentosArchivo: RepositorioIntentosArchivoChat = new RepositorioIntentosArchivoChatEnMemoria(),
+  ) {}
 
   private claveAviso(canalId: string, pacienteCC: string): string {
     return `${canalId}:${pacienteCC}`;
   }
 
-  private buscarVinculacion(canalId: string, pacienteCC: string): Vinculacion | undefined {
-    return this.vinculaciones.find((v) => v.canalId === canalId && v.pacienteCC === pacienteCC && !v.revocada);
-  }
-
-  constructor(private readonly simulacion: SimulacionApi) {}
-
   /** Siembra una vinculación con una fecha determinada, solo para pruebas (sin interfaz de producto). */
   async sembrarVinculacionDePrueba(canalId: string, pacienteCC: string, fechaVinculacionISO: string): Promise<void> {
-    this.vinculaciones.push({
+    await this.vinculaciones.crear({
       canalId,
       pacienteCC,
       fechaVinculacionISO,
@@ -63,12 +71,11 @@ export class CanalesServicio {
   /** RF-014 / BR-005 / AC-009, AC-020, AC-026 / CL-005, CL-008 — estado de vigencia de cada vinculación del canal. */
   async verificarExpiracionVinculaciones(canalId: string, ahora: Date = new Date()): Promise<PacienteVinculado[]> {
     const ahoraISO = fechaColombiaISO(ahora.getTime());
-    return this.vinculaciones
-      .filter((v) => v.canalId === canalId && !v.revocada)
-      .map((v) => {
-        const vigente = estaVigente(v.fechaVinculacionISO, ahoraISO);
-        return { pacienteCC: v.pacienteCC, cedulaEnmascarada: enmascararCedula(v.pacienteCC), vigente, vencida: !vigente };
-      });
+    const activas = await this.vinculaciones.listarActivasPorCanal(canalId);
+    return activas.map((v) => {
+      const vigente = estaVigente(v.fechaVinculacionISO, ahoraISO);
+      return { pacienteCC: v.pacienteCC, cedulaEnmascarada: enmascararCedula(v.pacienteCC), vigente, vencida: !vigente };
+    });
   }
 
   /** Expone el código de revalidación emitido (para pruebas; en producción se envía por SMS/correo, SPEC-001). */
@@ -78,9 +85,19 @@ export class CanalesServicio {
     return codigo;
   }
 
+  /**
+   * Solo para pruebas automatizadas (Playwright, skill `plantilla-playwright-humo`) contra el
+   * adaptador de envío simulado: el código real nunca se expone así en producción (se entrega
+   * únicamente por SMS/correo, SPEC-001/RF-004, RF-005). El controlador que la expone la cierra
+   * fuera de `NODE_ENV=production`.
+   */
+  async obtenerCodigoVigentePrueba(canalId: string, pacienteCC: string): Promise<string | undefined> {
+    return this.codigosRevalidacion.get(this.claveAviso(canalId, pacienteCC));
+  }
+
   /** RF-015 / BR-007 / AC-010 — una vinculación vencida se revalida solo con un código nuevo, sin cédula. */
   async revalidarVinculacionVencida(canalId: string, pacienteCC: string, codigo: string): Promise<{ revalidada: boolean }> {
-    const vinculacion = this.buscarVinculacion(canalId, pacienteCC);
+    const vinculacion = await this.vinculaciones.buscarActiva(canalId, pacienteCC);
     if (!vinculacion) {
       throw new Error('vinculacion_no_encontrada');
     }
@@ -88,7 +105,7 @@ export class CanalesServicio {
     if (!codigoEsperado || codigo !== codigoEsperado) {
       return { revalidada: false };
     }
-    vinculacion.fechaVinculacionISO = fechaColombiaISO(Date.now());
+    await this.vinculaciones.actualizarFecha(canalId, pacienteCC, fechaColombiaISO(Date.now()));
     this.codigosRevalidacion.delete(this.claveAviso(canalId, pacienteCC));
     return { revalidada: true };
   }
@@ -103,11 +120,11 @@ export class CanalesServicio {
     if (!confirmado) {
       return { desvinculado: false };
     }
-    const indice = this.vinculaciones.findIndex((v) => v.canalId === canalId && v.pacienteCC === pacienteCC);
-    if (indice === -1) {
+    const vinculacion = await this.vinculaciones.buscarActiva(canalId, pacienteCC);
+    if (!vinculacion) {
       throw new Error('vinculacion_no_encontrada');
     }
-    this.vinculaciones.splice(indice, 1);
+    await this.vinculaciones.eliminar(canalId, pacienteCC);
     return { desvinculado: true };
   }
 
@@ -115,22 +132,22 @@ export class CanalesServicio {
   async procesarMensajeChatTelegram(update: { message?: { chat?: { id: number }; document?: unknown; photo?: unknown } }): Promise<typeof PLANTILLA_ARCHIVO_EN_CHAT> {
     const chatId = update.message?.chat?.id;
     if (chatId !== undefined && (update.message?.document || update.message?.photo)) {
-      this.intentosArchivoChat.push({ canalId: String(chatId), fecha: fechaColombiaISO(Date.now()) });
+      await this.intentosArchivo.registrar(String(chatId), fechaColombiaISO(Date.now()));
     }
     return PLANTILLA_ARCHIVO_EN_CHAT;
   }
 
   async contarIntentosArchivoChat(canalId: string): Promise<number> {
-    return this.intentosArchivoChat.filter((i) => i.canalId === canalId).length;
+    return this.intentosArchivo.contarPorCanal(canalId);
   }
 
   /** RF-012 / DEC-P27 — una aceptación del aviso por paciente y canal; se vuelve a exigir tras desvincular (DEC-P40). */
   async aceptarAvisoPrivacidad(canalId: string, pacienteCC: string): Promise<void> {
-    this.avisoAceptadoPorCanal.add(this.claveAviso(canalId, pacienteCC));
+    await this.avisos.marcarAceptado(canalId, pacienteCC);
   }
 
   async avisoPrivacidadAceptado(canalId: string, pacienteCC: string): Promise<boolean> {
-    return this.avisoAceptadoPorCanal.has(this.claveAviso(canalId, pacienteCC));
+    return this.avisos.fueAceptado(canalId, pacienteCC);
   }
 
   /**
@@ -148,7 +165,7 @@ export class CanalesServicio {
       return { vinculado: false };
     }
     this.codigosRevalidacion.delete(this.claveAviso(canalId, pacienteCC));
-    this.vinculaciones.push({
+    await this.vinculaciones.crear({
       canalId,
       pacienteCC,
       fechaVinculacionISO: fechaColombiaISO(Date.now()),
@@ -161,7 +178,7 @@ export class CanalesServicio {
 
   /** RF-013 / AC-024 / AC-032 — vinculación vigente: no se pide código nuevo; sin vinculación: exige cédula y código. */
   async validarAccesoMiniApp(canalId: string, pacienteCC: string, ahora: Date = new Date()): Promise<{ accesoDirecto: boolean; requiereCodigoNuevo: boolean; requiereCedula: boolean }> {
-    const vinculacion = this.buscarVinculacion(canalId, pacienteCC);
+    const vinculacion = await this.vinculaciones.buscarActiva(canalId, pacienteCC);
     if (!vinculacion) {
       return { accesoDirecto: false, requiereCodigoNuevo: true, requiereCedula: true };
     }
@@ -177,11 +194,11 @@ export class CanalesServicio {
     if (!confirmado) {
       return { revocado: false };
     }
-    const vinculacion = this.buscarVinculacion(canalId, pacienteCC);
+    const vinculacion = await this.vinculaciones.buscarActiva(canalId, pacienteCC);
     if (!vinculacion) {
       throw new Error('vinculacion_no_encontrada');
     }
-    vinculacion.revocada = true;
+    await this.vinculaciones.marcarRevocada(canalId, pacienteCC);
     return { revocado: true };
   }
 }

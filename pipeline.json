@@ -13,13 +13,13 @@
   "modulos": {
     "identidad": {
       "spec_id": "SPEC-001",
-      "spec_hash": "d278bfd11dc3",
+      "spec_hash": "e741b16632c3",
       "spec": "aprobada",
-      "revision": "APTA_CON_RESERVAS",
+      "revision": "NO_APTA",
       "oraculos": "aprobados",
       "pruebas": "rojas",
       "implementacion": "pendiente",
-      "humo": "pendiente",
+      "humo": "en_curso",
       "nota": "Las pruebas de unidad ya importan '../servicios' y 7 fallan; 3 siguen sospechosas (PREG-003/004/005). El código v0 no sirve como base (qa/incidentes/INC-20261031-001-identidad-v0.md).",
       "carpeta": "identidad"
     },
@@ -31,7 +31,7 @@
       "oraculos": "aprobados",
       "pruebas": "verdes",
       "implementacion": "verde",
-      "humo": "pendiente",
+      "humo": "verde",
       "nota": "Solo la parte de la EPS simulada y los catálogos que usa la prevalidación (provisional hasta el Corte técnico).",
       "carpeta": "simulacion"
     },
@@ -43,7 +43,7 @@
       "oraculos": "aprobados",
       "pruebas": "verdes",
       "implementacion": "verde",
-      "humo": "pendiente",
+      "humo": "verde",
       "nota": "Paso 5 (crónicas) depende de PREG-006.",
       "carpeta": "pre-dispensacion"
     },
@@ -55,7 +55,7 @@
       "oraculos": "aprobados",
       "pruebas": "verdes",
       "implementacion": "verde",
-      "humo": "pendiente",
+      "humo": "en_curso",
       "nota": "Depende de PREG-007 (chat, Mini App o enlace). El código v0 de entradas/telegram no sirve como base: implementa verificación por chat, contra DEC-P10, y no tiene pruebas (qa/incidentes/INC-20261102-001-telegram-entradas.md).",
       "carpeta": "canales",
       "construye": "B2"
@@ -66,18 +66,18 @@
       "oraculos": "aprobados",
       "pruebas": "verdes",
       "implementacion": "verde",
-      "humo": "pendiente",
+      "humo": "verde",
       "spec_id": "SPEC-001",
-      "spec_hash": "d278bfd11dc3",
+      "spec_hash": "e741b16632c3",
       "carpeta": "notificaciones"
     },
     "web": {
       "spec": "aprobada",
       "revision": "APTA_CON_RESERVAS",
       "oraculos": "aprobados",
-      "pruebas": "pendiente",
+      "pruebas": "verdes",
       "implementacion": "verde",
-      "humo": "pendiente",
+      "humo": "verde",
       "spec_id": "SPEC-002",
       "spec_hash": "b663f0a467b6",
       "construye": "B3"

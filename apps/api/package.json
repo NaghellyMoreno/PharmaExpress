@@ -15,7 +15,10 @@
     "test:modulo": "jest --",
     "guardian": "python3 ../../qa/scripts/guardian.py revisar",
     "start:dev": "ts-node src/main.ts",
-    "start": "node dist/main.js"
+    "start": "node dist/main.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.15",
@@ -23,6 +26,7 @@
     "@nestjs/platform-express": "^10.4.22",
     "@prisma/client": "^6.1.0",
     "argon2": "^0.41.1",
+    "dotenv": "^18.0.9",
     "grammy": "^1.33.0",
     "multer": "^2.5.0",
     "pg-boss": "^10.1.5",

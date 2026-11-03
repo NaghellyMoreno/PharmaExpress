@@ -59,4 +59,9 @@ export class CanalesApi {
   obtenerPacientesVinculados(canalId: string): Promise<PacienteVinculado[]> {
     return this.canales.obtenerPacientesVinculados(canalId);
   }
+
+  /** Solo para pruebas automatizadas; ver `CanalesServicio.obtenerCodigoVigentePrueba`. */
+  obtenerCodigoVigentePrueba(canalId: string, pacienteCC: string): Promise<string | undefined> {
+    return this.canales.obtenerCodigoVigentePrueba(canalId, pacienteCC);
+  }
 }

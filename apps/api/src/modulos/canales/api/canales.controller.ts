@@ -3,7 +3,7 @@
  * No contiene reglas de negocio: delega en `api/CanalesApi`. DTO + Zod en el borde.
  */
 
-import { BadRequestException, Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post } from '@nestjs/common';
 import { z } from 'zod';
 import { CanalesApi } from './canales.api';
 
@@ -55,5 +55,18 @@ export class CanalesController {
   @Get('pacientes/:canalId')
   async obtenerPacientes(@Param('canalId') canalId: string) {
     return this.canalesApi.obtenerPacientesVinculados(canalId);
+  }
+
+  /**
+   * Solo para pruebas automatizadas (Playwright) contra el adaptador de envío simulado;
+   * nunca disponible con `NODE_ENV=production`, donde el código solo llega por SMS/correo.
+   */
+  @Get('codigo/prueba/:canalId/:cedula')
+  async obtenerCodigoDePrueba(@Param('canalId') canalId: string, @Param('cedula') cedula: string) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new NotFoundException();
+    }
+    const codigo = await this.canalesApi.obtenerCodigoVigentePrueba(canalId, cedula);
+    return { codigo };
   }
 }
