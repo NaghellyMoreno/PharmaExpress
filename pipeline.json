@@ -62,7 +62,7 @@
     },
     "notificaciones": {
       "spec": "aprobada",
-      "revision": "APTA_CON_RESERVAS",
+      "revision": "NO_APTA",
       "oraculos": "aprobados",
       "pruebas": "verdes",
       "implementacion": "verde",
