@@ -40,6 +40,24 @@ export class DispensacionService {
     return { token: await this.jwt.signAsync({ sub: d.usuario, puntoId: d.puntoId }), punto: d.punto.nombre, usuario };
   }
 
+  /** Citas de hoy en el punto del dispensador (vista de inicio del dispensador). Solo iniciales del paciente. */
+  async citasDeHoy(puntoId: string) {
+    const ahora = this.reloj.ahora();
+    const desde = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+    const hasta = new Date(desde.getTime() + 24 * 3_600_000);
+    const citas = await this.prisma.cita.findMany({
+      where: { puntoId, inicio: { gte: desde, lt: hasta } },
+      include: { items: true },
+      orderBy: { inicio: 'asc' },
+    });
+    const out = [];
+    for (const c of citas) {
+      const p = await this.prisma.simPacienteEps.findUnique({ where: { cedula: c.pacienteCedula } });
+      out.push({ id: c.id, inicio: c.inicio, fin: c.fin, estado: c.estado, paciente: p ? nombreCorto(p.nombre) : '—', medicamentos: c.items.length });
+    }
+    return { ahora, citas: out };
+  }
+
   /** RF-60 a RF-63, BR-29, BR-30. */
   async validar(codigo: string, puntoId: string) {
     const ahora = this.reloj.ahora();

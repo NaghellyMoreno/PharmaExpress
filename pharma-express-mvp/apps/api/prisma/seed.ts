@@ -20,8 +20,8 @@ const hash = (s: string) => {
   return `${sal.toString('hex')}:${scryptSync(s, sal, 32).toString('hex')}`;
 };
 const contacto = (n: number, cel: string | null, correo: string | null) => ({
-  celular: process.env[`CONTACTO_${n}_CEL`] ?? cel,
-  correo: process.env[`CONTACTO_${n}_CORREO`] ?? correo,
+  celular: process.env[`CONTACTO_${n}_CEL`] || cel,
+  correo: process.env[`CONTACTO_${n}_CORREO`] || correo,
 });
 
 async function main() {

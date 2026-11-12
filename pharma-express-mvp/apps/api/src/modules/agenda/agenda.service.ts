@@ -99,7 +99,7 @@ export class AgendaService {
       const { punto, ventanas } = await this.ventanasDe(g.puntoId, g.incluyeCronico);
       out.push({ puntoId: g.puntoId, punto: punto.nombre, incluyeCronico: g.incluyeCronico, ventanas });
     }
-    return out;
+    return { hoy: this.reloj.ahora(), grupos: out };
   }
 
   /** RF-41, BR-19, BR-20, DEC-21, DEC-43: reserva de existencias y cupo todo o nada. */

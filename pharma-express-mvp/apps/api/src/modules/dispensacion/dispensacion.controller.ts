@@ -1,4 +1,4 @@
-import { Body, CanActivate, Controller, ExecutionContext, Injectable, Param, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, CanActivate, Controller, ExecutionContext, Get, Injectable, Param, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Type } from 'class-transformer';
 import { IsArray, IsIn, IsOptional, IsString, ValidateNested } from 'class-validator';
@@ -45,6 +45,12 @@ export class DispensacionController {
   @Post('login')
   login(@Body() b: LoginDto) {
     return this.s.login(b.usuario, b.clave);
+  }
+
+  @UseGuards(DispensadorGuard)
+  @Get('citas-hoy')
+  citasHoy(@Req() req: any) {
+    return this.s.citasDeHoy(req.dispensador.puntoId);
   }
 
   @UseGuards(DispensadorGuard)

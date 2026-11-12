@@ -49,6 +49,7 @@ Con Docker:
 cp .env.example .env              # completa Twilio, Resend y Telegram si los vas a usar
 docker compose up --build -d
 docker compose exec api npm run db:seed
+docker compose logs -f api
 ```
 
 - Paciente: http://localhost:5173

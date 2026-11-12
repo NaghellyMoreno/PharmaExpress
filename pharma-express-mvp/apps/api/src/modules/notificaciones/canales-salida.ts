@@ -1,6 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Api } from 'grammy';
 
+/** Fuera de producción, si el proveedor rechaza el envío, el mensaje se muestra en consola para no bloquear las pruebas. */
+function respaldo(log: Logger, destino: string, texto: string) {
+  if (process.env.NODE_ENV !== 'production') log.warn(`[no entregado, se muestra aquí] ${destino}: ${texto}`);
+}
+
 /** SMS real con Twilio. Sin credenciales, registra el envío en consola (modo desarrollo). */
 @Injectable()
 export class SmsCanal {
@@ -13,7 +18,11 @@ export class SmsCanal {
       headers: { Authorization: 'Basic ' + Buffer.from(`${sid}:${token}`).toString('base64'), 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({ To: numero, From: from, Body: texto }),
     });
-    if (!r.ok) this.log.error(`Twilio respondió ${r.status}`);
+    if (!r.ok) {
+      const cuerpo = await r.json().catch(() => ({}));
+      this.log.error(`Twilio respondió ${r.status} (código ${cuerpo.code ?? '?'}): ${cuerpo.message ?? 'sin detalle'} · destino ${numero}`);
+      respaldo(this.log, numero, texto);
+    }
   }
 }
 
@@ -29,7 +38,11 @@ export class CorreoCanal {
       headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ from, to: [correo], subject: 'Pharma Express', text: texto }),
     });
-    if (!r.ok) this.log.error(`Resend respondió ${r.status}`);
+    if (!r.ok) {
+      const cuerpo = await r.json().catch(() => ({}));
+      this.log.error(`Resend respondió ${r.status}: ${cuerpo.message ?? cuerpo.name ?? 'sin detalle'} · destino ${correo}`);
+      respaldo(this.log, correo, texto);
+    }
   }
 }
 
